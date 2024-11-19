@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+html,
+body,
+#__nuxt {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+body {
+    margin: 0;
+}
+
+main {
+    flex: 1 1 auto;
+}
+
+article:hover img {
+    transform: scale(1.1);
+    transition: transform .1s linear;
+}
+
+article p,
+article h5 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-wrap: wrap;
+
+
+}
+
+article p {
+    height: 72px;
+}
+
+article h5 {
+    height: 70px;
+}
+
+article img {
+    height: 150px;
+    width: 100%;
+    object-fit: cover;
+}
+
+.p-5 {
+    background-color: rgb(182, 248, 83);
+}
+
+
+
+
+
+
+
+
+
