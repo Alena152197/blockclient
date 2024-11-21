@@ -2,7 +2,7 @@
 
     <!-- {{ route }} -->
 
-    <!-- <nav class="bg-white border-gray-200 dark:bg-gray-900">
+    <nav class="bg-white border-gray-200 dark:bg-gray-900">
 
         <div class="flex flex-wrap items-center justify-between mx-auto py-4">
             <a href="https://localhost3000/" class="flex items-center space-x-3 rtl:space-x-reverse">
@@ -80,7 +80,7 @@
                 </ul>
             </div>
         </div>
-    </nav> -->
+    </nav>
 </template>
 
 
