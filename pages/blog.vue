@@ -6,7 +6,7 @@
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
-                    <img class="rounded-t-lg" :src="base_url + post.img[0].url" :alt=post.img[0].alternativeText />
+                    <img class="rounded-t-lg" :src="base_url+post.img[0].url" :alt=post.img[0].alternativeText />
                 </NuxtLink>
                 <div class="p-5">
                     <NuxtLink :to="'/post/' + post.documentId">
