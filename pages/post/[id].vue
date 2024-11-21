@@ -74,12 +74,12 @@ const markdown = new MarkdownIt();
 
 const { id } = useRoute().params
 
-const api = await $fetch(`http://panel.4cce9171d57c.vps.myjino.ru/api/posts/${id}?populate=*`);
+const api = await $fetch(`http://324cbb377ef9.vps.myjino.ru/api/posts/${id}?populate=*`);
 const post = api.data;
 const mark = markdown.render(post.body);
 
 
-const base_url = 'http://panel.4cce9171d57c.vps.myjino.ru'
+const base_url = 'http://324cbb377ef9.vps.myjino.ru'
 
 const apiConfic = await $fetch(`${base_url}/api/config?populate=*`)
 const config = apiConfic.data

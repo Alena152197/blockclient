@@ -6,7 +6,7 @@
         <div class="md:flex md:justify-between">
           <div class="mb-6 md:mb-0">
               <a href="https://localhost3000/" class="flex items-center">
-                  <img src="http://panel.4cce9171d57c.vps.myjino.ru/uploads/free_30_instagram_stories_icons81_122628_749474acd3.png" class="h-8 me-3" alt="FlowBite Logo" />
+                  <img src="http://324cbb377ef9.vps.myjino.ru/uploads/free_30_instagram_stories_icons81_122628_749474acd3.png" class="h-8 me-3" alt="FlowBite Logo" />
                   <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Путешественник</span>
               </a>
           </div>

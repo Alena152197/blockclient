@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-const base = 'http://panel.4cce9171d57c.vps.myjino.ru'
+const base = 'http://324cbb377ef9.vps.myjino.ru'
 const api = await $fetch(`${base}/api/config?populate=*`)
 const config = api.data
 
