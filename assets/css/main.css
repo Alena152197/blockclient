@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-
 html,
 body,
 #__nuxt {
@@ -12,12 +11,14 @@ body,
     flex-direction: column;
 }
 
+
 body {
     margin: 0;
 }
 
 main {
     flex: 1 1 auto;
+    height: 800px;
 }
 
 article:hover img {
@@ -54,9 +55,26 @@ article img {
     background-color: rgb(182, 248, 83);
 }
 
+.h-8 {
+    width: 400px;
+    height: 70px;
+    margin-right: 34px;
+}
 
-
-
+/* .list {
+    width: 23%;
+    height: 66%;
+    background-color: #FFFFFF;
+    position: absolute;
+    top: 13%;
+    left: 25.5%;
+    border: 1px solid #6c6666;
+    box-shadow: 
+    2px 2px #C8C8C8,
+    4px 4px #909090,
+    6px 6px #888888,
+    8px 8px #585858;
+} */
 
 
 

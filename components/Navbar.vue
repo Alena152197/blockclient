@@ -2,14 +2,15 @@
 
     <!-- {{ route }} -->
 
-    <nav class="bg-white border-gray-200 dark:bg-gray-900">
+    <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
 
-        <div class="flex flex-wrap items-center justify-between mx-auto py-4">
+        <div class="flex flex-wrap items-center justify-center mx-auto">
             <a href="https://localhost3000/" class="flex items-center space-x-3 rtl:space-x-reverse">
-                <img src="http://324cbb377ef9.vps.myjino.ru/uploads/free_30_instagram_stories_icons81_122628_749474acd3.png"
-                    class="h-8" alt="Flowbite Logo" />
-                <span class="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Путешественник</span>
-            </a>
+
+                <img src="#"
+                    class="h-8" alt="Личный блог"/>
+            
+                </a>
             <div class="flex gap-8 md:order-2">
                 <DarkMode />
                 <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search"
@@ -81,6 +82,9 @@
             </div>
         </div>
     </nav>
+
+
+
 </template>
 
 
@@ -102,3 +106,4 @@ useHead({
 
 
 </script>
+
