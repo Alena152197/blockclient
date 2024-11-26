@@ -4,7 +4,7 @@
         <img class="relative h-full max-w-full ms-auto" src="../img/zebra.png" alt="image description">
 
         <div>
-            <div class="w-1/4 h-2/3 bg-white absolute">
+            <div class="w-1/4 h-2/3 bg-white absolute top-36 left-1/4">
             <div class="float-right mr-8">
                 <img src="../img/flag.png" alt="" width="27px" height="60px">
             </div>

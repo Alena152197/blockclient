@@ -18,7 +18,6 @@ body {
 
 main {
     flex: 1 1 auto;
-    height: 800px;
 }
 
 article:hover img {
