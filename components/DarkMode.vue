@@ -34,6 +34,7 @@ const toggleTheme = () => {
     if (isDark.value) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('color-theme', 'dark');
+        console.log(isDark.value)
     } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');

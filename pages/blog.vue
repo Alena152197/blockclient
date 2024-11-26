@@ -35,7 +35,7 @@
 
 
 <script setup>
-const api = await $fetch('http://324cbb377ef9.vps.myjino.ru/api/posts?populate=*')
+const api = await $fetch('https://324cbb377ef9.vps.myjino.ru/api/posts?populate=*')
 const posts = api.data
 
 const displayedPosts = ref(posts.slice(0, 6));
@@ -43,7 +43,7 @@ const loadMore = () => {
     displayedPosts.value = posts.slice(0, displayedPosts.value.length + 6);
 }
 
-const base_url = "http://324cbb377ef9.vps.myjino.ru"
+const base_url = "https://324cbb377ef9.vps.myjino.ru"
 </script>
 
 
