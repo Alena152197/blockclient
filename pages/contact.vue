@@ -1,7 +1,7 @@
 <template>
     <main class="bg-white">
-        <div class="box">
-            <img src="../img/контакты.png" alt="">
-        </div>
+
+        <img class="relative h-full max-w-full ms-auto" src="../img/контакты.png" alt="">
+
     </main>
 </template>
