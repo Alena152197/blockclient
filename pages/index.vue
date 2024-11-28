@@ -4,7 +4,7 @@
         <img class="relative h-full max-w-full ms-auto" src="../img/zebra.png" alt="image description">
 
         <div>
-            <div class="list w-1/4 h-2/3 hover:min-h-full
+            <div class="list w-1/4 h-2/3
              bg-white absolute top-32 left-1/4
               border-solid border-2 border-gray-500">
                 <div class="float-right mr-8">
