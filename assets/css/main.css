@@ -60,20 +60,15 @@ article img {
     margin-right: 34px;
 }
 
-/* .list {
-    width: 23%;
-    height: 66%;
-    background-color: #FFFFFF;
-    position: absolute;
-    top: 13%;
-    left: 25.5%;
-    border: 1px solid #6c6666;
+.list {
     box-shadow: 
-    2px 2px #C8C8C8,
-    4px 4px #909090,
-    6px 6px #888888,
-    8px 8px #585858;
-} */
+    1px 1px #C8C8C8,
+    2px 2px #585858,
+    3px 3px #C8C8C8,
+    4px 4px #585858,
+    5px 5px #C8C8C8,
+    6px 6px #585858;
+}
 
 
 

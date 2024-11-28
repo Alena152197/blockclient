@@ -4,12 +4,16 @@
         <img class="relative h-full max-w-full ms-auto" src="../img/zebra.png" alt="image description">
 
         <div>
-            <div class="w-1/4 h-2/3 bg-white absolute top-36 left-1/4">
-            <div class="float-right mr-8">
-                <img src="../img/flag.png" alt="" width="27px" height="60px">
+            <div class="list w-1/4 h-2/3
+             bg-white absolute top-32 left-1/4
+              border-solid border-2 border-gray-500">
+                <div class="float-right mr-8">
+                    <img src="../img/flag.png" alt="" width="27px" height="60px">
+                </div>
             </div>
         </div>
-        </div>
+
+        
 
 
 
@@ -17,13 +21,11 @@
 
 
 </template>
-<!-- <img src="../img/главная.png" alt="" class="zebra"></img> -->
+
 
 <script setup>
 
 
-
-// bg-[url('/img/главная.png')] bg-no-repeat bg-container bg-right
 
 </script>
 
