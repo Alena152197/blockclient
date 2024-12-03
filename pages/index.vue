@@ -7,13 +7,25 @@
             <div class="list w-1/4 h-2/3
              bg-white absolute top-32 left-1/4
               border-solid border-2 border-gray-500">
-                <div class="float-right mr-8">
-                    <img src="../img/flag.png" alt="" width="27px" height="60px">
+                <div>
+                    <img  class="float-right mr-8" src="../img/flag.png" alt="" width="27px" height="60px">
+                    <p class="mx-20 text-center pt-20">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius, dolores, aliquid unde molestias
+                        facilis nihil earum,
+
+                        corrupti odit animi nostrum ipsum nulla omnis doloremque velit sed veniam non numquam commodi.
+                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, quod? Dolorem officia ipsum
+                        dolores labore sit dicta numquam quam sed deleniti ducimus,
+
+                        maxime mollitia nihil omnis quis amet voluptate ea?
+                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates magni mollitia harum quos
+                        in earum laboriosam, optio similique totam impedit saepe labore.
+                        
+                        Consequuntur adipisci itaque nemo quibusdam repellendus, quod quisquam.</p>
                 </div>
             </div>
         </div>
 
-        
+
 
 
 
