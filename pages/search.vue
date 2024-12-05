@@ -1,8 +1,7 @@
 <template>
     <h1>hello</h1>
     <main>
-        <button @click="searcAlert">click</button>
-        {{ search }}
+        <article v-for="post in posts" :key="post.Required"></article>
     </main>
 </template>
 
@@ -11,13 +10,21 @@ import { useSearchStore } from '~/stores/search';
 
 
 const search = useSearchStore()
+const posts = ref()
 
-function searcAlert() {
+async function searcAlert() {
     console.log(search.searchQuery);
-    
+
+    try {
+        const response = await $fetch('http://324cbb377ef9.vps.myjino.ru/api/posts?filters[$or][0][title][$containsi]=${search.searchQuery}&filters[$or][1][body][$containsi]=${search.searchQuery}')
+        const searchResponse = response.data;
+    } catch (error) {
+        console.error('bla bla bla', error);
+    }
 }
 
-const response = await $fetch('http://324cbb377ef9.vps.myjino.ru/api/posts?filters[$or][0][title][$containsi]=${stringSearch}&filters[$or][1][body][$containsi]=${stringSearch}')
-const searchResponse = response.data
+onMounted(() => {
+    searcAlert()
+})
 
 </script>
