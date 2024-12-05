@@ -86,10 +86,12 @@ article img {
     position: absolute;
 }
 
-span {
+.box span {
     position: absolute;
     padding: 50px;
 }
+
+
 
 
 
