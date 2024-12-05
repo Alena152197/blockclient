@@ -95,7 +95,11 @@
 
 <script setup>
 
+const search = useSearchStore()
 const textSearch = ref('')
+search.searchQuery = textSearch.value
+console.log(search.searchQuery)
+
 
 const route = useRoute()
 const isActive = (path) => route.path.split('/')[1] === path
