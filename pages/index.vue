@@ -1,29 +1,27 @@
 <template>
     <main class="bg-yellow-300 ">
-
-        <img class="relative h-full max-w-full ms-auto" src="../img/zebra.png" alt="image description">
-
-        <div>
-            <div class="list w-1/4 h-2/3
-             bg-white absolute top-32 left-1/4
-              border-solid border-2 border-gray-500">
-                <div>
-                    <img  class="float-right mr-8" src="../img/flag.png" alt="" width="27px" height="60px">
-                    <p class="mx-20 text-center pt-20">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Eius, dolores, aliquid unde molestias
-                        facilis nihil earum,
-
-                        corrupti odit animi nostrum ipsum nulla omnis doloremque velit sed veniam non numquam commodi.
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Iste, quod? Dolorem officia ipsum
-                        dolores labore sit dicta numquam quam sed deleniti ducimus,
-
-                        maxime mollitia nihil omnis quis amet voluptate ea?
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptates magni mollitia harum quos
-                        in earum laboriosam, optio similique totam impedit saepe labore.
-                        
-                        Consequuntur adipisci itaque nemo quibusdam repellendus, quod quisquam.</p>
-                </div>
+        <div class="box">
+            <div class="box_1">
+                <img src="../img/лист1.png" alt="">
+                <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                    Dolore neque temporibus odit quas ad doloribus placeat nihil, ab beatae! 
+                    Earum architecto ipsam
+                    quibusdam fugit?
+                    Alias quis molestiae laboriosam harum dolor.</span>
             </div>
         </div>
+
+        <!-- <div class="box">
+            <div class="box_1">
+                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus, aut dicta dolorum labore maiores illum sed temporibus tenetur, itaque alias qui quo nemo? Debitis, dicta. Quis eius cumque ex soluta!
+            </div>
+        </div> -->
+
+        <!-- <img class="relative h-full max-w-full ms-auto" src="../img/zebra.png" alt="image description">
+
+        <div>
+            <img src="../img/лист 1.png" alt="">
+        </div> -->
 
 
 

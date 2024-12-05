@@ -55,19 +55,59 @@ article img {
 }
 
 .h-8 {
-    width: 800px;
-    height: 70px;
+    width: 726px;
+    height: 88px;
+    margin-right: 33px;
+    
 }
 
-.list {
-    box-shadow: 
-    1px 1px #C8C8C8,
-    2px 2px #585858,
-    3px 3px #C8C8C8,
-    4px 4px #585858,
-    5px 5px #C8C8C8,
-    6px 6px #585858;
+.box {
+    width: 100%;
+    height: 100%;
+    background-repeat: no-repeat;
+    background-position: right;
+    background-size: 87% 100%;
+    background-image: 
+    url('/img/zebra.png');
+    position: relative;
 }
+
+.box_1 {
+    width: 470px;
+    position: relative;
+    top: 50px;
+    left: 29%;
+    
+
+}
+
+.box_1 img {
+    width: 100%;
+    position: absolute;
+}
+
+span {
+    position: absolute;
+    padding: 50px;
+}
+
+
+
+
+/* .box_1 {
+    width: 100%;
+    height: 100%;
+    background-image: url('/img/лист1.png');
+    background-repeat: no-repeat;
+    background-size: 25% 80%;
+    background-position: 39% 35%;
+    position: relative;
+    
+} */
+
+
+
+
 
 /* section {
     width: 100%;
