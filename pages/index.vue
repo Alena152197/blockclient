@@ -10,23 +10,6 @@
                     Alias quis molestiae laboriosam harum dolor.</span>
             </div>
         </div>
-
-        <!-- <div class="box">
-            <div class="box_1">
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Doloribus, aut dicta dolorum labore maiores illum sed temporibus tenetur, itaque alias qui quo nemo? Debitis, dicta. Quis eius cumque ex soluta!
-            </div>
-        </div> -->
-
-        <!-- <img class="relative h-full max-w-full ms-auto" src="../img/zebra.png" alt="image description">
-
-        <div>
-            <img src="../img/лист 1.png" alt="">
-        </div> -->
-
-
-
-
-
     </main>
 
 

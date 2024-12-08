@@ -10,18 +10,12 @@
 <script setup>
 
 const search = useSearchStore()
-const posts = ref()
+const textSearch = ref('')
 
-async function searchAlert() {
-    console.log(search.searchQuery);
+search.searchQuery = textSearch.value
 
-    try {
-        const response = await $fetch('http://324cbb377ef9.vps.myjino.ru/api/posts?filters[$or][0][title][$containsi]=${search.searchQuery}&filters[$or][1][body][$containsi]=${search.searchQuery}')
-        posts = response.data;
-    } catch (error) {
-        console.error('bla bla bla', error);
-    }
-}
+console.log(search.searchQuery);
+
 
 onMounted(() => searcAlert())
 

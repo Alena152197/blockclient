@@ -102,11 +102,11 @@ const search = useSearchStore()
 const route = useRoute()
 const isActive = (path) => route.path.split('/')[1] === path
 
-const router = useRouter()
-function goToSearch() {
-    router.push({path: '/search'})
+// const router = useRouter()
+// function goToSearch() {
+//     router.push({path: '/search'})
 
-}
+// }
 
 
 useHead({
