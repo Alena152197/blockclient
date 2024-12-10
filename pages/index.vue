@@ -1,15 +1,20 @@
 <template>
-    <main class="bg-yellow-300 ">
+    <main class="bg-yellow-300 text-right h-full p-0 m-0">
         <div class="box">
-            <div class="box_1">
+            <img src="../img/zebra.png" alt="" width="1375px">
+        </div>
+        <div class="container">
+            <img src="../img/лист.png" alt="">
+        </div>
+            <!-- <div class="box_1">
                 <img src="../img/лист1.png" alt="">
                 <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Dolore neque temporibus odit quas ad doloribus placeat nihil, ab beatae! 
                     Earum architecto ipsam
                     quibusdam fugit?
                     Alias quis molestiae laboriosam harum dolor.</span>
-            </div>
-        </div>
+            </div> -->
+        
     </main>
 
 

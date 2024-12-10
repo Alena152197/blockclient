@@ -2,7 +2,7 @@
 
 
     <footer class=" bg-white dark:bg-gray-900">
-        <div class="w-full h-16 bg-black sm:flex sm:items-center sm:justify-between">
+        <div class="w-full h-14 bg-black sm:flex sm:items-center sm:justify-between">
             <span class="text-sm text-gray-200 sm:text-center dark:text-gray-400">&copy; 2024 <a
                     href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. Все права защищены.
             </span>

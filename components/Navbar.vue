@@ -8,7 +8,7 @@
             <a href="https://localhost3000/" class="flex items-center space-x-3 rtl:space-x-reverse">
 
  
-                    <!-- <img src="../img/шапка стрелка.png" class="h-8 " alt="Личный блог" /> -->
+                    <img src="../img/шапка стрелка.png" class="h-8 " alt="Личный блог" />
 
 
             </a>
@@ -62,7 +62,7 @@
                         placeholder="Поиск...">
                 </div>
                 <ul
-                    class="flex flex-col p-4 md:p-0 mt-4 font-bold md:space-x-8  md:flex-row md:mt-0 dark:border-gray-700">
+                    class="flex flex-col p-5 md:p-0 mt-4 font-bold md:space-x-8  md:flex-row md:mt-0 dark:border-gray-700">
                     <li>
                         <NuxtLink to="/"
                             class="block py-2 px-5 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
@@ -102,11 +102,11 @@ const search = useSearchStore()
 const route = useRoute()
 const isActive = (path) => route.path.split('/')[1] === path
 
-// const router = useRouter()
-// function goToSearch() {
-//     router.push({path: '/search'})
+const router = useRouter()
+function goToSearch() {
+    router.push({path: '/search'})
 
-// }
+}
 
 
 useHead({

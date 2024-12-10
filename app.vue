@@ -22,7 +22,7 @@ useHead({
   ],
   // настройка боди на главной
   bodyAttrs: {
-    class: 'w-full bg-white dark:bg-gray-900'
+    class: 'bg-white dark:bg-gray-900'
   },
   head: {
     script: [
