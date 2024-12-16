@@ -27,6 +27,7 @@ body {
 article:hover img {
     transform: scale(1.1);
     transition: transform .1s linear;
+
 }
 
 article p,
@@ -52,6 +53,7 @@ article img {
     height: 150px;
     width: 100%;
     object-fit: cover;
+    
 }
 
 /* .p-5 {
@@ -72,10 +74,10 @@ article img {
 
 }
 
-.box img {
+/* .box img {
     height: 677px;
 
-}
+} */
 
 .container {
     display: inline-block;
@@ -89,6 +91,21 @@ article img {
     margin-left: 247px;
 }
 
+
+.dateText {
+    font-family: sans-serif;
+    padding: 0 32px 0 32px;
+    line-height: 2;
+    margin-bottom: 100px;
+}
+
+.dateText img {
+    margin: auto;
+    padding: 10px;
+    width: 50%;
+    min-width: 500px;
+    
+}
 
 
 
