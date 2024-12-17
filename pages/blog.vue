@@ -1,8 +1,8 @@
 <template>
 
     <main>
-        <h2 class="text-4xl font-extrabold my-4 dark:text-white">Блог</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mb-4">
+        <h2 class="text-4xl font-extrabold my-4 p-4 dark:text-white">Блог</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mb-4 p-4">
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
