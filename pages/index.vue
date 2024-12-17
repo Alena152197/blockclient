@@ -1,11 +1,11 @@
 <template>
     <main class="bg-yellow-300 text-right h-full p-0 m-0">
         <div class="box">
-            <img src="../img/zebra.png" alt="" width="1375px">
+            <img src="../img/zebra.png" alt="">
         </div>
-        <div class="container">
+        <!-- <div class="container">
             <img src="../img/лист.png" alt="">
-        </div>
+        </div> -->
             <!-- <div class="box_1">
                 <img src="../img/лист1.png" alt="">
                 <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.
