@@ -1,7 +1,7 @@
 <template>
-    <main class="bg-yellow-300 text-right h-full p-0 m-0">
-        <div class="box">
-            <img src="../img/zebra.png" alt="">
+    <main class="bg-yellow-300 bg-[url('/img/zebra.png')] bg-right bg-no-repeat p-0 h-screen bg-cover ">
+        <div class="">
+            <h1>hello</h1>
         </div>
         <!-- <div class="container">
             <img src="../img/лист.png" alt="">
