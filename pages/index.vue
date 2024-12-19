@@ -1,6 +1,6 @@
 <template>
     <main class="bg-yellow-300 p-0 m-0 w-screen h-screen">
-        <div class="bg-[url('/img/zebra.png')] bg-right bg-no-repeat  bg-[length:200px_100px]">
+        <div class="bg-[url('/img/zebra.png')] bg-right bg-no-repeat bg-[length:90%_100%] h-screen ">
             <h1>hello</h1>
         </div>
         <!-- <div class="container">
