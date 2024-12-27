@@ -4,7 +4,7 @@ export default defineNuxtConfig({
     host: '0.0.0.0',
   },
   compatibilityDate: '2024-04-03',
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   css: ['~/assets/css/main.css'],
   postcss: {
     plugins: {
