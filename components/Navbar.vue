@@ -94,6 +94,7 @@
 
 
 <script setup>
+import { useSearchStore } from '~/stores/search'
 
 const search = useSearchStore()
 
