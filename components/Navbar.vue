@@ -5,7 +5,7 @@
     <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
 
         <div class="flex flex-wrap items-center justify-left mx-auto">
-            <a href="https://localhost3000/" class="flex items-center space-x-3 rtl:space-x-reverse">
+            <a href="https://fenix1521.ru/" class="flex items-center space-x-3 rtl:space-x-reverse">
 
  
                     <!-- <img src="../img/шапка стрелка.png" class="h-8 " alt="Личный блог" /> -->
