@@ -4,7 +4,7 @@
   <!-- <NuxtPage />
   <Up />
   <Footer /> -->
-  <button @click="func">КНопка</button>
+  <button @click="func()">КНопка</button>
 </template>
 
 <script setup>
