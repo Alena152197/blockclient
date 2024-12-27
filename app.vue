@@ -4,6 +4,7 @@
   <!-- <NuxtPage />
   <Up />
   <Footer /> -->
+  <button @click="func">КНопка</button>
 </template>
 
 <script setup>
@@ -31,6 +32,9 @@
 //   }
 // })
 
+function func() {
+  console.log('fewfewfew');
+}
 </script>
 
 
