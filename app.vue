@@ -1,6 +1,6 @@
 <template>
   <!-- <NuxtLoadingIndicator throttle="0" /> -->
-  <Navbar />
+  <!-- <Navbar /> -->
   <!-- <NuxtPage />
   <Up />
   <Footer /> -->
