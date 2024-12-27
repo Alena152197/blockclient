@@ -35,6 +35,8 @@
 function funcfefefe() {
   console.log('fewfewfew');
 }
+
+onMounted(() => console.log('erfefe'))
 </script>
 
 
