@@ -1,9 +1,9 @@
 <template>
   <!-- <NuxtLoadingIndicator throttle="0" /> -->
   <Navbar />
-  <NuxtPage />
+  <!-- <NuxtPage />
   <Up />
-  <Footer />
+  <Footer /> -->
 </template>
 
 <script setup>
