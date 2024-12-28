@@ -1,15 +1,16 @@
 <template>
     <main class="bg-yellow-300 p-0 m-0 w-screen h-screen">
-        <div class="bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:90%_100%] h-screen ">
+        <div class="bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:90%_100%] h-screen">
             <h1>hello</h1>
+            <div>
+                <img src="../public/img/лист.png" alt="обо мне">
+            </div>
         </div>
-        <div>
-            <img src="../public/img/лист.png" alt="обо мне">
-        </div>
+
         <!-- <div class="container">
             <img src="../img/лист.png" alt="">
         </div> -->
-            <!-- <div class="box_1">
+        <!-- <div class="box_1">
                 <img src="../img/лист1.png" alt="">
                 <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.
                     Dolore neque temporibus odit quas ad doloribus placeat nihil, ab beatae! 
@@ -17,7 +18,7 @@
                     quibusdam fugit?
                     Alias quis molestiae laboriosam harum dolor.</span>
             </div> -->
-        
+
     </main>
 
 
