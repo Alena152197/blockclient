@@ -17,6 +17,6 @@ search.searchQuery = textSearch.value
 console.log(search.searchQuery);
 
 
-onMounted(() => searcAlert())
+onMounted(() => searchAlert())
 
 </script>
