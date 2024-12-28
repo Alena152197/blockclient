@@ -8,7 +8,7 @@
             <a href="https://fenix1521.ru/" class="flex items-center space-x-3 rtl:space-x-reverse">
 
  
-                    <!-- <img src="../img/шапка стрелка.png" class="h-8 " alt="Личный блог" /> -->
+                    <img src="../img/шапка стрелка.png" class="h-8 " alt="Личный блог" />
 
 
             </a>
