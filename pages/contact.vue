@@ -1,7 +1,7 @@
 <template>
     <main class="bg-white">
         <div class="box">
-            <img src="../img/фон зебра.png" alt="">
+            <img src="../public/img/фон зебра.png" alt="">
         </div>
 
 
