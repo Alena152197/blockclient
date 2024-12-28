@@ -3,6 +3,9 @@
         <div class="bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:90%_100%] h-screen ">
             <h1>hello</h1>
         </div>
+        <div>
+            <img src="../public/img/лист.png" alt="обо мне">
+        </div>
         <!-- <div class="container">
             <img src="../img/лист.png" alt="">
         </div> -->
