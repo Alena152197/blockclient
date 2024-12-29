@@ -4,7 +4,7 @@
 
     <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
 
-        <div class="flex flex-wrap items-center justify-left mx-auto">
+        <div class="flex flex-wrap items-center justify-stretch mx-auto">
             <a href="https://fenix1521.ru/" class="flex items-center space-x-3 rtl:space-x-reverse">
 
  
