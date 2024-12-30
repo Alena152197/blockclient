@@ -1,9 +1,6 @@
 <template>
-    <main class="bg-yellow-300 p-0 m-0 w-screen ">
-        <div class="bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:85%_100%] right-6 h-screen relative">
-                <div class="container">
-                    <img src="../public/img/лист.png" alt="обо мне" >
-                </div>
+    <main class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:88%_100%]">
+        <div class="containerMain">
         </div>
 
         <!-- <div class="container">

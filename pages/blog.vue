@@ -1,8 +1,8 @@
 <template>
-
-    <main>
-        <h2 class="text-4xl font-extrabold my-4 p-4 dark:text-white">Блог</h2>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mb-4 p-4">
+<!-- gap-2 mb-4 p-4 -->
+    <main class="bg-yellow-300">
+        <h2 class="text-4xl font-extrabold my-0 p-4 dark:text-white text-center">Блог</h2>
+        <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
@@ -27,7 +27,7 @@
             </article>
         </div>
         <button v-if="!(displayedPosts.length === posts.length)" @click="loadMore" type="button"
-            class="w-full text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2 dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Смотреть
+            class="block m-auto my-8 w-3/4 bg-blue-300 text-blue-900 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Смотреть
             еще</button>
     </main>
 </template>
@@ -38,9 +38,9 @@
 const api = await $fetch('https://324cbb377ef9.vps.myjino.ru/api/posts?populate=*')
 const posts = api.data
 
-const displayedPosts = ref(posts.slice(0, 6));
+const displayedPosts = ref(posts.slice(0, 8));
 const loadMore = () => {
-    displayedPosts.value = posts.slice(0, displayedPosts.value.length + 6);
+    displayedPosts.value = posts.slice(0, displayedPosts.value.length + 4);
 }
 
 const base_url = "https://324cbb377ef9.vps.myjino.ru"
