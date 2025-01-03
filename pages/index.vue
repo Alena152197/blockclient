@@ -2,19 +2,26 @@
     <main
         class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:89%_100%]">
         <div class="flex justify-center mt-10">
-            <div class="relative h-5/6 rounded-2xl border-4 border-green-800 inline-block">
+            <div class="relative h-5/6 rounded-2xl border-4 border-green-800 inline-block bottom-5">
                 <img src="../public/img/лист.png" alt="" class="w-full h-full object-cover" />
                 <div class="absolute top-14 mx-8">
-                    <!-- <span> <strong>Всем привет! <br> Будем знакомы, Меня зовут Алена.</strong> </span><br><br>
+                    <span> <strong>Всем привет! <br> Будем знакомы, Меня зовут Алена.</strong> </span><br><br>
                     <p>В этом блоге я хочу рассказать про свой жизненный путь, с чего всё началось, поиски себя и своего
                         места в жизни, и всё ли так просто, как кажется на первый взгляд. <br><br>
                         Надеюсь, моя история будет для кого-то полезной, как преодолеть трудности, как не потерять себя
                         и найти силы на что-то новое. <br><br>
                         Жизнь, мягко говоря, непредсказуема. В один момент все идет хорошо, а потом вдруг что-то
-                        происходит, и вся жизнь переворачивается с ног на голову, так случилось и у меня... </p> -->
+                        происходит, и вся жизнь переворачивается с ног на голову, так случилось и у меня... </p>
                 </div>
             </div>
         </div>
+        <blockquote class="blockquote-7">
+            <p>"Мы все, как карандаши.
+                Каждый рисует свою судьбу.
+                Один ломается, другой тупит,
+                а кто-то затачивается и движется вперёд".</p>
+            <cite class="cite">Светлана Кременецкая</cite>
+        </blockquote>
     </main>
 
 

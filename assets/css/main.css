@@ -102,6 +102,12 @@ article img {
     
 }
 
+.blockquote-7 {
+    display: none; 
+}
+
+
+
 @media (max-width: 500px) {
     #__nuxt > main.bg-yellow-300 {
         background: url('/public/img/phoneVersey.png'), yellow;
@@ -110,8 +116,34 @@ article img {
         background-size: cover;
         background-position: 100%;
 
+
     }
 }
+
+@media (max-width: 500px) {
+    .blockquote-7 {
+        background-color:   rgb(239, 239, 20180);
+        border: 2px solid  rgb(183, 183, 7);
+        font-size: 16px;
+        font-weight: 500;
+        font-style: italic;
+        margin: 16px 30px 30px 16px;
+        padding: 16px 20px;
+        position: relative;
+        box-shadow: 10px 10px 0 0 rgb(239, 239, 20180);
+        display: block; 
+    }
+    .blockquote-7 .cite {
+        color: black;
+        font-size: 15px;
+        font-weight: 700;
+        padding-top: 10px;
+        display: block;
+        text-align: right;
+    
+    }
+}
+
 
 
 
