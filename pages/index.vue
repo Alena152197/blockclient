@@ -1,14 +1,21 @@
 <template>
-<main class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:89%_100%]">
-    <div class="rounded-2xl border-4 h-full border-red-800 flex items-center justify-start">
-        <div class="w-10/12 rounded-2xl border-4 h-full border-green-800 flex items-center justify-center relative">
-            <img src="../public/img/лист.png" alt="" class="h-5/6 mb-16 p-4" />
-            <div class="absolute inset-0 flex items-center justify-center"> 
-                <span class="text-blue-500 text-xl font-bold">Ваш текст здесь</span>
+    <main
+        class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:89%_100%]">
+        <div class="flex justify-center mt-10">
+            <div class="relative h-5/6 rounded-2xl border-4 border-green-800 inline-block">
+                <img src="../public/img/лист.png" alt="" class="w-full h-full object-cover" />
+                <div class="absolute top-14 mx-8">
+                    <span> <strong>Всем привет! <br> Будем знакомы, Меня зовут Алена.</strong> </span><br><br>
+                    <p>В этом блоге я хочу рассказать про свой жизненный путь, с чего всё началось, поиски себя и своего
+                        места в жизни, и всё ли так просто, как кажется на первый взгляд. <br><br>
+                        Надеюсь, моя история будет для кого-то полезной, как преодолеть трудности, как не потерять себя
+                        и найти силы на что-то новое. <br><br>
+                        Жизнь, мягко говоря, непредсказуема. В один момент все идет хорошо, а потом вдруг что-то
+                        происходит, и вся жизнь переворачивается с ног на голову, так случилось и у меня... </p>
+                </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 
 
 </template>
@@ -19,6 +26,18 @@
 
 
 </script>
+
+
+
+<!-- <div class="relative w-10/12 rounded-2xl border-4 h-full border-green-800 flex items-center justify-center">
+    <img src="../public/img/лист.png" alt="" class="h-5/6 mb-16 p-4" />
+    <div class="absolute"> 
+        Lorem, ipsum dolor sit amet consectetur adipisicing elit. Fugit quos, voluptatum quas cumque libero optio tempore minus architecto asperiores commodi!
+    </div>
+</div> -->
+
+
+
 
 <!-- bg-[url('/img/главная.png')] bg-no-repeat bg-fixed bg-right -->
 
