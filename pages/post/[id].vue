@@ -59,7 +59,7 @@
         </nav>
 
 
-        <div class="bg-no-repeat bg-top h-96 rounded-se-2xl my-10 bg-fixed bg-[length:40%_800px]"
+        <div class="bg-no-repeat bg-top h-96 rounded-se-2xl my-10 bg-fixed bg-[length:50%_800px]"
             :style="'background-image: url(' + base_url + post.img[0].url + ')'"></div>
         <div class="px-8">
             <strong>
@@ -77,12 +77,13 @@
 <script setup>
 import MarkdownIt from "markdown-it";
 const markdown = new MarkdownIt();
+const mark = ref('')
 
 const { id } = useRoute().params
 
 const api = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/posts/${id}?populate=*`);
 const post = api.data;
-const mark = markdown.render(post.body);
+mark.value = markdown.render(post.body);
 
 
 const base_url = 'https://324cbb377ef9.vps.myjino.ru'

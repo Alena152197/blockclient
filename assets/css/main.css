@@ -87,7 +87,9 @@ article img {
 }
 
 
+
 .dateText {
+    text-align: center;
     font-family: sans-serif;
     padding: 0 32px 0 32px;
     line-height: 2;
@@ -95,11 +97,12 @@ article img {
 }
 
 .dateText img {
-    margin: auto;
+    display: inline-block; 
     padding: 10px;
-    width: 50%;
-    min-width: 500px;
-    
+    width: 40%; /* Ширина 40% от родительского элемента */
+    height: 350px; /* Фиксированная высота */
+    object-fit: cover; /* Обрезка изображения, чтобы оно заполнило контейнер */
+    min-width: 250px; /* Минимальная ширина */
 }
 
 .blockquote-7 {
