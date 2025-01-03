@@ -1,9 +1,8 @@
 <template>
-    <main class="bg-white">
-        <div class="box">
-            <img src="../public/img/фон зебра.png" alt="">
-        </div>
+    <main class="p-0 m-0 w-screen bg-[url('/public/img/фонЗебра.png')] bg-right bg-no-repeat bg-[length:83%_100%]">
 
 
     </main>
+
+
 </template>

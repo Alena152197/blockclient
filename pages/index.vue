@@ -1,21 +1,14 @@
 <template>
-    <main class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:88%_100%]">
-        <div class="containerMain">
+<main class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:89%_100%]">
+    <div class="rounded-2xl border-4 h-full border-red-800 flex items-center justify-start">
+        <div class="w-10/12 rounded-2xl border-4 h-full border-green-800 flex items-center justify-center relative">
+            <img src="../public/img/лист.png" alt="" class="h-5/6 mb-16 p-4" />
+            <div class="absolute inset-0 flex items-center justify-center"> 
+                <span class="text-blue-500 text-xl font-bold">Ваш текст здесь</span>
+            </div>
         </div>
-
-        <!-- <div class="container">
-            <img src="../img/лист.png" alt="">
-        </div> -->
-        <!-- <div class="box_1">
-                <img src="../img/лист1.png" alt="">
-                <span>Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                    Dolore neque temporibus odit quas ad doloribus placeat nihil, ab beatae! 
-                    Earum architecto ipsam
-                    quibusdam fugit?
-                    Alias quis molestiae laboriosam harum dolor.</span>
-            </div> -->
-
-    </main>
+    </div>
+</main>
 
 
 </template>

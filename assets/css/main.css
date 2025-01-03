@@ -58,6 +58,8 @@ article img {
     background-color: rgb(182, 248, 83);
 } */
 
+
+
 .h-8 {
     width: 726px;
     height: 70px;
@@ -100,16 +102,20 @@ article img {
     
 }
 
-/* bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:85%_100%] h-screen relative */
+@media (max-width: 400px) {
+    #__nuxt > main.bg-yellow-300 {
+        background: url('/public/img/phoneVersey.png'), yellow;
+        background-repeat: no-repeat;
+        background-origin : border-box;
+        background-size: cover;
+        background-position: 100%;
+    }
+}
 
 
-/* .containerMain {
-    background-image: url("/public/img/zebra.png");
-    background-repeat: no-repeat;
-    height: 100%;
-    background-size: contain;
-    background-position: top right;
 
-} */
+
+
+
 
 
