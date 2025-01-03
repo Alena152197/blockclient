@@ -102,7 +102,7 @@ article img {
     
 }
 
-@media (max-width: 450px) {
+@media (max-width: 500px) {
     #__nuxt > main.bg-yellow-300 {
         background: url('/public/img/phoneVersey.png'), yellow;
         background-repeat: no-repeat;
