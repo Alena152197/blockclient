@@ -2,7 +2,7 @@
     <main
         class="bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:89%_100%]">
         <div class="flex justify-center mt-10">
-            <div class="relative h-5/6 rounded-2xl border-4 border-green-800 inline-block bottom-5">
+            <div class="mt-8 relative h-5/6 rounded-2xl border-4 border-green-800 inline-block bottom-5">
                 <img src="../public/img/лист.png" alt="" class="w-full h-full object-cover" />
                 <div class="absolute top-14 mx-8">
                     <span> <strong>Всем привет! <br> Будем знакомы, Меня зовут Алена.</strong> </span><br><br>
@@ -16,9 +16,9 @@
             </div>
         </div>
         <blockquote class="blockquote-7">
-            <p>"Мы все, как карандаши.
-                Каждый рисует свою судьбу.
-                Один ломается, другой тупит,
+            <p>"Мы все, как карандаши. <br>
+                Каждый рисует свою судьбу. <br>
+                Один ломается, другой тупит, <br>
                 а кто-то затачивается и движется вперёд".</p>
             <cite class="cite">Светлана Кременецкая</cite>
         </blockquote>

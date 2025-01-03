@@ -122,24 +122,25 @@ article img {
 
 @media (max-width: 500px) {
     .blockquote-7 {
-        background-color:   rgb(239, 239, 20180);
-        border: 2px solid  rgb(183, 183, 7);
-        font-size: 16px;
-        font-weight: 500;
+        text-align: right;
+        justify-self: start;
+        font-size: 14px;
+        font-weight: 400;
         font-style: italic;
-        margin: 16px 30px 30px 16px;
+        margin: 40px 0px 40px 0px;
         padding: 16px 20px;
         position: relative;
-        box-shadow: 10px 10px 0 0 rgb(239, 239, 20180);
         display: block; 
+        color: #FEFEFE;
     }
     .blockquote-7 .cite {
-        color: black;
+        color: rgb(243, 241, 241);
         font-size: 15px;
         font-weight: 700;
         padding-top: 10px;
         display: block;
         text-align: right;
+        
     
     }
 }
