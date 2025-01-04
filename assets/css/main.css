@@ -118,9 +118,11 @@ article img {
         background-origin : border-box;
         background-size: cover;
         background-position: 100%;
+        
 
 
     }
+
 }
 
 @media (max-width: 500px) {
@@ -135,6 +137,7 @@ article img {
         position: relative;
         display: block; 
         color: #FEFEFE;
+        
     }
     .blockquote-7 .cite {
         color: rgb(243, 241, 241);
