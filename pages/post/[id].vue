@@ -103,3 +103,100 @@ useHead({
     title: `${post.title} - ${config.title}`
 })
 </script>
+
+<style scoped>
+
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: Arial, sans-serif; /* Замените на нужный шрифт */
+  font-weight: bold; /* Замените на нужный вес */
+  line-height: 1.5; /* Замените на нужную высоту строки */
+  color: #333; /* Замените на нужный цвет заголовков */
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-top: 1.5em; /* Замените на нужное значение */
+  margin-bottom: 0.75em; /* Замените на нужное значение */
+}
+
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+  margin-top: 0.75em; /* Замените на нужное значение */
+  margin-bottom: 0.75em; /* Замените на нужное значение */
+}
+
+h1, .h1 { font-size: 2em; } /* Замените на нужное значение */
+h2, .h2 { font-size: 1.75em; } /* Замените на нужное значение */
+h3, .h3 { font-size: 1.5em; } /* Замените на нужное значение */
+h4, .h4 { font-size: 1.25em; } /* Замените на нужное значение */
+h5, .h5 { font-size: 1em; } /* Замените на нужное значение */
+h6, .h6 { font-size: 0.875em; } /* Замените на нужное значение */
+
+/* Body text
+------------------------- */
+p {
+  margin: 0 0 0.75em; /* Замените на нужное значение */
+}
+
+.lead {
+  margin-bottom: 1.5em; /* Замените на нужное значение */
+  font-size: 1.15em; /* Замените на нужное значение */
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+@media (min-width: 576px) { /* Замените на нужный размер экрана */
+  .lead {
+    font-size: 1.5em; /* Замените на нужное значение */
+  }
+}
+
+/* Emphasis & misc
+------------------------- */
+small,
+.small {
+  font-size: 0.85em; /* Замените на нужное значение */
+}
+
+/* Undo browser default styling */
+cite {
+  font-style: normal;
+}
+
+mark,
+.mark {
+  background-color: #ffeb3b; /* Замените на нужный цвет */
+  padding: 0.2em;
+}
+
+/* Alignment */
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.text-justify { text-align: justify; }
+.text-nowrap { white-space: nowrap; }
+
+/* Transformation */
+.text-lowercase { text-transform: lowercase; }
+.text-uppercase { text-transform: uppercase; }
+.text-capitalize { text-transform: capitalize; }
+
+/* Contextual colors */
+.text-muted { color: #6c757d; } /* Замените на нужный цвет */
+.text-primary { color: #007bff; } /* Замените на нужный цвет */
+.text-success { color: #28a745; } /* Замените на нужный цвет */
+.text-info { color: #17a2b8; } /* Замените на нужный цвет */
+.text-warning { color: #ffc107; } /* Замените на нужный цвет */
+.text-danger { color: #dc3545; } /* Замените на нужный цвет */
+
+/* Contextual backgrounds */
+.bg-primary { color: #fff; background-color: #007bff; } /* Замените на нужный цвет */
+.bg-success { background-color: #28a745; } /* Замените на нужный цвет */
+.bg-info { background-color: #17a2b8; } /* Замените на нужный цвет */
+.bg-warning { background-color: #ffc107; } /* Замените на нужный цвет */
+.bg-danger { background-color: #dc3545; } /* Замените на нужный цвет */
+
+</style>
