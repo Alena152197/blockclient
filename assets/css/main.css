@@ -159,3 +159,91 @@ article img {
 
 
 
+/* стили для статьи */
+.ns_desc {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-wrap: wrap;
+}
+
+.ns_post h1,h2,h3,h4,h5,h6,p,ul,ol {
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+.ns_post h1 {
+    font-size: 3rem;
+    font-weight: 800;
+}
+
+.ns_post h2 {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.ns_post h3 {
+    font-size: 1.875rem;
+    font-weight: 700;
+}
+
+.ns_post h4 {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.ns_post h5 {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.ns_post h6 {
+    font-size: 1.125rem;
+    font-weight: 700;
+}
+
+.ns_post ul,
+.ns_post ol {
+    padding: revert;
+    max-width: 28rem;
+    gap: 0.25rem;
+    list-style-type: disc;
+    list-style-position: inside;
+}
+
+.ns_post blockquote {
+    font-size: 1.25rem;
+    font-style: italic;
+    font-weight: 600;
+
+    padding: 1rem;
+    /* p-4 */
+    margin-top: 1rem;
+    /* my-4 */
+    margin-bottom: 1rem;
+    /* my-4 */
+    border-left-width: 4px;
+    /* border-s-4 */
+    border-left-color: #d1d5db;
+    /* border-gray-300 */
+    background-color: #f3f4f6;
+    /* bg-gray-50 */
+}
+
+.ns_post a {
+    font-weight: 500;
+    color: rgb(37 99 235);
+}
+
+.ns_post a:hover {
+    text-decoration: underline;
+}
+
+.ns_post hr {
+    height: 1px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    background-color: #dddddd;
+    border: none;
+}

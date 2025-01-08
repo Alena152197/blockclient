@@ -1,21 +1,4 @@
 <template>
-
-    <!-- <nav>
-        <ul>
-            <li>
-                <NuxtLink to="/blog">Блог</NuxtLink>
-            </li>
-            <li>
-                <NuxtLink :style="'background:' + post.categories[0].bg"
-                    :to="'/category/' + post.categories[0].documentId">
-                    {{ post.categories[0].title }}</NuxtLink>
-            </li>
-            <li><strong>{{ post.title }}</strong></li>
-        </ul>
-    </nav> -->
-    <!--тело статьи-->
-
-
     <main class="max-w-screen-xl min-w-96 md:min-w-[48rem] lg:min-w-[56rem] mx-auto py-2">
         <!--хлебные крошки-->
         <nav class="flex" aria-label="Breadcrumb">
@@ -65,10 +48,10 @@
             <strong>
                 <h1>{{ post.title }}</h1>
             </strong>
-            <p class="date">Дата публикации: <span>{{ post.publishedAt }}</span> </p> <br>
+            <p class="date">Дата публикации: <span>{{ formatDate() }}</span> </p> <br>
         </div>
 
-        <div class="dateText" v-html="mark"></div>
+        <div class=" ns_post" v-html="mark"></div>
 
         <!-- <img :src=base_url+post.img[0].url :alt=post.img[0].alternativeText> -->
     </main>
@@ -76,7 +59,7 @@
 
 <script setup>
 import MarkdownIt from "markdown-it";
-const markdown = new MarkdownIt();
+const markdown = MarkdownIt();
 const mark = ref('')
 
 const { id } = useRoute().params
@@ -84,6 +67,31 @@ const { id } = useRoute().params
 const api = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/posts/${id}?populate=*`);
 const post = api.data;
 mark.value = markdown.render(post.body);
+
+
+function formatDate() {
+    try {
+        // Предполагаем, что post.publishedAt — это строка в формате ISO 8601
+        const date = new Date(this.post.publishedAt);
+
+        // Массив названий месяцев на русском языке
+        const months = [
+            "января", "февраля", "марта", "апреля", "мая", "июня",
+            "июля", "августа", "сентября", "октября", "ноября", "декабря"
+        ];
+
+        // Получаем день, месяц и год
+        const day = date.getUTCDate(); // Получаем день
+        const month = months[date.getUTCMonth()]; // Получаем месяц
+        const year = date.getUTCFullYear(); // Получаем год
+
+        // Формируем строку в нужном формате
+        return `${day} ${month} ${year} г.`;
+    } catch (error) {
+        console.log(error);
+        return 'Дата отсуствует...'
+    }
+}
 
 
 const base_url = 'https://324cbb377ef9.vps.myjino.ru'
