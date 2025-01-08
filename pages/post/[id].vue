@@ -43,7 +43,7 @@
 
 
         <div class="bg-no-repeat bg-top h-96 rounded-se-2xl my-10 bg-fixed bg-[length:50%_800px]"
-            :style="'background-image: url(' + base_url + post.img[0].url + ')'"></div>
+            :style="'background-image: url(' + base_url + post.img.url + ')'"></div>
         <div class="px-8">
             <strong>
                 <h1>{{ post.title }}</h1>

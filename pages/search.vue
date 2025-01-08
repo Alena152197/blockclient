@@ -4,7 +4,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mb-4">
             <article v-for="post in posts" :key="post.id" class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
-                    <!-- <img class="rounded-t-lg" :src="base_url+post.img.url" :alt=post.img.alternativeText /> -->
+                    <img class="rounded-t-lg" :src="home+post.img.url" />
                 </NuxtLink>
                 <div class="p-5">
                     <NuxtLink :to="'/post/' + post.documentId">
