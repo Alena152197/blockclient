@@ -1,8 +1,8 @@
 <template>
     <main
         class=" bg-yellow-300 p-0 m-0 w-screen bg-[url('/public/img/zebra.png')] bg-right bg-no-repeat bg-[length:89%_100%] ">
-        <div class="flex justify-center mt-10">
-            <div
+        <div class="flex justify-center items-center bg-[url('/public/img/лист.png')] w-full h-full bg-no-repeat">
+            <!-- <div
                 class="overflow-auto mx-4 mt-8 relative h-5/6 rounded-2xl
                  border-4 border-green-800 
                  inline-block bottom-5">
@@ -11,7 +11,7 @@
                     <span> <strong>Всем привет! <br> </strong> Lorem ipsum dolor sit amet consectetu </span><br><br>
                     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Magnam, laudantium! Sint, rerum? Rerum quisquam placeat amet velit eos aut odit quas nisi, voluptatibus molestiae ea inventore similique minus possimus hic! Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolore molestiae ea quia aliquid ut quaerat atque asperiores <br> a ducimus corrupti animi eaque laudantium nostrum quos nihil inventore velit, enim soluta. </p>
                 </div>
-            </div>
+            </div> -->
         </div>
 
 
