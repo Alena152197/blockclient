@@ -1,6 +1,5 @@
 <template>
-    <main
-        class="fonImage">
+    <main class="fonImage">
 
 
 
@@ -16,20 +15,23 @@
                 </div>
             </div> -->
 
+
+
+<!-- 
         <div class="flex self-center justify-center h-auto">
             <div class="flex px-10 mt-16">
                 <img src="../public/img/блокнот_зебра.png" alt="">
             </div>
-        </div>
+        </div> -->
 
 
-        <blockquote class="blockquote-7">
+        <!-- <blockquote class="blockquote-7">
             <p>"Мы все, как карандаши. <br>
                 Каждый рисует свою судьбу. <br>
                 Один ломается, другой тупит, <br>
                 а кто-то затачивается и движется вперёд".</p>
             <cite class="cite">Светлана Кременецкая</cite>
-        </blockquote>
+        </blockquote> -->
     </main>
 
 

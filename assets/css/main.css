@@ -22,14 +22,27 @@ body {
     min-height: 87px;
 }
 
+
 .fonImage {
-    height: 100%;
-    max-width: 100%;
-    background: url(/public/img/зебра_полосы.png);
+    height: 800px;
+    background: url(/public/img/зебра_фон_полосы.png) no-repeat center;
     background-color: #FFEE00;
-    background-repeat: no-repeat;
-    background-position: right;
     background-size: cover;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+}
+
+@media (max-width: 1016px) {
+    .fonImage {height: 600px;}
+}
+
+@media (max-width: 768px) {
+    .fonImage {height: 300px;}
+}
+
+@media (max-width: 480px) {
+    .fonImage {height: 170px;}
 }
 
 
