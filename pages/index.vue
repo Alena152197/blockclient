@@ -1,6 +1,8 @@
 <template>
     <main class="fonImage">
-
+        <div class="flex justify-center items-center h-full">
+            <img class="blockNotImg" src="../public/img/блокнот_зебра.png" alt="" >
+        </div>
 
 
         <!-- bg-[url('/public/img/зебра_полосы.png')]  bg-yellow-300 p-0 m-0 w-screen bg-right bg-no-repeat bg-[length:89%_100%] -->

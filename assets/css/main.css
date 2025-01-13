@@ -4,7 +4,7 @@
 
 html,
 body {
-    width: 100%;
+    width: 100vw;
     height: 100vh;
     margin: 0;
 
@@ -22,9 +22,10 @@ body {
     min-height: 87px;
 }
 
+/* main */
 
 .fonImage {
-    height: 800px;
+    height: 100%;
     background: url(/public/img/зебра_фон_полосы.png) no-repeat center;
     background-color: #FFEE00;
     background-size: cover;
@@ -33,17 +34,15 @@ body {
     -o-background-size: cover;
 }
 
-@media (max-width: 1016px) {
-    .fonImage {height: 600px;}
+.blockNotImg {
+    max-width: 100%;
+    height: auto;
 }
 
-@media (max-width: 768px) {
-    .fonImage {height: 300px;}
-}
 
-@media (max-width: 480px) {
-    .fonImage {height: 170px;}
-}
+
+
+
 
 
 
@@ -81,9 +80,6 @@ article img {
 
 }
 
-/* .p-5 {
-    background-color: rgb(182, 248, 83);
-} */
 
 
 
@@ -129,7 +125,14 @@ article img {
     /* Минимальная ширина */
 }
 
-.blockquote-7 {
+
+@media (max-width: 1016px) {
+    .fonImage {
+        background: none;
+    }
+}
+
+/* .blockquote-7 {
     display: none;
 }
 
@@ -174,7 +177,7 @@ article img {
 
 
     }
-}
+} */
 
 
 
