@@ -85,19 +85,19 @@
                         class="flex flex-col p-5 mt-4 font-bold md:space-x-8  md:flex-row md:mt-0  sm:flex-row sm:justify-center sm:mt-0 dark:border-gray-700">
                         <li>
                             <NuxtLink to="/"
-                                class="block py-2 px-5 text-gray-900 rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                                class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                                 :class="{ 'md:text-white': isActive(''), 'dark:text-blue-700': isActive('') }">О БЛОГЕ
                             </NuxtLink>
                         </li>
                         <li>
                             <NuxtLink to="/blog"
-                                class="block py-2 px-5 text-gray-900 rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-blue-700 md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                                class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                                 :class="{ 'md:text-white': isActive('blog') || isActive('post') || isActive('category'), 'dark:text-blue-700': isActive('blog') || isActive('post') || isActive('category') }">
                                 МОЯ ИСТОРИЯ</NuxtLink>
                         </li>
                         <li>
                             <NuxtLink to="/contact"
-                                class="block py-2 px-5 text-gray-900 rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-blue-700 md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
+                                class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0 dark:text-white md:dark:hover:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                                 :class="{ 'md:text-white': isActive('contact'), 'dark:text-blue-700': isActive('contact') }">
                                 ЗАДАТЬ ВОПРОС</NuxtLink>
                         </li>

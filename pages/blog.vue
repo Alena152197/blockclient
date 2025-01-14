@@ -4,7 +4,7 @@
         <h2 class="text-4xl font-extrabold my-0 p-4 dark:text-white text-center">Блог</h2>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
-                class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
+                class="max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
                     <img class="rounded-t-lg" :src="base_url+post.img.url" :alt=post.img.alternativeText />
                 </NuxtLink>
@@ -15,7 +15,7 @@
                     </NuxtLink>
                     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ post.desc }}</p>
                     <NuxtLink :to="'/post/' + post.documentId"
-                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#a79d1c]/50 rounded-lg hover:bg-[#a79d1c] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
                         Подробнее
                         <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
@@ -27,7 +27,7 @@
             </article>
         </div>
         <button v-if="!(displayedPosts.length === posts.length)" @click="loadMore" type="button"
-            class="block m-auto w-3/4 my-8 bg-blue-300 text-blue-900 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+            class="block m-auto w-40  my-8 bg-[#a79d1c]/50 text-[#a79d1c] hover:text-white border border-[#a79d1c] hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-[#a79d1c] font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
             Смотреть еще
         </button>
     </div>
