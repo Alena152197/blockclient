@@ -12,6 +12,12 @@
                     src="../public/img/блокнот_зебра.png" alt="блокнот">
             </div>
         </div>
+        <div class="relative flex justify-center items-center mt-[-50px] left-[400px]"> <!-- Отрицательный отступ для наложения -->
+            <img class="absolute" src="../public/img/завиток_большой.png" alt="завиток">
+            <img class="absolute mt-26 mr-5" src="../public/img/карандаш_top.png" alt="карандаш_top">
+            <img class="absolute ml-36" src="../public/img/карандаш.png" alt="карандаш">
+        </div>
+
         <!-- <blockquote class="blockquote-7">
             <p>"Мы все, как карандаши. <br>
                 Каждый рисует свою судьбу. <br>
