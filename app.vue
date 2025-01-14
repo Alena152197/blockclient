@@ -1,4 +1,5 @@
-<template>
+<template></template>
+<!-- <template>
   <NuxtLoadingIndicator throttle="0" />
   <Navbar />
   <NuxtPage />
@@ -32,4 +33,4 @@ useHead({
 })
 </script>
 
-
+ -->
