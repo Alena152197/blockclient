@@ -1,12 +1,9 @@
 <template>
-
-
-    <footer class=" bg-white dark:bg-gray-900">
-        <div class="w-full h-14 bg-black sm:flex sm:items-center sm:justify-between">
+    <footer class="  bg-white dark:bg-gray-900">
+        <div class="w-full h-14 px-4 bg-black sm:flex sm:items-center sm:justify-between">
             <span class="text-sm text-gray-200 sm:text-center dark:text-gray-400">&copy; 2024 <a
                     href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. Все права защищены.
             </span>
-
 
             <div class="flex mt-4 sm:justify-center sm:mt-0">
                 <a href="#" class="text-gray-500 hover:text-gray-900 dark:hover:text-white">
@@ -55,11 +52,5 @@
                 </a>
             </div>
         </div>
-
     </footer>
-
-
-
-
-    <!-- <footer><h3>Все права защищены &copy; 2024</h3></footer> -->
 </template>
