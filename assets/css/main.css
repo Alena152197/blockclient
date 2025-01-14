@@ -3,18 +3,17 @@
 @tailwind utilities;
 
 html,
-body {
-    width: 100vw;
-    height: 100vh;
-    margin: 0;
+body,
+#__nuxt {
+    width: 100%;
+    height: 100%;
+   
 
 }
 
 #__nuxt {
-    display: grid;
-    grid-template-rows: auto 1fr auto;
-    width: 100%;
-    height: 100vh;
+   display: flex;
+   flex-direction: column;
 
 }
 
@@ -27,7 +26,7 @@ body {
 .fonImage {
     height: 100%;
     background: url(/public/img/зебра_фон_полосы.png) no-repeat center;
-    background-color: #FFEE00;
+    /* background-color: #FFEE00; */
     background-size: cover;
     -webkit-background-size: cover;
     -moz-background-size: cover;
@@ -38,13 +37,6 @@ body {
     max-width: 100%;
     height: auto;
 }
-
-
-
-
-
-
-
 
 
 
@@ -79,11 +71,6 @@ article img {
     object-fit: cover;
 
 }
-
-
-
-
-
 
 .container {
     display: inline-block;
@@ -126,11 +113,7 @@ article img {
 }
 
 
-@media (max-width: 1016px) {
-    .fonImage {
-        background: none;
-    }
-}
+
 
 /* .blockquote-7 {
     display: none;

@@ -1,6 +1,6 @@
 <template>
 <!-- gap-2 mb-4 p-4 -->
-    <main class="bg-yellow-300">
+    <div class="">
         <h2 class="text-4xl font-extrabold my-0 p-4 dark:text-white text-center">Блог</h2>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
@@ -27,9 +27,10 @@
             </article>
         </div>
         <button v-if="!(displayedPosts.length === posts.length)" @click="loadMore" type="button"
-            class="block m-auto my-8 w-3/4 bg-blue-300 text-blue-900 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">Смотреть
-            еще</button>
-    </main>
+            class="block m-auto w-3/4 my-8 bg-blue-300 text-blue-900 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+            Смотреть еще
+        </button>
+    </div>
 </template>
 
 
