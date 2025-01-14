@@ -3,7 +3,7 @@
         <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
             <!-- отвечает за расположение навигации -->
             <div class="max-w-screen-xl flex flex-wrap items-center justify-around mx-auto p-4">
-                <NuxtLink to="/">
+                <!-- <NuxtLink to="/">
                     <svg class="w-48 md:w-96" viewBox="0 0 397 62" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_153_3)">
                             <path
@@ -28,7 +28,7 @@
                             </clipPath>
                         </defs>
                     </svg>
-                </NuxtLink>
+                </NuxtLink> -->
 
 
                 <div class="flex gap-8 md:order-2">
