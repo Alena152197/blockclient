@@ -1,21 +1,21 @@
 <template>
     <div class="fonImage">
         <div class="flex justify-center items-center h-full">
-            <div class="absolute top-[50.5%] left-[49.5%] transform -translate-x-1/2 -translate-y-1/2 ">
-                <div class=" -translate-x-[320px] md:-translate-x-[420px] scale-65 lg:scale-97">
+            <div class="absolute top-[53%] left-[50%] transform -translate-x-1/2 -translate-y-1/2 ">
+                <div class=" -translate-x-[320px] md:-translate-x-[350px] scale-65 lg:scale-90">
                     <img src="../public/img/блокнот_море.png" alt="море">
                     <img src="../public/img/блокнот_горы.png" alt="горы">
                 </div>
             </div>
-            <div class="relative z-10 left-16 h-auto">
-                <img class="blockNotImg w-full mb-32 sm:w-[650px] md:w-[981px] md:min-h-[670px]"
+            <div class="relative z-10 left-44 h-auto">
+                <img class="blockNotImg w-full mb-[70px] sm:w-[650px] md:w-[981px] md:h-[600px]"
                     src="../public/img/блокнот_зебра.png" alt="блокнот">
             </div>
         </div>
-        <div class="relative flex justify-center items-center mt-[-50px] left-[400px]"> <!-- Отрицательный отступ для наложения -->
-            <img class="absolute" src="../public/img/завиток_большой.png" alt="завиток">
-            <img class="absolute mt-26 mr-5" src="../public/img/карандаш_top.png" alt="карандаш_top">
-            <img class="absolute ml-36" src="../public/img/карандаш.png" alt="карандаш">
+        <div class="relative flex justify-center items-center mt-[-20px] left-[490px]"> <!-- Отрицательный отступ для наложения -->
+            <img class="absolute ml-32 mb-[220px]" src="../public/img/завиток_большой.png" alt="завиток">
+            <img class="absolute mt-26 mr-10 md:w-[247px] md:h-[150px]" src="../public/img/карандаш_top.png" alt="карандаш_top">
+            <img class="absolute ml-40 mb-8 md:w-[247px] md:h-[150px]" src="../public/img/карандаш.png" alt="карандаш">
         </div>
 
         <!-- <blockquote class="blockquote-7">
