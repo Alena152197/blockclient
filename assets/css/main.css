@@ -10,8 +10,8 @@ body,
 }
 
 #__nuxt {
-   display: flex;
-   flex-direction: column;
+    display: flex;
+    flex-direction: column;
 
 }
 
@@ -36,10 +36,11 @@ body,
     padding: 10px;
     width: 80%;
     max-width: 100%;
-    background-color: aqua;
+    background-color: green;
     margin: auto;
     border: 3px solid red;
     border-radius: 10px;
+    overflow: hidden;
 }
 
 .grid-item {
@@ -47,17 +48,25 @@ body,
     padding: 20px;
     text-align: center;
     border-radius: 10px;
+    overflow: hidden;
+}
+
+.grid-item img {
+    max-width: 100%;
+    height: auto;
 }
 
 
 .item1 {
     grid-column: 1;
     grid-row: 1 / span 3;
+    border: 1px solid red;
 }
 
 .item2 {
     grid-column: 2 / span 3;
     grid-row: 1;
+    border: 1px solid red;
 }
 
 .grid-item:nth-child(3) {
@@ -67,11 +76,20 @@ body,
 .item4 {
     grid-column: 2;
     grid-row: 2;
+    border: 1px solid red;
 }
+
+/* .item4 img {
+    position: absolute;
+    width: 232px;
+    height: 267px;
+    transform: rotate(56.18deg);
+} */
 
 .item5 {
     grid-column: 3;
     grid-row: 2;
+    border: 1px solid red;
 }
 
 .item6 {
@@ -83,6 +101,7 @@ body,
 .item7 {
     grid-column: 4;
     grid-row: 2;
+    border: 1px solid red;
 }
 
 .item8 {
