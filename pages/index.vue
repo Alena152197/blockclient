@@ -1,12 +1,11 @@
 <template>
-    <div
-        class="flex justify-center self-center bg-[url('/public/img/зебра_фон_полосы.png')] bg-no-repeat bg-right bg-cover h-full w-screen">
-        <div class="grid-container">
+    <div class="flex justify-center self-center bg-[url('/public/img/зебра_фон_полосы.png')] bg-no-repeat bg-right  h-full w-screen max-w-full overflow-hidden">
+        <div class="grid-container relative">
             <div class="grid-item item1">
                 <img src="../public/img/блокнот_море.png" alt="">
             </div>
-            <div class="grid-item item2">
-                <img src="../public/img/блокнот_зебра (2).png" alt="">
+            <div class=" flex justify-center items-center">
+                <img src="../public/img/блокнот_зебра (2).png" alt="" class="absolute inset-0 mt-16 mx-auto">
             </div>
             <div class="grid-item item4">
                 <img src="../public/img/графит.png" alt="" class="base-image">
