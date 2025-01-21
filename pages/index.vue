@@ -1,6 +1,6 @@
 <template>
     <div
-        class="flex justify-center self-center bg-[url('/public/img/зебра_фон_полосы.png')] bg-no-repeat bg-right bg-contain h-full w-screen">
+        class="flex justify-center self-center bg-[url('/public/img/зебра_фон_полосы.png')] bg-no-repeat bg-right bg-cover h-full w-screen">
         <div class="grid-container">
             <div class="grid-item item1">
                 <img src="../public/img/блокнот_море.png" alt="">

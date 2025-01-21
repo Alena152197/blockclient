@@ -18,6 +18,7 @@ body,
 
 /* main */
 
+    
 .grid-container {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -49,7 +50,7 @@ body,
     border: 1px solid rgb(12, 4, 4);
     overflow: visible;
     height: 100%;
-    margin-left: -40px;
+    margin-left: -35px;
 }
 
 .item1 img {
@@ -64,7 +65,7 @@ body,
     border: 1px solid green;
     height: 52%;
     margin-top: 110%;
-    margin-left: -40px;
+    margin-left: -35px;
     
 }
 
@@ -200,7 +201,7 @@ body,
 .next-image {
     position: absolute; /* Устанавливаем абсолютное позиционирование для изображений */
     top: 0; /* Позиция сверху */
-    left: 0; /* Позиция слева */
+    left: -3px; /* Позиция слева */
     width: 100%; /* Устанавливаем ширину 100% для адаптивности */
     height: auto; /* Сохраняем пропорции */
 }
@@ -230,7 +231,7 @@ body,
     z-index: 3; /* Устанавливаем порядок наложения */
     top: 5px;
     transform: rotate(11.18deg);
-    margin-left: 8px;
+    
 }
 
 .item8 {
@@ -334,17 +335,7 @@ article img {
 
 
 
-@media (max-width: 500px) {
-    #__nuxt>main.bg-yellow-300 {
-        background: url('/public/img/phoneVersey.png'), yellow;
-        background-repeat: no-repeat;
-        background-origin: border-box;
-        background-size: cover;
-        background-position: 100%;
-
-
-
-    }
+@media (min-width: 1920px) {
 
 }
 
