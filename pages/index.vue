@@ -1,12 +1,16 @@
 <template>
-    <div class="phone ">
+    <div class="phone">
         <div class="grid-container">
             <div class="grid-item item1">
                 <img src="../public/img/блокнот_море.png" alt="Image1">
                 <img src="../public/img/блокнот_горы.png" alt="Image2">
             </div>
+            <div class="item7">
+                <img src="../public/img/блокнот_зебра1024.png" alt="" class="zebraNon">
+            </div>
             <div class="grid-item item2">
-                <img src="../public/img/блокнот_зебра (2).png" alt="Image 2">
+                <img src="../public/img/блокнот_зебра (2).png" alt="Image 2" class="zebraMax">
+                <img src="../public/img/лист_блокнот1024.png" alt="" class="zebraNone">
             </div>
             <div class="grid-item item4">
                 <img src="../public/img/графит.png" alt="" class="base-image">
