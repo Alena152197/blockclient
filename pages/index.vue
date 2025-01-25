@@ -3,10 +3,11 @@
         <div class="grid-container">
             <div class="grid-item item1">
                 <img src="../public/img/блокнот_море.png" alt="Image1">
-                <img src="../public/img/блокнот_горы.png" alt="Image2">
+                <img src="../public/img/блокнот_горы.png" alt="Image2" class="image_gory">
             </div>
             <div class="item7">
                 <img src="../public/img/блокнот_зебра1024.png" alt="" class="zebraNon">
+                <img src="../public/img/блокнот_зебра768.png" alt="" class="zebraNon1">
             </div>
             <div class="grid-item item2">
                 <img src="../public/img/блокнот_зебра (2).png" alt="Image 2" class="zebraMax">
