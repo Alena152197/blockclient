@@ -2,7 +2,7 @@
     <header>
         <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
             <!-- отвечает за расположение навигации -->
-            <div class="navigHead max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-2">
+            <div class="navigHead max-w-screen-xl flex flex-wrap items-center justify-center mx-auto p-2">
                 <NuxtLink to="/">
                     <svg width="397" height="62" viewBox="0 0 397 62" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_153_3)">
