@@ -101,7 +101,6 @@
                                 :class="{ 'md:text-white': isActive('blog') || isActive('post') || isActive('category'), 'dark:text-blue-700': isActive('blog') || isActive('post') || isActive('category') }">
                                 МОЯ ИНТЕРЕСЫ</NuxtLink>
                         </li>
-
                     </ul>
                 </div>
             </div>

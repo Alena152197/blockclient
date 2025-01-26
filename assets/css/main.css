@@ -32,27 +32,66 @@ body,
 
 .grid-container {
     display: grid;
-    grid-template-columns: 0.3fr 0.3fr 0.3fr 0.3fr 0.3fr;
-    grid-template-rows: repeat(1, 1fr);
-    width: 100%;
-    height: auto;
+    grid-template-columns: 30% auto;
+    grid-template-rows: repeat(2, 1fr);
+    min-width: 70%;
+    height: 100%;
     gap: 10px;
     overflow: hidden;
-    padding-left: 366px;
-    /* Отступ слева */
-    padding-right: 310px;
-    /* Отступ справа */
-
+    margin: auto;
+    border: 5px solid red;
 }
 
-.grid-item {
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    overflow: hidden;
-    position: relative;
+.item-grid {
+    border: 5px solid red;
 }
 
 .item1 {
+    grid-column: 1 / span 2;
+    grid-row: 1;
+    margin-left: 0;
+
+}
+
+.item2 {
+    grid-column: 1 / span 2;
+    grid-row: 2;
+    margin-left: 0;
+
+}
+
+.gory {
+    margin-top: -30px;
+}
+
+.item3 {
+    grid-column: 1 / span 2;
+    grid-row: 1 / span 2;
+    padding-top: 67px;
+    height: auto;
+    justify-self: right;
+    margin-right: 100px;
+}
+
+.bloknot {
+    border: 3px solid blue;
+    height: auto;
+    max-width: 100%;
+    margin: auto;
+    
+}
+
+.item4 {
+    grid-column: 1;
+    grid-row: 2;
+}
+
+
+
+
+
+
+/* .item1 {
     display: grid;
     grid-column: 1 / span 2;
     grid-row: 1 / span 2;
@@ -65,7 +104,7 @@ body,
 
 
 .item2 {
-    grid-column: 2 / span 4;
+    grid-column: 2 / span 2;
     grid-row: 1 / span 2;
     margin-top: 65px;
     margin-left: -140px;
@@ -88,21 +127,25 @@ body,
 }
 
 .item4 {
-    grid-column: 2 / span 3;
+    grid-column: 1 / span 3;
     grid-row: 2;
+    width: 100%;
+    position: relative;
+    height: auto;
+
 }
 
 .base-image {
     position: absolute;
-    top: -50px;
+    top: 0px;
     left: 0;
     object-fit: cover;
 }
 
 .toc_image {
     position: absolute;
-    top: 100px;
-    left: 88px;
+    top: 0px;
+    left: 0px;
     object-fit: cover;
 }
 
@@ -114,29 +157,18 @@ body,
 }
 
 .image1 {
-    top: 70px;
-    left: 200px;
+    top: 0px;
+    left:0px;
 }
 
 .image2 {
-    top: 140px;
-    /* Позиция второго изображения */
-    left: 240px;
-    margin-left: 10px;
-    /* Отступ между изображениями */
+    top: 0px;
+    left: 0px;
+    margin-left: 0px;
+
 }
 
 
-
-
-
-.item5 {
-    grid-column: 2 / span 4;
-    grid-row: 2;
-    justify-self: center;
-    align-content: center;
-    margin-left: -30px;
-}
 
 .quote {
     text-align: center;
@@ -144,13 +176,6 @@ body,
     margin-top: 30px;
 }
 
-.item6 {
-    grid-column: 5;
-    grid-row: 2;
-    position: relative;
-    height: 200px;
-    overflow: visible;
-}
 
 .next-image {
     position: absolute;
@@ -162,36 +187,30 @@ body,
 
 .big {
     position: absolute;
-    top: 10px;
+    top: 0px;
     left: 0;
     object-fit: cover;
 }
 
 .top {
     position: absolute;
-    top: 70px;
-    left: -90px;
+    top: 0px;
+    left: 0px;
 }
 
 .bottom {
     position: absolute;
-    top: 50px;
+    top: 0px;
     left: 0;
     object-fit: cover;
 }
 
 
-.item4,
-.item5,
-.item6 {
-    height: 200px;
-}
-
 .grid-container img {
     max-width: 100%;
     height: auto;
     object-fit: cover;
-}
+} */
 
 .zebraNon1 {
     display: none;
@@ -199,451 +218,6 @@ body,
 
 
 
-@media (max-width: 1536px) {
-    .phone {
-        width: 100%;
-        background-size: cover;
-        background-image: url('public/img/зебра_полосы1536.png');
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: 0.3fr 0.3fr 0.3fr 0.3fr 0.3fr;
-        grid-template-rows: repeat(1, 1fr);
-        width: 100%;
-        height: 100%;
-        gap: 10px;
-        overflow: hidden;
-        padding-left: 234px;
-        /* Отступ слева */
-        padding-right: 161px;
-        /* Отступ справа */
-    }
-
-    .footerHead {
-        height: 87px;
-    }
-
-    .item1 {
-        transform: translateX(-6rem);
-        overflow: visible;
-    }
-
-    .item2 {
-        transform: translateX(-4rem);
-    }
-
-    .item2 img {
-        transform: scale(1.0);
-    }
-
-    .item4 {
-        transform: translateX(-4rem);
-        overflow: visible;
-    }
-
-    .item4 img {
-        margin-top: 15px;
-    }
-
-    .item5 {
-        transform: translateX(-1rem);
-    }
-
-    .item6 {
-        transform: translateX(-2rem);
-    }
-
-}
-
-@media (max-width: 1280px) {
-    .phone {
-        background-image: url('public/img/зебра_полосы1536.png');
-        background-size: cover;
-
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: 0.3fr 0.3fr 0.3fr 0.3fr 0.3fr;
-        grid-template-rows: repeat(1, 1fr);
-        width: 100%;
-        height: 100%;
-        gap: 10px;
-        overflow: hidden;
-        padding-left: 100px;
-        /* Отступ слева */
-        padding-right: 50px;
-        /* Отступ справа */
-    }
-
-    .footerHead {
-        height: 87px;
-    }
-
-    .item1 {
-        margin-top: 10px;
-        transform: translateX(-5rem);
-        overflow: visible;
-    }
-
-    .item1 img {
-        transform: scale(.8);
-    }
-
-    .item2 {
-        transform: translateX(-7rem);
-    }
-
-    .item2 img {
-        margin-top: 20px;
-        transform: scale(.9);
-    }
-
-    .item4 {
-        transform: translateX(-4rem);
-        overflow: visible;
-    }
-
-    .item4 img {
-        margin-top: 15px;
-    }
-
-    .base-image {
-        transform: rotate(30deg);
-        top: -90px;
-    }
-
-    .toc_image {
-        top: 20px;
-        left: 140px;
-        transform: rotate(50deg);
-    }
-
-    .overlay-image {
-        transform: rotate(-130deg);
-        left: 110px;
-
-    }
-
-    .image1 {
-        top: 90px;
-
-    }
-
-    .image2 {
-        transform: rotate(-10deg);
-        top: 100px;
-        left: 240px;
-    }
-
-    .item5 {
-        margin-top: -30px;
-        transform: translateX(-3rem);
-    }
-
-    .item6 {
-        transform: translateX(-6rem);
-
-    }
-
-    .next-image {
-        transform: scale(.9);
-    }
-
-    .big {
-        left: -10px;
-    }
-
-    .top {
-        transform: translateY(2rem);
-        left: -180px;
-    }
-
-    .bottom {
-        transform: translateY(2rem);
-        left: -90px;
-    }
-}
-
-@media (min-width: 770px) and (max-width: 1024px) {
-    .phone {
-        background-size: cover;
-        background-image: url('public/img/зебра_полосы1024 (2).png');
-        max-width: 1024px;
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        width: 100%;
-        height: 100%;
-        gap: 10px;
-        overflow: hidden;
-        margin: auto;
-    }
-
-    .item1 {
-        grid-column: 1 / span 1;
-        margin-top: -100px;
-        transform: translateX(0rem);
-        overflow: visible;
-        align-self: center;
-    }
-
-    .item1 img {
-        max-width: 440px;
-    }
-
-
-    .item2 {
-        grid-column: 1 / span 2;
-        margin: auto;
-        margin-bottom: 150px;
-        transform: translateX(-2rem);
-    }
-
-    .item2 img {
-        max-width: 502px;
-        transform: scale(1.0);
-    }
-
-    .item4 {
-        grid-column: 1 / span 2;
-        transform: translateX(-1rem);
-        overflow: visible;
-    }
-
-    .item4 img {
-        transform: translateY(2rem);
-    }
-
-    .base-image {
-        top: -90px;
-    }
-
-    .image1 {
-        display: none;
-    }
-
-    .item5 {
-        margin: auto;
-        grid-column: 1 / span 2;
-        transform: translateX(3rem);
-        overflow: visible;
-
-    }
-
-    .quote {
-        max-width: 250px;
-        font-size: 16px;
-        object-fit: cover;
-        line-height: .9;
-        text-align: center;
-        word-spacing: 5px;
-        padding-top: 85px;
-
-    }
-
-    .item6 {
-        grid-column: 2 / span 1;
-        transform: translateX(50px);
-        border: 1px solid red;
-    }
-
-    .item6 img {
-        left: 100px;
-    }
-
-
-    .big {
-        max-width: 93px;
-        height: auto;
-        margin-left: 20px;
-        margin-top: 10px;
-        transform: rotate(-20deg);
-    }
-
-    .top {
-        margin-top: 50px;
-        transform: rotate(-42deg);
-    }
-
-    .bottom {
-        transform: rotate(-42deg);
-        margin-left: 55px;
-    }
-
-    .zebraMax {
-        display: none;
-    }
-
-    .zebraNone {
-        display: block;
-        height: auto;
-        object-fit: contain;
-        margin: auto;
-
-    }
-
-    .item7 {
-        grid-column: 2 / span 2;
-        margin-top: -730px;
-        transform: translateX(2rem);
-
-    }
-
-    .zebraNon {
-        display: block;
-        height: auto;
-        object-fit: contain;
-
-    }
-
-}
-
-@media (min-width: 375px) and (max-width: 769px) {
-    .phone {
-        background-size: cover;
-        background-image: url('public/img/полосы_phone.png');
-        max-width: 768px;
-    }
-
-    .grid-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        width: 100%;
-        height: 100%;
-        gap: 10px;
-        overflow: hidden;
-        margin: auto;
-        justify-content: center;
-    }
-
-    .item1 {
-        grid-column: 1 / span 1;
-        overflow: visible;
-        align-self: start;
-        transform: scale(.7);
-        height: auto;
-        margin-top: -70px;
-
-    }
-
-    .item1 img {
-        transform: rotate(-20deg);
-        margin-left: -120px;
-    }
-
-
-    .item2 {
-        grid-column: 1 / span 2;
-        margin: auto;
-        margin-bottom: 180px;
-        transform: scale(1.2);
-
-    }
-
-    .item2 img {
-        transform: translateX(0rem);
-    }
-
-    .item4 {
-        grid-column: 1 / span 2;
-        transform: translateX(-1rem);
-        overflow: visible;
-    }
-
-    .item4 img {
-        transform: translateY(2rem);
-    }
-
-    .base-image {
-        top: -90px;
-    }
-
-    .image1 {
-        display: none;
-    }
-
-    .item5 {
-        margin: auto;
-        grid-column: 1 / span 2;
-        transform: translateX(3rem);
-        overflow: visible;
-
-    }
-
-    .quote {
-        max-width: 250px;
-        font-size: 16px;
-        object-fit: cover;
-        line-height: .9;
-        text-align: center;
-        word-spacing: 5px;
-        padding-top: 85px;
-
-    }
-
-    .item6 {
-        grid-column: 2 / span 1;
-        transform: translateX(50px);
-        border: 1px solid red;
-    }
-
-    .item6 img {
-        left: 100px;
-    }
-
-
-    .big {
-        max-width: 93px;
-        height: auto;
-        margin-left: 20px;
-    }
-
-    .top {
-        margin-top: 50px;
-        transform: rotate(-42deg);
-    }
-
-    .bottom {
-        transform: rotate(-42deg);
-        margin-left: 55px;
-    }
-
-    .zebraMax {
-        display: none;
-    }
-
-    .zebraNone {
-        display: block;
-        height: auto;
-        object-fit: contain;
-        margin: auto;
-
-    }
-
-    .item7 {
-        grid-column: 2 / span 2;
-        grid-row: 1;
-        z-index: 20;
-        transform: translate(90px);
-        margin-top: -80px;
-    }
-
-    .zebraNon {
-        display: none;
-    }
-
-    .zebraNon1 {
-        max-width: 440px;
-        display: block;
-        height: auto;
-        transform: scale(1.5);
-    }
-
-}
 
 
 article:hover img {
