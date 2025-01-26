@@ -34,7 +34,7 @@ body,
     display: grid;
     grid-template-columns: 30% auto;
     grid-template-rows: repeat(2, 1fr);
-    min-width: 70%;
+    max-width: 70%;
     height: 100%;
     gap: 10px;
     overflow: hidden;
@@ -82,11 +82,39 @@ body,
 }
 
 .item4 {
-    grid-column: 1;
+    grid-column: 1 / span 2;
     grid-row: 2;
+    margin: auto;
 }
 
+.mini-bloknot {
+    display: none;
+}
 
+.block-item4 {
+    margin: auto;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    height: 100%;
+}
+
+.text-quote {
+    
+}
+
+.tochilka {
+    display: flex;
+    flex-direction: row;
+
+    
+}
+
+.karandash {
+    display: flex;
+    flex-direction: row;
+    transform: scale(1);
+}
 
 
 
