@@ -12,12 +12,9 @@ body,
 #__nuxt {
     display: flex;
     flex-direction: column;
-
 }
 
-
 /* main */
-
 .phone {
     background-image: url('/public/img/зебра_фон_полосы.png');
     display: flex;
@@ -33,58 +30,63 @@ body,
 .grid-container {
     display: grid;
     grid-template-columns: 30% auto;
-    grid-template-rows: repeat(2, 1fr);
-    max-width: 70%;
+    grid-template-rows: 1fr auto;
+    max-width: 80%;
     height: 100%;
     gap: 10px;
     overflow: hidden;
     margin: auto;
-    border: 5px solid red;
+
 }
 
-.item-grid {
-    border: 5px solid red;
-}
+.item-grid {}
 
 .item1 {
     grid-column: 1 / span 2;
     grid-row: 1;
-    margin-left: 0;
 
 }
 
 .item2 {
     grid-column: 1 / span 2;
     grid-row: 2;
-    margin-left: 0;
+    z-index: 1;
 
 }
 
-.gory {
-    margin-top: -30px;
+.item2 img {
+    transform: translateY(-2rem);
 }
+
 
 .item3 {
     grid-column: 1 / span 2;
     grid-row: 1 / span 2;
-    padding-top: 67px;
-    height: auto;
+    padding-top: 90px;
+    height: 700px;
     justify-self: right;
-    margin-right: 100px;
+    margin-right: 70px;
+    margin-left: 170px;
+    z-index: 2;
+
 }
 
-.bloknot {
-    border: 3px solid blue;
-    height: auto;
+.bloknot img {
     max-width: 100%;
-    margin: auto;
-    
+    height: auto;
+    object-fit: contain;
 }
 
 .item4 {
     grid-column: 1 / span 2;
     grid-row: 2;
-    margin: auto;
+    display: grid;
+    align-content: stretch;
+    height: auto;
+    justify-content: end;
+    justify-items: end;
+    border: 5px solid rgb(49, 139, 7);
+    z-index: 3;
 }
 
 .mini-bloknot {
@@ -92,159 +94,131 @@ body,
 }
 
 .block-item4 {
-    margin: auto;
+    position: relative;
+    width: 100vh;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
     height: 100%;
-}
-
-.text-quote {
-    
+    gap: 20px;
+    align-items: center;
+    justify-content: space-around;
+    border: 5px solid red;
+    padding: 20px;
 }
 
 .tochilka {
+    position: relative;
     display: flex;
     flex-direction: row;
-
-    
+    justify-content: center;
+    align-items: center;
+    order: 1;
 }
 
 .karandash {
+    position: relative;
     display: flex;
     flex-direction: row;
-    transform: scale(1);
+    justify-content: center;
+    align-items: center;
+    order: 3;
 }
 
-
-
-
-/* .item1 {
-    display: grid;
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
-    margin-left: -65px;
-}
-
-.item1 img {
-    margin-top: -10px;
-}
-
-
-.item2 {
-    grid-column: 2 / span 2;
-    grid-row: 1 / span 2;
-    margin-top: 65px;
-    margin-left: -140px;
-}
-
-.zebraNon {
-    display: none;
-}
-
-.zebraNone {
-    display: none;
-}
-
-.item2 img {
+.tochilka img {
+    position: absolute;
     height: auto;
-    object-fit: contain;
-    margin: 0 auto;
-    margin-top: 10px;
-    transform: translateX(-2rem);
+
 }
 
-.item4 {
-    grid-column: 1 / span 3;
-    grid-row: 2;
-    width: 100%;
+.karandash img {
+    position: absolute;
+    height: auto;
+}
+
+.text-quote {
     position: relative;
+    text-align: center;
+    width: 45%;
     height: auto;
+    margin: 20px 0;
+    order: 2;
+}
+
+.quote {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-top: 250px;
+    margin-left: 40px;
+    color: white;
+    font-size: 16px;
+}
+
+
+.base-image,
+.toc_image,
+.overlay-image.image1,
+.overlay-image.image2 {
+    position: absolute;
+    height: auto;
+    max-width: 250px;
 
 }
 
 .base-image {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    object-fit: cover;
+    border: 4px solid red;
+    top: 10px;
+    transform: scale(1.4);
+    left: 20px;
 }
 
 .toc_image {
+    top: 110px;
+    left: 60px;
+}
+
+.overlay-image.image1 {
+    top: 80px;
+    left: 170px;
+}
+
+.overlay-image.image2 {
+    top: 140px;
+    left: 230px;
+}
+
+.next-image.big,
+.next-image.top,
+.next-image.bottom {
     position: absolute;
-    top: 0px;
-    left: 0px;
-    object-fit: cover;
-}
-
-.overlay-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    object-fit: cover;
-}
-
-.image1 {
-    top: 0px;
-    left:0px;
-}
-
-.image2 {
-    top: 0px;
-    left: 0px;
-    margin-left: 0px;
+    max-width: 180px;
+    height: auto;
 
 }
 
-
-
-.quote {
-    text-align: center;
-    color: #fefefe;
-    margin-top: 30px;
+.next-image.top {
+    transform: translateY(13rem);
+    margin-left: -290px;
 }
 
-
-.next-image {
-    position: absolute;
-    top: 0;
-    left: 0;
-    object-fit: cover;
+.next-image.bottom {
+    transform: translateY(11rem);
+    margin-left: -110px;
 }
-
 
 .big {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    object-fit: cover;
+    transform: scale(1);
+    margin-left: -170px;
+    margin-top: 160px;
 }
-
-.top {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-}
-
-.bottom {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    object-fit: cover;
-}
-
-
-.grid-container img {
-    max-width: 100%;
-    height: auto;
-    object-fit: cover;
-} */
 
 .zebraNon1 {
     display: none;
 }
 
-
+/* main закончен*/
 
 
 
@@ -317,6 +291,601 @@ article img {
 
 /* contact */
 
+@media screen and (max-width: 1278px) and (min-width: 1024px) {
+
+    .phone {
+        background-image: url('/public/img/полосы1024.png');
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 30% auto;
+        grid-template-rows: 0.7fr 0.3fr;
+        max-width: 70%;
+        height: 100%;
+        gap: 10px;
+        overflow: hidden;
+        margin: auto;
+        /* border: 5px solid rgb(0, 204, 255); */
+    }
+
+    .item1 {
+        grid-column: 1 / span 2;
+        grid-row: 1;
+        transform: scale(.9);
+        overflow: visible;
+
+    }
+
+    .item2 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        z-index: 1;
+        transform: scale(.9);
+        overflow: visible;
+        margin-top: 400px;
+
+    }
+
+    .item1 img {
+        transform: translateX(-90px);
+    }
+
+    .item2 img {
+        transform: translateX(-90px);
+
+    }
+
+    .item3 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        padding-top: 90px;
+        height: 700px;
+        justify-self: right;
+        margin-right: 210px;
+        margin-left: 70px;
+        z-index: 2;
+        width: 75%;
+
+    }
+
+    .bloknot img {
+        display: none;
+        /* width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        transform: translateX(-5rem); */
+    }
+
+    .zebraNone {
+        display: none;
+    }
+
+    .item4 {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        display: grid;
+        align-content: stretch;
+        height: auto;
+        justify-content: end;
+        justify-items: end;
+        border: 5px solid rgb(49, 139, 7);
+        z-index: 3;
+    }
+
+    .block-item4 {
+        position: relative;
+        width: 100vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        height: 100%;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-evenly;
+        border: 5px solid red;
+        padding: 20px;
+        
+    }
+
+    .next-image.top {
+        transform: translateY(13rem);
+        margin-left: -450px;
+    }
+
+    .next-image.bottom {
+        transform: translateY(11rem);
+        margin-left: -270px;
+    }
+
+    .big {
+        transform: scale(1);
+        margin-left: -250px;
+        margin-top: 80px;
+    }
+
+    .base-image {
+        border: 4px solid red;
+        top: -30px;
+        transform: scale(1.4);
+        left: -20px;
+    }
+
+    .toc_image {
+        top: 70px;
+        left: 20px;
+    }
+
+    .overlay-image.image1 {
+        top: 40px;
+        left: 130px;
+    }
+
+    .overlay-image.image2 {
+        top: 110px;
+        left: 180px;
+    }
+
+}
+
+@media screen and (max-width: 1534px) and (min-width: 1279px) {
+    body {
+        font-size: 19px;
+        /* Увеличиваем размер шрифта для больших экранов */
+    }
+
+    .phone {
+        background-image: url('/public/img/зебра_фон_полосы.png');
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-self: center;
+        background-repeat: no-repeat;
+        background-position: right;
+        background-size: cover;
+
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 30% auto;
+        grid-template-rows: 0.7fr 0.3fr;
+        max-width: 70%;
+        height: 100%;
+        gap: 10px;
+        overflow: hidden;
+        margin: auto;
+        /* border: 5px solid rgb(0, 204, 255); */
+    }
+
+    .item1 {
+        grid-column: 1 / span 2;
+        grid-row: 1;
+        transform: scale(.9);
+        overflow: visible;
+
+    }
+
+    .item2 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        z-index: 1;
+        transform: scale(.9);
+        overflow: visible;
+        margin-top: 400px;
+
+    }
+
+    .item1 img {
+        transform: translateX(-90px);
+    }
+
+    .item2 img {
+        transform: translateX(-90px);
+
+    }
+
+    .item3 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        padding-top: 90px;
+        height: 700px;
+        justify-self: right;
+        margin-right: 210px;
+        margin-left: 70px;
+        z-index: 2;
+        width: 75%;
+
+    }
+
+    .bloknot img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        transform: translateX(-5rem);
+    }
+
+    .zebraNone {
+        display: none;
+    }
+
+    .item4 {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        display: grid;
+        align-content: stretch;
+        height: auto;
+        justify-content: end;
+        justify-items: end;
+        border: 5px solid rgb(49, 139, 7);
+        z-index: 3;
+    }
+
+    .block-item4 {
+        position: relative;
+        width: 100vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        height: 100%;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-evenly;
+        border: 5px solid red;
+        padding: 20px;
+        
+    }
+
+    .next-image.top {
+        transform: translateY(13rem);
+        margin-left: -450px;
+    }
+
+    .next-image.bottom {
+        transform: translateY(11rem);
+        margin-left: -270px;
+    }
+
+    .big {
+        transform: scale(1);
+        margin-left: -250px;
+        margin-top: 80px;
+    }
+
+    .base-image {
+        border: 4px solid red;
+        top: -30px;
+        transform: scale(1.4);
+        left: -20px;
+    }
+
+    .toc_image {
+        top: 70px;
+        left: 20px;
+    }
+
+    .overlay-image.image1 {
+        top: 40px;
+        left: 130px;
+    }
+
+    .overlay-image.image2 {
+        top: 110px;
+        left: 180px;
+    }
+
+    .mini-bloknot {
+        display: none;
+    }
+
+}
+
+
+@media screen and (max-width: 1920px) and (min-width: 1535px) {
+    body {
+        font-size: 19px;
+        /* Увеличиваем размер шрифта для больших экранов */
+    }
+
+    .phone {
+        background-image: url('/public/img/зебра_фон_полосы.png');
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-self: center;
+        background-repeat: no-repeat;
+        background-position: right;
+        background-size: cover;
+
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 30% auto;
+        grid-template-rows: 0.7fr 0.3fr;
+        max-width: 100%;
+        height: 100%;
+        gap: 10px;
+        overflow: hidden;
+        margin: auto;
+        /* border: 5px solid rgb(0, 204, 255); */
+    }
+
+    .item1 {
+        grid-column: 1 / span 2;
+        grid-row: 1;
+        transform: scale(.9);
+        overflow: visible;
+
+    }
+
+    .item2 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        z-index: 1;
+        transform: scale(.9);
+        overflow: visible;
+        margin-top: 400px;
+
+    }
+
+    .item1 img {
+        transform: translateX(-90px);
+    }
+
+    .item2 img {
+        transform: translateX(-90px);
+
+    }
+
+    .item3 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        padding-top: 90px;
+        height: 700px;
+        justify-self: right;
+        margin-right: 210px;
+        margin-left: 70px;
+        z-index: 2;
+        width: 75%;
+
+    }
+
+    .bloknot img {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        transform: translateX(-9rem);
+    }
+
+    .zebraNone {
+        display: none;
+    }
+    
+    .item4 {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        display: grid;
+        align-content: stretch;
+        height: auto;
+        justify-content: end;
+        justify-items: end;
+        border: 5px solid rgb(49, 139, 7);
+        z-index: 3;
+    }
+
+    .block-item4 {
+        position: relative;
+        width: 100vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        height: 100%;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-evenly;
+        border: 5px solid red;
+        padding: 20px;
+        
+    }
+
+    .next-image.top {
+        transform: translateY(13rem);
+        margin-left: -450px;
+    }
+
+    .next-image.bottom {
+        transform: translateY(11rem);
+        margin-left: -270px;
+    }
+
+    .big {
+        transform: scale(1);
+        margin-left: -250px;
+        margin-top: 80px;
+    }
+
+    .base-image {
+        border: 4px solid red;
+        top: -30px;
+        transform: scale(1.4);
+        left: -20px;
+    }
+
+    .toc_image {
+        top: 70px;
+        left: 20px;
+    }
+
+    .overlay-image.image1 {
+        top: 40px;
+        left: 130px;
+    }
+
+    .overlay-image.image2 {
+        top: 110px;
+        left: 180px;
+    }
+
+    .mini-bloknot {
+        display: none;
+    }
+
+}
+
+
+
+
+@media screen and (max-width: 1921px) {
+    body {
+        font-size: 19px;
+        /* Увеличиваем размер шрифта для больших экранов */
+    }
+
+    .phone {
+        background-image: url('/public/img/зебра_фон_полосы.png');
+        display: flex;
+        width: 100%;
+        height: 100%;
+        justify-content: center;
+        align-self: center;
+        background-repeat: no-repeat;
+        background-position: right;
+        background-size: cover;
+
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 30% auto;
+        grid-template-rows: 0.7fr 0.3fr;
+        max-width: 100%;
+        height: 100%;
+        gap: 10px;
+        overflow: hidden;
+        margin: auto;
+        /* border: 5px solid rgb(0, 204, 255); */
+    }
+
+    .item1 {
+        grid-column: 1 / span 2;
+        grid-row: 1;
+        transform: scale(.9);
+        overflow: visible;
+
+    }
+
+    .item2 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        z-index: 1;
+        transform: scale(.9);
+        overflow: visible;
+        margin-top: 400px;
+
+    }
+
+    .item1 img {
+        transform: translateX(-90px);
+    }
+
+    .item2 img {
+        transform: translateX(-90px);
+
+    }
+
+    .item3 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        padding-top: 110px;
+        height: 700px;
+        justify-self: right;
+        margin-right: 90px;
+        margin-left: 170px;
+        z-index: 2;
+
+    }
+
+    .bloknot img {
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .item4 {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        display: grid;
+        align-content: stretch;
+        height: auto;
+        justify-content: end;
+        justify-items: end;
+        border: 5px solid rgb(49, 139, 7);
+        z-index: 3;
+    }
+
+    .block-item4 {
+        position: relative;
+        width: 100vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        height: 100%;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-around;
+        border: 5px solid red;
+        padding: 20px;
+    }
+
+    .next-image.top {
+        transform: translateY(13rem);
+        margin-left: -390px;
+    }
+
+    .next-image.bottom {
+        transform: translateY(11rem);
+        margin-left: -210px;
+    }
+
+    .big {
+        transform: scale(1);
+        margin-left: -270px;
+        margin-top: 160px;
+    }
+
+    .base-image {
+        border: 4px solid red;
+        top: 0px;
+        transform: scale(1.4);
+        left: 20px;
+    }
+
+    .toc_image {
+        top: 110px;
+        left: 60px;
+    }
+
+    .overlay-image.image1 {
+        top: 80px;
+        left: 170px;
+    }
+
+    .overlay-image.image2 {
+        top: 140px;
+        left: 230px;
+    }
+
+    .mini-bloknot {
+        display: none;
+    }
+
+}
 
 
 
@@ -338,11 +907,8 @@ article img {
 
 
 
-
-
-
-/* стили для статьи */
-/* .ns_desc {
+    /* стили для статьи */
+    /* .ns_desc {
     display: -webkit-box;
     -webkit-line-clamp: 3;
     -webkit-box-orient: vertical;
@@ -430,6 +996,6 @@ article img {
     border: none;
 } */
 
-/* #__nuxt  {
+    /* #__nuxt  {
     color: brown;
 } */

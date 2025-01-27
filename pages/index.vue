@@ -7,14 +7,14 @@
                 </div>
             </div>
             <div class="item-grid item2">
-                <div class="gory">
+                <div class="gory-rek">
                     <img src="../public/img/блокнот_горы.png" alt="Image2">
                 </div>
             </div>
             <div class="item-grid item3">
                 <div class="bloknot">
                     <img src="../public/img/блокнот_зебра (2).png" alt="Image 2" class="zebraMax">
-                    <!-- <img src="../public/img/лист_блокнот1024.png" alt="" class="zebraNone"> -->
+                    <img src="../public/img/лист_блокнот1024.png" alt="" class="zebraNone">
 
                 </div>
             </div>
@@ -25,28 +25,28 @@
                 </div>
 
                 <div class="block-item4">
-                    <div class="tochilka">
-                        <img src="../public/img/графит.png" alt="" class="base-image">
-                        <img src="../public/img/точиолка.png" alt="" class="toc_image">
-                        <img src="../public/img/завиток_top.png" alt="" class="overlay-image image1">
-                        <img src="../public/img/завиток_niz.png" alt="" class="overlay-image image2">
-                    </div>
+                        <div class="tochilka">
+                            <img src="../public/img/графит.png" alt="" class="base-image">
+                            <img src="../public/img/точиолка.png" alt="" class="toc_image">
+                            <img src="../public/img/завиток_top.png" alt="" class="overlay-image image1">
+                            <img src="../public/img/завиток_niz.png" alt="" class="overlay-image image2">
+                        </div>
 
-                    <div class="text-quote">
-                        <blockquote class="quote">
-                            <p>"Мы все, как карандаши.
-                                Каждый рисует свою судьбу.
-                                Один ломается, другой тупит, <br>
-                                а кто-то затачивается и движется вперёд".</p>
-                            <cite class="cite">Светлана Кременецкая</cite>
-                        </blockquote>
-                    </div>
+                        <div class="text-quote">
+                            <blockquote class="quote">
+                                <p>"Мы все, как карандаши.
+                                    Каждый рисует свою судьбу.
+                                    Один ломается, другой тупит, <br>
+                                    а кто-то затачивается и движется вперёд".</p>
+                                <cite class="cite">Светлана Кременецкая</cite>
+                            </blockquote>
+                        </div>
 
-                    <div class="karandash">
-                        <img src="../public/img/завиток_большой.png" alt="" class="next-image big">
-                        <img src="../public/img/карандаш_top.png" alt="" class="next-image top">
-                        <img src="../public/img/карандаш.png" alt="" class="next-image bottom">
-                    </div>
+                        <div class="karandash">
+                            <img src="../public/img/завиток_большой.png" alt="" class="next-image big">
+                            <img src="../public/img/карандаш_top.png" alt="" class="next-image top">
+                            <img src="../public/img/карандаш.png" alt="" class="next-image bottom">
+                        </div>
                 </div>
 
 
