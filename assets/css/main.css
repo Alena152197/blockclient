@@ -240,7 +240,7 @@ article h5 {
 }
 
 article p {
-    height: 72px;
+    height: 92px;
 }
 
 article h5 {
@@ -287,6 +287,27 @@ article img {
     /* Обрезка изображения, чтобы оно заполнило контейнер */
     min-width: 250px;
     /* Минимальная ширина */
+}
+
+@keyframes highlight {
+    0% {
+        background-color: transparent;
+    }
+    50% {
+        background-color: rgb(180 157 28 / var(--tw-text-opacity, 1));
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+
+.highlight-link {
+    transition: all 0.3s ease-in-out;
+    display: inline-block; /* Чтобы анимация применялась к блоку */
+}
+
+.highlight-link:hover {
+    animation: highlight 1s ease-in-out forwards;
 }
 
 /* contact */

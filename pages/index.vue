@@ -1,6 +1,6 @@
 <template>
     <div class="phone">
-        <div class="grid-container">
+        <!-- <div class="grid-container">
             <div class="item-grid item1">
                 <div class="samolet">
                     <img src="../public/img/блокнот_море.png" alt="Image1">
@@ -51,7 +51,7 @@
 
 
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
 
