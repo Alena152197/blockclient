@@ -17,6 +17,9 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ],
+    server: {
+      allowedHosts: ['fenix1521.ru'],
+    },
   },
 
   modules: ['@pinia/nuxt'],
