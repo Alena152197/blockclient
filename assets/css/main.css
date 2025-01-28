@@ -39,7 +39,6 @@ body,
 
 }
 
-.item-grid {}
 
 .item1 {
     grid-column: 1 / span 2;
@@ -90,7 +89,7 @@ body,
 }
 
 .mini-bloknot {
-    display: none;
+    visibility: hidden;
 }
 
 .block-item4 {
@@ -214,9 +213,6 @@ body,
     margin-top: 160px;
 }
 
-.zebraNon1 {
-    display: none;
-}
 
 /* main закончен*/
 
@@ -293,9 +289,11 @@ article img {
     0% {
         background-color: transparent;
     }
+
     50% {
         background-color: rgb(180 157 28 / var(--tw-text-opacity, 1));
     }
+
     100% {
         background-color: transparent;
     }
@@ -303,7 +301,8 @@ article img {
 
 .highlight-link {
     transition: all 0.3s ease-in-out;
-    display: inline-block; /* Чтобы анимация применялась к блоку */
+    display: inline-block;
+    /* Чтобы анимация применялась к блоку */
 }
 
 .highlight-link:hover {
@@ -311,8 +310,172 @@ article img {
 }
 
 /* contact */
+@media screen and (max-width: 1024px) and (min-width: 769px) {
 
-@media screen and (max-width: 1278px) and (min-width: 1024px) {
+    .phone {
+        background-image: url('/public/img/полосы1024.png');
+    }
+
+    .grid-container {
+        display: grid;
+        grid-template-columns: 30% auto;
+        grid-template-rows: 0.7fr 0.3fr;
+        max-width: 70%;
+        height: 100%;
+        gap: 10px;
+        overflow: hidden;
+        margin: auto;
+        /* border: 5px solid rgb(0, 204, 255); */
+    }
+
+    .item1 {
+        grid-column: 1 / span 2;
+        grid-row: 1;
+        transform: scale(.9);
+        overflow: visible;
+
+    }
+
+    .item2 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        z-index: 1;
+        transform: scale(.9);
+        overflow: visible;
+        margin-top: 400px;
+
+    }
+
+    .item1 img {
+        margin-left: 30px;
+    }
+
+    .item2 img {
+        margin-left: 30px;
+    }
+
+    .item3 {
+        grid-column: 1 / span 2;
+        grid-row: 1 / span 2;
+        height: 700px;
+        justify-self: center;
+        margin-right: 210px;
+        margin-left: 70px;
+        z-index: 9;
+        width: 75%;
+        transform: scale(1.0);
+
+    }
+
+    .zebraMax {
+        display: none;
+    }
+
+    .zebraNone {
+        width: 60%;
+        max-width: 100%;
+        height: auto;
+        object-fit: contain;
+        transform: translateY(-1rem);
+        z-index: 9;
+    }
+
+    .item4 {
+        grid-column: 1 / span 2;
+        grid-row: 2;
+        display: grid;
+        align-content: stretch;
+        height: auto;
+        justify-content: end;
+        justify-items: end;
+        border: 5px solid rgb(49, 139, 7);
+        z-index: 1;
+    }
+
+    .block-item4 {
+        position: relative;
+        width: 100vh;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        height: 100%;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-evenly;
+        border: 5px solid red;
+        padding: 20px;
+        z-index: 1;
+    }
+
+    .mini-bloknot {
+        z-index: 1;
+        grid-column: 2; /* Позиционирование в сетке */
+        grid-row: 1; /* Позиционирование в сетке */
+        height: auto; /* Фиксированная высота */
+        justify-self: center; /* Центрирование по горизонтали */
+        max-width: 600px; /* Максимальная ширина */
+        transform: translateX(-40rem); /* Сдвиг по оси X */
+        visibility: visible; /* Видимость элемента */
+        position: relative;
+
+
+    }
+
+    .mini-bloknot .zebraNon {
+        z-index: 1;
+        position: absolute; /* Абсолютное позиционирование для дочернего элемента */
+        top: -70%; /* Позиционирование в верхней части родителя */
+        left: 0; /* Позиционирование в левой части родителя */
+        max-width: 500px; /* Занять всю ширину родителя */
+        height: auto; /* Занять всю высоту родителя */
+        object-fit: contain; /* Сохранение пропорций изображения */
+        visibility: visible;
+    }
+
+
+
+    .next-image.top {
+        transform: translateY(13rem);
+        margin-left: -450px;
+    }
+
+    .next-image.bottom {
+        transform: translateY(11rem);
+        margin-left: -270px;
+    }
+
+    .big {
+        transform: scale(1);
+        margin-left: -250px;
+        margin-top: 80px;
+    }
+
+    .base-image {
+        border: 4px solid red;
+        top: -30px;
+        transform: scale(1.4);
+        left: -20px;
+    }
+
+    .toc_image {
+        top: 70px;
+        left: 20px;
+    }
+
+    .overlay-image.image1 {
+        top: 40px;
+        left: 130px;
+    }
+
+    .overlay-image.image2 {
+        top: 110px;
+        left: 180px;
+    }
+
+}
+
+
+@media screen and (max-width: 1278px) and (min-width: 1025px) {
 
     .phone {
         background-image: url('/public/img/полосы1024.png');
@@ -360,23 +523,23 @@ article img {
     .item3 {
         grid-column: 1 / span 2;
         grid-row: 1 / span 2;
-        padding-top: 90px;
         height: 700px;
-        justify-self: right;
+        justify-self: center;
         margin-right: 210px;
         margin-left: 70px;
         z-index: 2;
         width: 75%;
+        transform: scale(1.0);
 
     }
 
     .bloknot img {
-        display: none;
-        /* width: 100%;
+        width: 100%;
         max-width: 100%;
         height: auto;
         object-fit: contain;
-        transform: translateX(-5rem); */
+        margin-left: -50px;
+        transform: translateY(4rem);
     }
 
     .zebraNone {
@@ -407,7 +570,7 @@ article img {
         justify-content: space-evenly;
         border: 5px solid red;
         padding: 20px;
-        
+
     }
 
     .next-image.top {
@@ -557,7 +720,7 @@ article img {
         justify-content: space-evenly;
         border: 5px solid red;
         padding: 20px;
-        
+
     }
 
     .next-image.top {
@@ -599,7 +762,7 @@ article img {
     }
 
     .mini-bloknot {
-        display: none;
+        visibility: hidden;
     }
 
 }
@@ -687,7 +850,7 @@ article img {
     .zebraNone {
         display: none;
     }
-    
+
     .item4 {
         grid-column: 1 / span 2;
         grid-row: 2;
@@ -712,7 +875,7 @@ article img {
         justify-content: space-evenly;
         border: 5px solid red;
         padding: 20px;
-        
+
     }
 
     .next-image.top {
@@ -754,13 +917,10 @@ article img {
     }
 
     .mini-bloknot {
-        display: none;
+        visibility: hidden;
     }
 
 }
-
-
-
 
 @media screen and (max-width: 1921px) {
     body {
@@ -903,120 +1063,7 @@ article img {
     }
 
     .mini-bloknot {
-        display: none;
+        visibility: hidden;
     }
 
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /* стили для статьи */
-    /* .ns_desc {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-wrap: wrap;
-}
-
-.ns_post h1,h2,h3,h4,h5,h6,p,ul,ol {
-    margin-top: 16px;
-    margin-bottom: 16px;
-}
-
-.ns_post h1 {
-    font-size: 3rem;
-    font-weight: 800;
-}
-
-.ns_post h2 {
-    font-size: 2rem;
-    font-weight: 700;
-}
-
-.ns_post h3 {
-    font-size: 1.875rem;
-    font-weight: 700;
-}
-
-.ns_post h4 {
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.ns_post h5 {
-    font-size: 1.25rem;
-    font-weight: 700;
-}
-
-.ns_post h6 {
-    font-size: 1.125rem;
-    font-weight: 700;
-}
-
-.ns_post ul,
-.ns_post ol {
-    padding: revert;
-    max-width: 28rem;
-    gap: 0.25rem;
-    list-style-type: disc;
-    list-style-position: inside;
-}
-
-.ns_post blockquote {
-    font-size: 1.25rem;
-    font-style: italic;
-    font-weight: 600;
-
-    padding: 1rem;
-
-    margin-top: 1rem;
-
-    margin-bottom: 1rem;
-
-    border-left-width: 4px;
-
-    border-left-color: #d1d5db;
-
-    background-color: #f3f4f6;
-
-}
-
-.ns_post a {
-    font-weight: 500;
-    color: rgb(37 99 235);
-}
-
-.ns_post a:hover {
-    text-decoration: underline;
-}
-
-.ns_post hr {
-    height: 1px;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    background-color: #dddddd;
-    border: none;
-} */
-
-    /* #__nuxt  {
-    color: brown;
-} */

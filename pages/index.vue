@@ -1,6 +1,6 @@
 <template>
     <div class="phone">
-        <!-- <div class="grid-container">
+        <div class="grid-container">
             <div class="item-grid item1">
                 <div class="samolet">
                     <img src="../public/img/блокнот_море.png" alt="Image1">
@@ -19,9 +19,9 @@
                 </div>
             </div>
             <div class="item-grid item4">
+
                 <div class="mini-bloknot">
                     <img src="../public/img/блокнот_зебра1024.png" alt="" class="zebraNon">
-                    <img src="../public/img/блокнот_зебра768.png" alt="" class="zebraNon1">
                 </div>
 
                 <div class="block-item4">
@@ -51,7 +51,7 @@
 
 
             </div>
-        </div> -->
+        </div>
     </div>
 </template>
 
