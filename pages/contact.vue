@@ -17,21 +17,18 @@
                 :class="['relative', 'w-[445px]', 'h-[598px]', { 'pageFlipPrew': pageFlipLeft }, leftClass]">
                 <img src="/public/img/лист_1.png" alt="" class="w-full h-full object-cover ">
                 <div
-                    class="absolute top-0 left-0 p-8 pr-12 w-full h-full bg-white-100 overflow-y-auto text-ellipsis sm:text-sm md:text-sm lg:text-sm 2xl:text-sm flex items-center justify-center">
-                    <p
-                        class="text-gray-800 leading-relaxed tracking-wide font-semibold drop-shadow-md text-center ">
-                        {{ currentPages[1]?.content }}
-                    </p>
+                    class="absolute top-0 left-0 p-8 pr-12 w-full h-full bg-white-100 overflow-y-hidden text-ellipsis sm:text-sm md:text-sm lg:text-sm 2xl:text-sm flex items-center justify-center">
+                    <p class="text-gray-800 leading-relaxed tracking-wide font-semibold drop-shadow-md text-center"
+                        v-html="currentPages[1]?.content ? markdown.render(currentPages[1].content) : ''"></p>
                 </div>
             </div>
             <!-- правая страница -->
             <div ref="right" :class="['relative', 'w-[445px]', 'h-[598px]', { 'pageFlip': pageFlipRight }]">
                 <img src="/public/img/лист_2.png" alt="" class="w-full h-full object-cover">
                 <div
-                    class="absolute top-0 left-0 p-8 pr-12 w-full h-full bg-white-100 overflow-y-auto text-ellipsis sm:text-sm md:text-sm lg:text-sm 2xl:text-sm flex items-center justify-center">
-                    <p class="text-gray-800 leading-relaxed tracking-wide font-semibold drop-shadow-md text-center">
-                        {{ currentPages[0]?.content }}
-                    </p>
+                    class="absolute top-0 left-0 p-8 pr-12 w-full h-full bg-white-100 overflow-y-hidden text-ellipsis sm:text-sm md:text-sm lg:text-sm 2xl:text-sm flex items-center justify-center">
+                    <p class="text-gray-800 leading-relaxed tracking-wide font-semibold drop-shadow-md text-center"
+                    v-html="currentPages[0]?.content ? markdown.render(currentPages[0].content) : ''"></p>
                 </div>
             </div>
             <div class="absolute bottom-0">
@@ -58,63 +55,43 @@
     </div>
 </template>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 <script setup>
 import { ref, onMounted, computed } from 'vue';
+import MarkdownIt from "markdown-it";
 
 const pageFlipRight = ref(false);
 const pageFlipLeft = ref(false);
 const currentPages = ref([]);
-let currentPage = 1;
+let currentPage = ref(1);
 const pageSize = 2;
 const totalPages = ref(0);
-
-const opacityFlipLeft = ref(true)
+const markdown = new MarkdownIt();
+const leftClass = ref('');
 
 const fetchPages = async (animate = false) => {
     try {
-        const response = await fetch(`https://324cbb377ef9.vps.myjino.ru/api/abouts?pagination[page]=${currentPage}&pagination[pageSize]=${pageSize}`);
+        const response = await fetch(`https://324cbb377ef9.vps.myjino.ru/api/abouts?pagination[page]=${currentPage.value}&pagination[pageSize]=${pageSize}`);
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
         const data = await response.json();
-
         currentPages.value = data.data;
         totalPages.value = Math.ceil(data.meta.pagination.total / pageSize);
-
     } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
     }
 };
 
-const leftClass = ref('');
-
 const flip = (params) => {
     if (params === 'next') {
-        pageFlipRight.value = !pageFlipRight.value;
+        pageFlipRight.value = true;
         setTimeout(() => {
             pageFlipRight.value = false;
             leftClass.value = '';
         }, 1000);
     }
-    if (params === 'prew') {
-        pageFlipLeft.value = !pageFlipLeft.value;
+    if (params === 'prev') {
+        pageFlipLeft.value = true;
         leftClass.value = 'z-10';
         setTimeout(() => {
             pageFlipLeft.value = false;
@@ -124,18 +101,18 @@ const flip = (params) => {
 };
 
 const nextPage = () => {
-    if (currentPage < totalPages.value) {
-        currentPage++;
+    if (currentPage.value < totalPages.value) {
+        currentPage.value++;
         fetchPages(true); // Загрузка новых данных с анимацией
         flip('next');
     }
 };
 
 const prevPage = () => {
-    if (currentPage > 1) {
-        currentPage--;
+    if (currentPage.value > 1) {
+        currentPage.value--;
         fetchPages(true); // Загрузка новых данных с анимацией
-        flip('prew');
+        flip('prev');
     }
 };
 
@@ -184,4 +161,100 @@ onMounted(() => {
     perspective: 1000px;
     animation: pageFlipPrew 1s ease-in-out;
 }
+</style>
+
+<style>
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6 {
+  font-family: Arial, sans-serif; /* Замените на нужный шрифт */
+  font-weight: bold; /* Замените на нужный вес */
+  line-height: 1.5; /* Замените на нужную высоту строки */
+  color: #333; /* Замените на нужный цвет заголовков */
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-top: 1.5em; /* Замените на нужное значение */
+  margin-bottom: 0.75em; /* Замените на нужное значение */
+}
+
+h4, .h4,
+h5, .h5,
+h6, .h6 {
+  margin-top: 0.75em; /* Замените на нужное значение */
+  margin-bottom: 0.75em; /* Замените на нужное значение */
+}
+
+h1, .h1 { font-size: 2em; } /* Замените на нужное значение */
+h2, .h2 { font-size: 1.75em; } /* Замените на нужное значение */
+h3, .h3 { font-size: 1.5em; } /* Замените на нужное значение */
+h4, .h4 { font-size: 1.25em; } /* Замените на нужное значение */
+h5, .h5 { font-size: 1em; } /* Замените на нужное значение */
+h6, .h6 { font-size: 0.875em; } /* Замените на нужное значение */
+
+/* Body text
+------------------------- */
+p {
+  margin: 0 0 0.75em; /* Замените на нужное значение */
+}
+
+.lead {
+  margin-bottom: 1.5em; /* Замените на нужное значение */
+  font-size: 1.15em; /* Замените на нужное значение */
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+@media (min-width: 576px) { /* Замените на нужный размер экрана */
+  .lead {
+    font-size: 1.5em; /* Замените на нужное значение */
+  }
+}
+
+/* Emphasis & misc
+------------------------- */
+small,
+.small {
+  font-size: 0.85em; /* Замените на нужное значение */
+}
+
+/* Undo browser default styling */
+cite {
+  font-style: normal;
+}
+
+mark,
+.mark {
+  background-color: #ffeb3b; /* Замените на нужный цвет */
+  padding: 0.2em;
+}
+
+/* Alignment */
+.text-left { text-align: left; }
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+.text-justify { text-align: justify; }
+.text-nowrap { white-space: nowrap; }
+
+/* Transformation */
+.text-lowercase { text-transform: lowercase; }
+.text-uppercase { text-transform: uppercase; }
+.text-capitalize { text-transform: capitalize; }
+
+/* Contextual colors */
+.text-muted { color: #6c757d; } /* Замените на нужный цвет */
+.text-primary { color: #007bff; } /* Замените на нужный цвет */
+.text-success { color: #28a745; } /* Замените на нужный цвет */
+.text-info { color: #17a2b8; } /* Замените на нужный цвет */
+.text-warning { color: #ffc107; } /* Замените на нужный цвет */
+.text-danger { color: #dc3545; } /* Замените на нужный цвет */
+
+/* Contextual backgrounds */
+.bg-primary { color: #fff; background-color: #007bff; } /* Замените на нужный цвет */
+.bg-success { background-color: #28a745; } /* Замените на нужный цвет */
+.bg-info { background-color: #17a2b8; } /* Замените на нужный цвет */
+.bg-warning { background-color: #ffc107; } /* Замените на нужный цвет */
+.bg-danger { background-color: #dc3545; } /* Замените на нужный цвет */
+
 </style>

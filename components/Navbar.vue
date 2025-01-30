@@ -1,5 +1,5 @@
 <template>
-    <header>
+    <header class="z-20 relative">
         <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
             <!-- отвечает за расположение навигации -->
             <div class="navigHead max-w-screen-xl flex flex-wrap items-center justify-evenly mx-auto p-2">
