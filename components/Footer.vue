@@ -8,7 +8,7 @@
 
             <div class="flex mt-4 sm:justify-center sm:mt-0">
 
-                <a href="https://vk.com/"
+                <a href="https://vk.com/id713643203?from=search"
                     class="text-gray-300 hover:text-gray-900 dark:hover:text-white highlight-link">
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 24 24">
