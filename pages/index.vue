@@ -1,6 +1,7 @@
 <template>
     <div class="phone">
-        <div class="absolute z-10 inset-0 h-screen flex items-center justify-center">
+        <h1>hello</h1>
+        <!-- <div class="absolute z-10 inset-0 h-screen flex items-center justify-center">
             <div class="image-container relative">
                 <img src="../public/img/блокнот_зебра (2).png" alt="Image 2" class="zebraMax hidden lg:block">
                 <div class="overlay-text absolute text-white text-start">
@@ -77,6 +78,6 @@
 
 
             </div>
-        </div>
+        </div> -->
     </div>
 </template>
