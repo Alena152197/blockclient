@@ -13,7 +13,7 @@ body,
 }
 
 /* main */
-.phone {
+/* .phone {
     background-image: url('/public/img/зебра_фон_полосы.png');
     display: flex;
     justify-content: center;
@@ -403,10 +403,10 @@ body,
     margin-top: 160px;
 }
 
-/* Новые стили для наложения текста на изображение */
+
 .image-container {
     position: relative;
-    display: inline-block; /* Чтобы контейнер занимал только пространство изображения */
+    display: inline-block; 
 }
 
 .image-container img {
@@ -418,34 +418,33 @@ body,
 .overlay-text {
     position: absolute;
     top: 10px;
-    right: 30px; /* Прижимаем текстовый блок к правому краю */
+    right: 30px; 
     bottom: 60px;
-    width: 40%; /* Устанавливаем ширину текстового блока на 50% от изображения */
+    width: 40%; 
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: start; /* Выравниваем текст по правому краю */
-    color: #2B2A29; /* Цвет текста */
-    padding: 30px; /* Отступы вокруг текста */
-    border-radius: 5px; /* Закругленные углы (если нужно) */
-    box-sizing: border-box; /* Учитывать отступы при расчете ширины и высоты */
-    overflow: hidden; /* Скрывать переполнение текста за пределами контейнера */
+    align-items: start; 
+    color: #2B2A29; 
+    padding: 30px; 
+    border-radius: 5px; 
+    box-sizing: border-box; 
+    overflow: hidden; 
 }
 
 .overlay-text h1 {
     margin: 0;
-    font-size: 2em; /* Размер шрифта заголовка */
-    line-height: 1.2; /* Линейная высота для лучшего чтения */
-    text-align: start; /* Выравнивание текста по правому краю */
+    font-size: 2em; 
+    line-height: 1.2; 
+    text-align: start; 
 }
 
 .overlay-text p {
     margin: 0;
-    font-size: 18px; /* Размер шрифта параграфа */
-    line-height: 1.4; /* Линейная высота для лучшего чтения */
-    text-align: start; /* Выравнивание текста по правому краю */
-}
-
+    font-size: 18px; 
+    line-height: 1.4; 
+    text-align: start; 
+} */
 
 /* main закончен*/
 
@@ -542,7 +541,7 @@ article img {
 }
 
 /* contact */
-@media screen and (max-width: 1024px) and (min-width: 769px) {
+/* @media screen and (max-width: 1024px) and (min-width: 769px) {
 
     .phone {
         background-image: url('/public/img/полосы1024.png');
@@ -700,10 +699,10 @@ article img {
         left: 180px;
     }
 
-}
+} */
 
 
-@media screen and (max-width: 1278px) and (min-width: 1025px) {
+/* @media screen and (max-width: 1278px) and (min-width: 1025px) {
 
     .phone {
         background-image: url('/public/img/полосы1024.png');
@@ -835,12 +834,12 @@ article img {
         left: 180px;
     }
 
-}
+} */
 
-@media screen and (max-width: 1534px) and (min-width: 1279px) {
+/* @media screen and (max-width: 1534px) and (min-width: 1279px) {
     body {
         font-size: 19px;
-        /* Увеличиваем размер шрифта для больших экранов */
+
     }
 
     .phone {
@@ -986,13 +985,13 @@ article img {
         visibility: hidden;
     }
 
-}
+} */
 
 
-@media screen and (max-width: 1920px) and (min-width: 1535px) {
+/* @media screen and (max-width: 1920px) and (min-width: 1535px) {
     body {
         font-size: 19px;
-        /* Увеличиваем размер шрифта для больших экранов */
+
     }
 
     .phone {
@@ -1137,12 +1136,12 @@ article img {
         visibility: hidden;
     }
 
-}
+} */
 
-@media screen and (max-width: 1921px) {
+/* @media screen and (max-width: 1921px) {
     body {
         font-size: 19px;
-        /* Увеличиваем размер шрифта для больших экранов */
+
     }
 
     .phone {
@@ -1279,4 +1278,4 @@ article img {
         visibility: hidden;
     }
 
-}
+} */

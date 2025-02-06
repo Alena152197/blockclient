@@ -1,5 +1,58 @@
 <template>
-    <div class="phone">
+    <div class="absolute z-10 inset-0 h-full w-full flex flex-wrap content-center items-center justify-center">
+        <div class="image-container relative w-full max-w-4xl mx-auto overflow-hidden">
+
+            <img src="../public/img/блокнот_зебра (2).png" alt="Image 2"
+                class="zebraMax hidden lg:block w-full h-auto object-cover rounded-lg">
+
+            <div class="hidden lg:block inset-0 overlay-text absolute left-[58%] top-[5%] p-2 text-black bg-gradient-to-l to-transparent">
+                <h4 class="text-2xl font-bold">Всем привет! <br> Будем знакомы, Меня зовут Алена.</h4>
+                <p class="mt-4 text-base">
+                    В этом блоге я хочу рассказать про свой жизненный путь, с чего всё началось, поиски себя и своего
+                    места в жизни, и всё ли так просто, как кажется на первый взгляд. <br><br>
+                    Надеюсь, моя история будет для кого-то полезной, как преодолеть трудности, как не потерять себя и
+                    найти силы на что-то новое. <br><br>
+                    Жизнь, мягко говоря, непредсказуема! В один момент все идет хорошо, а потом вдруг что-то происходит,
+                    и вся жизнь переворачивается с ног на голову, так случилось и у меня...
+                </p>
+            </div>
+        </div>
+
+        <div class="image-contain relative w-full max-w-md mx-auto h-auto lg:hidden overflow-hidden">
+
+            <img src="../public/img/лист_блокнот1024.png" alt="Image 1" class="w-full h-auto object-cover rounded-lg">
+
+
+            <div
+                class="overlay-text absolute inset-0 flex flex-col justify-center px-12 text-black">
+                <h4 class="text-xl font-bold text-center">
+                    Всем привет! <br> Будем знакомы, Меня зовут Алена.
+                </h4>
+                <p class="mt-4 text-sm sm:text-base text-center">
+                    В этом блоге я хочу рассказать про свой жизненный путь, с чего всё началось, поиски себя и своего
+                    места в жизни, и всё ли так просто, как кажется на первый взгляд. <br><br>
+                    Надеюсь, моя история будет для кого-то полезной, как преодолеть трудности, как не потерять себя и
+                    найти силы на что-то новое. <br><br>
+                    Жизнь, мягко говоря, непредсказуема! В один момент все идет хорошо, а потом вдруг что-то происходит,
+                    и вся жизнь переворачивается с ног на голову, так случилось и у меня...
+                </p>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <div class="phone">
         <div class="absolute z-10 inset-0 h-screen flex items-center justify-center">
             <div class="image-container relative">
                 <img src="../public/img/блокнот_зебра (2).png" alt="Image 2" class="zebraMax hidden lg:block">
@@ -78,5 +131,5 @@
 
             </div>
         </div>
-    </div>
+    </div> -->
 </template>
