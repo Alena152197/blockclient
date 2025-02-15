@@ -5,448 +5,64 @@ body,
 #__nuxt {
     width: 100%;
     height: 100%;
-}
-
-#__nuxt {
-    display: flex;
-    flex-direction: column;
-}
-
-/* main */
-/* .phone {
-    background-image: url('/public/img/зебра_фон_полосы.png');
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    background-repeat: no-repeat;
-    background-position: right;
-    background-size: cover;
-    width: 100%;
-    height: 100%;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: 30% auto;
-    grid-template-rows: 1fr auto;
-    max-width: 80%;
-    height: 100%;
-    gap: 10px;
-    overflow: hidden;
-    margin: auto;
-
-}
-
-
-.item1 {
-    grid-column: 1 / span 2;
-    grid-row: 1;
-
-}
-
-.item2 {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-    z-index: 1;
-
-}
-
-.item2 img {
-    transform: translateY(-2rem);
-}
-
-
-.item3 {
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
-    padding-top: 90px;
-    height: 700px;
-    justify-self: right;
-    margin-right: 70px;
-    margin-left: 170px;
-    z-index: 2;
-
-}
-
-
-
-.bloknot img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-}
-
-
-
-.item4 {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-    display: grid;
-    align-content: stretch;
-    height: auto;
-    justify-content: end;
-    justify-items: end;
-    z-index: 3;
-}
-
-.mini-bloknot {
-    visibility: hidden;
-}
-
-.block-item4 {
-    position: relative;
-    width: 100vh;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    height: 100%;
-    gap: 20px;
-    align-items: center;
-    justify-content: space-around;
-    padding: 20px;
-}
-
-.tochilka {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    order: 1;
-}
-
-.karandash {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    order: 3;
-}
-
-.tochilka img {
-    position: absolute;
-    height: auto;
-
-}
-
-.karandash img {
-    position: absolute;
-    height: auto;
-}
-
-.text-quote {
-    position: relative;
-    text-align: center;
-    width: 45%;
-    height: auto;
-    margin: 20px 0;
-    order: 2;
-}
-
-.quote {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-left: 40px;
-}
-
-
-.base-image,
-.toc_image,
-.overlay-image.image1,
-.overlay-image.image2 {
-    position: absolute;
-    height: auto;
-    max-width: 250px;
-
-}
-
-.base-image {
-    top: 10px;
-    transform: scale(1.4);
-    left: 20px;
-}
-
-.toc_image {
-    top: 110px;
-    left: 60px;
-}
-
-.overlay-image.image1 {
-    top: 80px;
-    left: 170px;
-}
-
-.overlay-image.image2 {
-    top: 140px;
-    left: 230px;
-}
-
-.next-image.big,
-.next-image.top,
-.next-image.bottom {
-    position: absolute;
-    max-width: 180px;
-    height: auto;
-
-}
-
-.next-image.top {
-    transform: translateY(13rem);
-    margin-left: -290px;
-}
-
-.next-image.bottom {
-    transform: translateY(11rem);
-    margin-left: -110px;
-}
-
-.big {
-    transform: scale(1);
-    margin-left: -170px;
-    margin-top: 160px;
-}
-
-html,
-body,
-#__nuxt {
-    width: 100%;
-    height: 100%;
-}
-
-#__nuxt {
-    display: flex;
-    flex-direction: column;
-}
-
-.phone {
-    background-image: url('/public/img/зебра_фон_полосы.png');
-    display: flex;
-    justify-content: center;
-    align-self: center;
-    background-repeat: no-repeat;
-    background-position: right;
-    background-size: cover;
-    width: 100%;
-    height: 100%;
-}
-
-.grid-container {
-    display: grid;
-    grid-template-columns: 30% auto;
-    grid-template-rows: 1fr auto;
-    max-width: 80%;
-    height: 100%;
-    gap: 10px;
-    overflow: hidden;
-    margin: auto;
-}
-
-.item1 {
-    grid-column: 1 / span 2;
-    grid-row: 1;
-}
-
-.item2 {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-    z-index: 1;
-}
-
-.item2 img {
-    transform: translateY(-2rem);
-}
-
-.item3 {
-    grid-column: 1 / span 2;
-    grid-row: 1 / span 2;
-    padding-top: 90px;
-    height: 700px;
-    justify-self: right;
-    margin-right: 70px;
-    margin-left: 170px;
-    z-index: 2;
-}
-
-.bloknot img {
-    max-width: 100%;
-    height: auto;
-    object-fit: contain;
-}
-
-.item4 {
-    grid-column: 1 / span 2;
-    grid-row: 2;
-    display: grid;
-    align-content: stretch;
-    height: auto;
-    justify-content: end;
-    justify-items: end;
-    z-index: 3;
-}
-
-.mini-bloknot {
-    visibility: hidden;
-}
-
-.block-item4 {
-    position: relative;
-    width: 100vh;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: nowrap;
-    height: 100%;
-    gap: 20px;
-    align-items: center;
-    justify-content: space-around;
-    padding: 20px;
-}
-
-.tochilka {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    order: 1;
-}
-
-.karandash {
-    position: relative;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    order: 3;
-}
-
-.tochilka img {
-    position: absolute;
-    height: auto;
-}
-
-.karandash img {
-    position: absolute;
-    height: auto;
-}
-
-.text-quote {
-    position: relative;
-    text-align: center;
-    width: 45%;
-    height: auto;
-    margin: 20px 0;
-    order: 2;
-}
-
-.quote {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
-    align-items: center;
-    margin-left: 40px;
-}
-
-.base-image,
-.toc_image,
-.overlay-image.image1,
-.overlay-image.image2 {
-    position: absolute;
-    height: auto;
-    max-width: 250px;
-}
-
-.base-image {
-    top: 10px;
-    transform: scale(1.4);
-    left: 20px;
-}
-
-.toc_image {
-    top: 110px;
-    left: 60px;
-}
-
-.overlay-image.image1 {
-    top: 80px;
-    left: 170px;
-}
-
-.overlay-image.image2 {
-    top: 140px;
-    left: 230px;
-}
-
-.next-image.big,
-.next-image.top,
-.next-image.bottom {
-    position: absolute;
-    max-width: 180px;
-    height: auto;
-}
-
-.next-image.top {
-    transform: translateY(13rem);
-    margin-left: -290px;
-}
-
-.next-image.bottom {
-    transform: translateY(11rem);
-    margin-left: -110px;
-}
-
-.big {
-    transform: scale(1);
-    margin-left: -170px;
-    margin-top: 160px;
-}
-
-
-.image-container {
-    position: relative;
-    display: inline-block; 
-}
-
-.image-container img {
-    display: block;
-    width: 100%;
-    height: auto;
-}
-
-.overlay-text {
-    position: absolute;
-    top: 10px;
-    right: 30px; 
-    bottom: 60px;
-    width: 40%; 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: start; 
-    color: #2B2A29; 
-    padding: 30px; 
-    border-radius: 5px; 
-    box-sizing: border-box; 
-    overflow: hidden; 
-}
-
-.overlay-text h1 {
     margin: 0;
-    font-size: 2em; 
-    line-height: 1.2; 
-    text-align: start; 
+    padding: 0;
 }
 
-.overlay-text p {
-    margin: 0;
-    font-size: 18px; 
-    line-height: 1.4; 
-    text-align: start; 
-} */
+#__nuxt {
+    display: flex;
+    flex-direction: column;
+}
 
-/* main закончен*/
+.font-clamp {
+    font-size: clamp(12px, 1.5vw, 16px);
+    /* Минимальный размер: 10px, предпочтительный: 2% от viewport, максимальный: 14px */
+    line-height: 1.3;
+    /* Для лучшей читаемости */
+}
+
+.font-clamp-author {
+    font-size: clamp(11px, 1.5vw, 16px);
+    /* Минимальный размер: 10px, предпочтительный: 1.5% от viewport, максимальный: 12px */
+    line-height: 1.2;
+    /* Для лучшей читаемости */
+}
+
+.phoneMain {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Для маленьких экранов (например, телефоны) */
+@media (max-width: 767px) {
+    .phoneMain {
+        background-image: url('/public/img/полосыPhone.png');
+    }
+}
+
+/* Для средних экранов (например, планшеты) */
+@media (min-width: 768px) and (max-width: 1023px) {
+    .phoneMain {
+        background-image: url('/public/img/полосы1024.png');
+    }
+}
+
+/* Для больших экранов (например, десктопы) */
+@media (min-width: 1024px) and (max-width: 1535px) {
+    .phoneMain {
+        background-image: url('/public/img/зебра_фон_полосыPL.png');
+    }
+}
+
+@media (min-width: 1536px) {
+    .phoneMain {
+        background-image: url('/public/img/зебра_фон_полосы.png');
+    }
+}
+
+
+
 
 
 
