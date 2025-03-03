@@ -1,7 +1,8 @@
 <template>
   <NuxtLoadingIndicator throttle= "0"/>
   <Navbar />
-  <main class="flex-auto  bg-[#FFEE00]/70">
+  <!-- flex auto -->
+  <main class=" bg-[#FFEE00]/70 m-0 p-0 box-border"> 
   <NuxtPage />
   </main>
   <Up />
