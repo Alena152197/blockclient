@@ -28,25 +28,6 @@ body,
     /* Для лучшей читаемости */
 }
 
-.phoneMainContainer {
-    width: 100%;
-    max-width: 767px;
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 article:hover img {
     transform: scale(1.1);
@@ -137,6 +118,18 @@ article img {
 .highlight-link:hover {
     animation: highlight 1s ease-in-out forwards;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* contact */
 /* @media screen and (max-width: 1024px) and (min-width: 769px) {
