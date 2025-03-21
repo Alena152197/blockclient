@@ -11,8 +11,8 @@
         <div class="center-content">
             <img src="../public/img/блокнот_зебра (2).png" alt="Картинка 3" class="center-image">
             <div class="quote-container">
-                <blockquote class="quote">"Мы все, как карандаши. 
-                    Каждый рисует свою судьбу. 
+                <blockquote class="quote">"Мы все, как карандаши.
+                    Каждый рисует свою судьбу.
                     Один ломается, другой тупит,
                     а кто-то затачивается и движется вперёд."</blockquote>
                 <p class="author">— Светлана Кременецкая</p>
@@ -81,22 +81,25 @@
 }
 
 .quote-container {
-    position: absolute; /* Фиксированное позиционирование */
+    position: absolute;
+    /* Фиксированное позиционирование */
     bottom: -26%;
     left: 60%;
     transform: translate(-50%, -40%);
     max-width: 420px;
-    white-space: initial; 
+    white-space: initial;
 }
 
 .quote {
-    font-size: clamp(1rem, 1vw, 1rem); /* Адаптивный размер шрифта */
+    font-size: clamp(1rem, 1vw, 1rem);
+    /* Адаптивный размер шрифта */
     font-style: italic;
     color: #d3cbcb;
 }
 
 .author {
-    font-size: clamp(0.8rem, 1.5vw, 1rem); /* Адаптивный размер шрифта */
+    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    /* Адаптивный размер шрифта */
     color: #cfcbcb;
     margin-top: 10px;
 }
@@ -135,16 +138,80 @@
 /* Медиа-запрос для max-width: 1600px */
 @media (max-width: 1600px) {
     .quote-container {
-        bottom: -32%; /* Опускаем цитату ниже */
-        transform: translate(-50%, -50%); /* Корректируем центрирование */
+        bottom: -32%;
+        /* Опускаем цитату ниже */
+        transform: translate(-50%, -50%);
+        /* Корректируем центрирование */
     }
 
     .quote {
-        font-size: clamp(0.9rem, 1vw, 0.9rem); /* Уменьшаем шрифт для лучшей читаемости */
+        font-size: clamp(0.9rem, 1vw, 0.9rem);
+        /* Уменьшаем шрифт для лучшей читаемости */
     }
 
     .author {
-        font-size: clamp(0.7rem, 1.5vw, 0.8rem); /* Уменьшаем шрифт автора */
+        font-size: clamp(0.7rem, 1.5vw, 0.8rem);
+        /* Уменьшаем шрифт автора */
     }
 }
+
+
+@media (max-width: 1500px) {
+    .phoneMain {
+        background-image: url(../public/img/зебра_полосы1536.png);
+    }
+
+    /* Левая часть */
+    .left-images {
+        left: 13%;
+        top: 53%;
+    }
+
+    /* Центральная часть */
+    .center-content {
+        left: 50%;
+        top: 51%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 58%;
+    }
+
+    .quote-container {
+        bottom: -31%;
+    }
+}
+
+@media (max-width: 1320px) {
+    .quote-container {
+        bottom: -43%;
+    }
+
+    .image-right-middle {
+        position: absolute;
+        bottom: -40px;
+        right: 40px;
+    }
+
+    .image-right-top {
+        position: absolute;
+        bottom: -30px;
+        right: -10px;
+    }
+
+    .image-right-bottom {
+        position: absolute;
+        bottom: 60px;
+        right: 30px;
+        scale: 0.8;
+    }
+}
+
+@media (max-width: 1200px) {
+    .phoneMain {
+        background-image: url(../public/img/полоски1024.png);
+        background-size: cover;
+    }
+}
+
+
 </style>
