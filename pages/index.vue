@@ -51,12 +51,14 @@
     background-position: right;
     background-repeat: no-repeat;
     border: 2px solid red;
+    overflow: hidden;
 }
 
 .left-images,
 .right-images,
 .center-content {
     position: absolute;
+    
 }
 
 /* Левая часть */
@@ -117,11 +119,13 @@
     right: 20%;
     bottom: 0;
     width: 9%;
+    
 }
 
 .right-images img {
     width: 100%;
     height: auto;
+    
 }
 
 .image-right-middle {
@@ -152,6 +156,8 @@
 
 .imageRightNone {
     display: none;
+    overflow: hidden;
+    
 }
 
 .grafKara {
@@ -513,21 +519,22 @@
 
 }
 
+
 @media (max-width: 650px) {
 
     .imageRightNone {
         display: block;
         position: absolute;
-        bottom: 46rem;
-        left: -40px;
-        scale: 4;
+        bottom: 48rem;
+        left: 1rem;
+        scale: 5;
         z-index: 5;
     }
 
     .left-images {
-        left: 13%;
+        left: 8%;
         top: 55%;
-        scale: 1.6;
+        scale: 1.8;
 
     }
 
@@ -536,63 +543,26 @@
         top: 43%;
         transform: translate(-50%, -50%);
         text-align: center;
-        width: 70%;
+        width: 65%;
         z-index: 3;
     }
 
-    .center-image {
-        content: url("../public/img/блокнотPhone.png");
-    }
-
-    .phoneMain {
-        background-image: url(../public/img/полосыPhone.png);
-        background-size: cover;
-    }
 
     /* Изменения для цитаты */
     .quote-container {
-        bottom: -14rem;
-        left: 93%;
+        bottom: -11rem;
+        left: 75%;
         transform: translateX(-50%);
         width: 280px;
         text-align: right;
     }
 
-    .quote {
-        font-size: clamp(0.9rem, 1.5vw, 1rem);
-        /* Адаптивный размер шрифта */
-        font-style: italic;
-        color: #d3cbcb;
-    }
-
-    .author {
-        font-size: clamp(0.8rem, 1.2vw, 0.8rem);
-        /* Адаптивный размер шрифта */
-        color: #cfcbcb;
-        margin-top: 10px;
-    }
-
-    .image-right-middle {
-        display: none;
-    }
-
-    .image-right-top {
-        display: none;
-    }
-
-    .image-right-bottom {
-        display: none;
-    }
-
-    .left-images img {
-        transform: rotate(-20deg);
-    }
 
     .grafKara {
         display: block;
         position: absolute;
-        bottom: 7rem;
-        left: -19rem;
+        bottom: 5rem;
+        left: -20rem;
         scale: 2.6;
         z-index: 5;
     }
@@ -600,9 +570,9 @@
     .topKara {
         display: block;
         position: absolute;
-        bottom: 5rem;
-        left: -16rem;
-        scale: 1;
+        bottom: 2rem;
+        left: -21rem;
+        scale: 1.2;
         z-index: 6;
     }
 
@@ -610,7 +580,7 @@
         display: block;
         position: absolute;
         bottom: 5rem;
-        left: -21rem;
+        left: -24rem;
         scale: 0.6;
         z-index: 6;
     }
@@ -618,8 +588,8 @@
     .tocKara {
         display: block;
         position: absolute;
-        bottom: 12rem;
-        left: -13rem;
+        bottom: 8rem;
+        left: -15rem;
         scale: 0.6;
         z-index: 6;
     }
@@ -627,11 +597,163 @@
     .phoneToc {
         display: block;
         position: absolute;
-        bottom: 11rem;
-        left: -18rem;
+        bottom: 8rem;
+        left: -20rem;
         scale: 1;
         z-index: 6;
     }
+
+
+}
+
+@media (max-width: 550px) {
+
+    .imageRightNone {
+        display: block;
+        position: absolute;
+        bottom: 48rem;
+        left: 3rem;
+        scale: 6;
+        z-index: 5;
+    }
+
+    .left-images {
+        left: 8%;
+        top: 60%;
+        scale: 2.2;
+
+    }
+
+    .center-content {
+        left: 50%;
+        top: 40%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 75%;
+        z-index: 3;
+    }
+
+
+    /* Изменения для цитаты */
+    .quote-container {
+        bottom: -16rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        text-align: right;
+    }
+
+    .quote {
+        font-size: 14px;
+        /* Адаптивный размер шрифта */
+        font-style: italic;
+        color: #d3cbcb;
+    }
+
+    .author {
+        font-size: 14px;
+        /* Адаптивный размер шрифта */
+        color: #cfcbcb;
+        margin-top: 10px;
+    }
+
+
+    .grafKara {
+        display: none;
+    }
+
+    .topKara {
+        display: none;
+    }
+
+    .nizKara {
+        display: none;
+    }
+
+    .tocKara {
+        display: none;
+    }
+
+    .phoneToc {
+        display: none;
+
+    }
+
+
+}
+
+@media (max-width: 430px) {
+
+.imageRightNone {
+    display: block;
+    position: absolute;
+    bottom: 51rem;
+    left: 2rem;
+    scale: 7.5;
+    z-index: 5;
+}
+
+.left-images {
+    left: 8%;
+    top: 52%;
+    scale: 2.5;
+
+}
+
+.center-content {
+    left: 50%;
+    top: 35%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    width: 82%;
+    z-index: 3;
+}
+
+
+/* Изменения для цитаты */
+.quote-container {
+    bottom: -16rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 300px;
+    text-align: right;
+}
+
+.quote {
+    font-size: 14px;
+    /* Адаптивный размер шрифта */
+    font-style: italic;
+    color: #d3cbcb;
+}
+
+.author {
+    font-size: 14px;
+    /* Адаптивный размер шрифта */
+    color: #cfcbcb;
+    margin-top: 10px;
+}
+
+
+.grafKara {
+    display: none;
+}
+
+.topKara {
+    display: none;
+}
+
+.nizKara {
+    display: none;
+}
+
+.tocKara {
+    display: none;
+}
+
+.phoneToc {
+    display: none;
+
+}
 
 
 }
