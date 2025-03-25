@@ -21,9 +21,17 @@
 
         <!-- Правая часть -->
         <div class="right-images">
+
             <img src="../public/img/завиток_большой.png" alt="Картинка 6" class="image-right-bottom">
             <img src="../public/img/карандаш.png" alt="Картинка 4" class="image-right-top">
             <img src="../public/img/карандаш_top.png" alt="Картинка 5" class="image-right-middle">
+            <img src="../public/img/блокнот_зебра1024 (3).png" alt="" class="imageRightBlock">
+            <img src="../public/img/блокнот_зебра768.png" alt="" class="imageRightNone">
+            <img src="../public/img/завиток большой_phone.png" alt="" class="topKara">
+            <img src="../public/img/завиток_top.png" alt="" class="nizKara">
+            <img src="../public/img/завиток_niz.png" alt="" class="tocKara">
+            <img src="../public/img/графит_phone.png" alt="" class="grafKara">
+            <img src="../public/img/точилкаPhone.png" alt="" class="phoneToc">
         </div>
     </div>
 
@@ -135,6 +143,39 @@
     scale: 0.7;
 }
 
+.imageRightBlock {
+    position: absolute;
+    bottom: 50px;
+    scale: 2.4;
+    display: none;
+}
+
+.imageRightNone {
+    display: none;
+}
+
+.grafKara {
+    display: none;
+}
+
+.topKara {
+    display: none;
+}
+
+.nizKara {
+    display: none;
+}
+
+.tocKara {
+    display: none;
+}
+
+.phoneToc {
+    display: none;
+
+}
+
+
 /* Медиа-запрос для max-width: 1600px */
 @media (max-width: 1600px) {
     .quote-container {
@@ -207,11 +248,392 @@
 }
 
 @media (max-width: 1200px) {
+    .center-content {
+        left: 48%;
+        top: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 70%;
+    }
+
+    .left-images {
+        left: 3%;
+        top: 59%;
+        scale: 1.2;
+    }
+
+    .quote-container {
+        bottom: -38%;
+        left: 50%;
+    }
+
+    .image-right-middle {
+        position: absolute;
+        bottom: -40px;
+        right: 85px;
+        scale: 1.2;
+    }
+
+    .image-right-top {
+        position: absolute;
+        bottom: -30px;
+        right: 35px;
+        scale: 1.2;
+    }
+
+    .image-right-bottom {
+        position: absolute;
+        bottom: 50px;
+        right: 80px;
+        scale: 0.9;
+    }
+
+
+
+}
+
+@media (max-width: 1024px) {
+
+    .left-images {
+        left: 13%;
+        top: 62%;
+        scale: 1.6;
+    }
+
+    .center-content {
+        left: 47%;
+        top: 43%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 50%;
+        z-index: 3;
+    }
+
+    .center-image {
+        content: url("../public/img/блокнотPhone.png");
+    }
+
     .phoneMain {
         background-image: url(../public/img/полоски1024.png);
         background-size: cover;
     }
+
+    /* Изменения для цитаты */
+    .quote-container {
+        bottom: -10rem;
+        left: 70%;
+        transform: translateX(-50%);
+        width: 500px;
+        text-align: center;
+    }
+
+    .quote {
+        font-size: clamp(0.8rem, 1.5vw, 1rem);
+        /* Адаптивный размер шрифта */
+        font-style: italic;
+        color: #d3cbcb;
+    }
+
+    .author {
+        font-size: clamp(0.7rem, 1.2vw, 0.8rem);
+        /* Адаптивный размер шрифта */
+        color: #cfcbcb;
+        margin-top: 10px;
+    }
+
+    .image-right-middle {
+        position: absolute;
+        bottom: -30px;
+        right: -70px;
+        scale: 1.4;
+    }
+
+    .image-right-top {
+        position: absolute;
+        bottom: -15px;
+        right: -130px;
+        scale: 1.4;
+    }
+
+    .image-right-bottom {
+        position: absolute;
+        bottom: 90px;
+        right: -140px;
+        scale: 1.2;
+    }
+
+    .imageRightBlock {
+        position: absolute;
+        bottom: 28rem;
+        z-index: 1;
+        scale: 4.5;
+        display: block;
+    }
+
+
 }
 
+@media (max-width: 875px) {
+    .quote-container {
+        bottom: -13rem;
+        left: 80%;
+        transform: translateX(-50%);
+        width: 300px;
+        text-align: center;
+    }
+
+    .imageRightNone {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .imageRightBlock {
+        display: none;
+    }
+
+    .imageRightNone {
+        display: block;
+        position: absolute;
+        bottom: 46rem;
+        left: -40px;
+        scale: 4;
+        z-index: 5;
+    }
+
+    .left-images {
+        left: 13%;
+        top: 55%;
+        scale: 1.6;
+
+    }
+
+    .center-content {
+        left: 50%;
+        top: 43%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 50%;
+        z-index: 3;
+    }
+
+    .center-image {
+        content: url("../public/img/блокнотPhone.png");
+    }
+
+    .phoneMain {
+        background-image: url(../public/img/полосыPhone.png);
+        background-size: cover;
+    }
+
+    /* Изменения для цитаты */
+    .quote-container {
+        bottom: -14rem;
+        left: 93%;
+        transform: translateX(-50%);
+        width: 280px;
+        text-align: right;
+    }
+
+    .quote {
+        font-size: clamp(0.9rem, 1.5vw, 1rem);
+        /* Адаптивный размер шрифта */
+        font-style: italic;
+        color: #d3cbcb;
+    }
+
+    .author {
+        font-size: clamp(0.8rem, 1.2vw, 0.8rem);
+        /* Адаптивный размер шрифта */
+        color: #cfcbcb;
+        margin-top: 10px;
+    }
+
+    .image-right-middle {
+        display: none;
+    }
+
+    .image-right-top {
+        display: none;
+    }
+
+    .image-right-bottom {
+        display: none;
+    }
+
+    .left-images img {
+        transform: rotate(-20deg);
+    }
+
+    .grafKara {
+        display: block;
+        position: absolute;
+        bottom: 7rem;
+        left: -19rem;
+        scale: 2.6;
+        z-index: 5;
+    }
+
+    .topKara {
+        display: block;
+        position: absolute;
+        bottom: 5rem;
+        left: -16rem;
+        scale: 1;
+        z-index: 6;
+    }
+
+    .nizKara {
+        display: block;
+        position: absolute;
+        bottom: 5rem;
+        left: -21rem;
+        scale: 0.6;
+        z-index: 6;
+    }
+
+    .tocKara {
+        display: block;
+        position: absolute;
+        bottom: 12rem;
+        left: -13rem;
+        scale: 0.6;
+        z-index: 6;
+    }
+
+    .phoneToc {
+        display: block;
+        position: absolute;
+        bottom: 11rem;
+        left: -18rem;
+        scale: 1;
+        z-index: 6;
+    }
+
+
+}
+
+@media (max-width: 650px) {
+
+    .imageRightNone {
+        display: block;
+        position: absolute;
+        bottom: 46rem;
+        left: -40px;
+        scale: 4;
+        z-index: 5;
+    }
+
+    .left-images {
+        left: 13%;
+        top: 55%;
+        scale: 1.6;
+
+    }
+
+    .center-content {
+        left: 50%;
+        top: 43%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 70%;
+        z-index: 3;
+    }
+
+    .center-image {
+        content: url("../public/img/блокнотPhone.png");
+    }
+
+    .phoneMain {
+        background-image: url(../public/img/полосыPhone.png);
+        background-size: cover;
+    }
+
+    /* Изменения для цитаты */
+    .quote-container {
+        bottom: -14rem;
+        left: 93%;
+        transform: translateX(-50%);
+        width: 280px;
+        text-align: right;
+    }
+
+    .quote {
+        font-size: clamp(0.9rem, 1.5vw, 1rem);
+        /* Адаптивный размер шрифта */
+        font-style: italic;
+        color: #d3cbcb;
+    }
+
+    .author {
+        font-size: clamp(0.8rem, 1.2vw, 0.8rem);
+        /* Адаптивный размер шрифта */
+        color: #cfcbcb;
+        margin-top: 10px;
+    }
+
+    .image-right-middle {
+        display: none;
+    }
+
+    .image-right-top {
+        display: none;
+    }
+
+    .image-right-bottom {
+        display: none;
+    }
+
+    .left-images img {
+        transform: rotate(-20deg);
+    }
+
+    .grafKara {
+        display: block;
+        position: absolute;
+        bottom: 7rem;
+        left: -19rem;
+        scale: 2.6;
+        z-index: 5;
+    }
+
+    .topKara {
+        display: block;
+        position: absolute;
+        bottom: 5rem;
+        left: -16rem;
+        scale: 1;
+        z-index: 6;
+    }
+
+    .nizKara {
+        display: block;
+        position: absolute;
+        bottom: 5rem;
+        left: -21rem;
+        scale: 0.6;
+        z-index: 6;
+    }
+
+    .tocKara {
+        display: block;
+        position: absolute;
+        bottom: 12rem;
+        left: -13rem;
+        scale: 0.6;
+        z-index: 6;
+    }
+
+    .phoneToc {
+        display: block;
+        position: absolute;
+        bottom: 11rem;
+        left: -18rem;
+        scale: 1;
+        z-index: 6;
+    }
+
+
+}
 
 </style>
