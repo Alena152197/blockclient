@@ -10,6 +10,25 @@
         <!-- Центральная часть -->
         <div class="center-content">
             <img src="../public/img/блокнот_зебра (2).png" alt="Картинка 3" class="center-image">
+            <div class="textKra">
+                <h4>Всем привет! <br>
+                    Будем знакомы, Меня зовут Алена. </h4>
+                <p>В этом блоге я хочу рассказать
+                    про свой жизненный путь, с чего всё
+                    началось, поиски себя и своего места
+                    в жизни, и всё ли так просто, как кажется
+                    на первый взгляд. <br><br>
+                    Надеюсь, моя история будет для кого-то
+                    полезной, как преодолеть трудности ,
+                    как не потерять себя и найти силы на
+                    что-то новое. <br><br>
+                    Жизнь, мягко говоря, непредсказуема.
+                    В один момент все идет хорошо, а потом
+                    вдруг что-то происходит, и вся жизнь
+                    переворачивается с ног на голову,
+                    так случилось и у меня...
+                </p>
+            </div>
             <div class="quote-container">
                 <blockquote class="quote">"Мы все, как карандаши.
                     Каждый рисует свою судьбу.
@@ -54,11 +73,30 @@
     overflow: hidden;
 }
 
+.textKra {
+    position: absolute;
+    top: 10%;
+    /* Размещаем текст ближе к верху */
+    left: 70%;
+    transform: translateX(-30%);
+    /* Центрируем только по горизонтали */
+    color: rgb(10, 10, 10);
+    font-size: 17px;
+    text-align: left;
+    width: 400px;
+    z-index: 10;
+    padding: 5px 10px;
+    border-radius: 5px;
+    height: auto;
+    overflow: hidden;
+    max-width: 90%;
+}
+
 .left-images,
 .right-images,
 .center-content {
     position: absolute;
-    
+
 }
 
 /* Левая часть */
@@ -119,13 +157,13 @@
     right: 20%;
     bottom: 0;
     width: 9%;
-    
+
 }
 
 .right-images img {
     width: 100%;
     height: auto;
-    
+
 }
 
 .image-right-middle {
@@ -157,7 +195,7 @@
 .imageRightNone {
     display: none;
     overflow: hidden;
-    
+
 }
 
 .grafKara {
@@ -200,6 +238,14 @@
         font-size: clamp(0.7rem, 1.5vw, 0.8rem);
         /* Уменьшаем шрифт автора */
     }
+
+    .textKra {
+        font-size: 15px;
+        width: 400px;
+        z-index: 10;
+        padding: 15px 30px;
+
+    }
 }
 
 
@@ -226,6 +272,15 @@
     .quote-container {
         bottom: -31%;
     }
+
+    .textKra {
+        top: 25px;
+        font-size: 14px;
+        width: 350px;
+        z-index: 10;
+        padding: 15px 30px;
+
+    }
 }
 
 @media (max-width: 1320px) {
@@ -250,6 +305,15 @@
         bottom: 60px;
         right: 30px;
         scale: 0.8;
+    }
+
+    .textKra {
+        top: 20px;
+        font-size: 13px;
+        width: 320px;
+        z-index: 10;
+        padding: 10px 30px;
+
     }
 }
 
@@ -301,17 +365,17 @@
 @media (max-width: 1024px) {
 
     .left-images {
-        left: 13%;
-        top: 62%;
-        scale: 1.6;
+        left: 18%;
+        top: 55%;
+        scale: 1.3;
     }
 
     .center-content {
-        left: 47%;
+        left: 50%;
         top: 43%;
         transform: translate(-50%, -50%);
         text-align: center;
-        width: 50%;
+        width: 40%;
         z-index: 3;
     }
 
@@ -327,9 +391,9 @@
     /* Изменения для цитаты */
     .quote-container {
         bottom: -10rem;
-        left: 70%;
+        left: 90%;
         transform: translateX(-50%);
-        width: 500px;
+        width: 300px;
         text-align: center;
     }
 
@@ -337,7 +401,7 @@
         font-size: clamp(0.8rem, 1.5vw, 1rem);
         /* Адаптивный размер шрифта */
         font-style: italic;
-        color: #d3cbcb;
+        color: #b0b3b0;
     }
 
     .author {
@@ -372,8 +436,17 @@
         position: absolute;
         bottom: 28rem;
         z-index: 1;
-        scale: 4.5;
+        left: -20px;
+        scale: 3.5;
         display: block;
+    }
+
+    .textKra {
+        top: 2%;
+        left: 32%;
+        font-size: 14px;
+        text-align: left;
+        width: 500px;
     }
 
 
@@ -390,6 +463,31 @@
 
     .imageRightNone {
         display: none;
+    }
+
+    .image-right-middle {
+        position: absolute;
+        bottom: -30px;
+        right: -40px;
+        scale: 1.4;
+    }
+
+    .image-right-top {
+        position: absolute;
+        bottom: -15px;
+        right: -90px;
+        scale: 1.4;
+    }
+
+    .image-right-bottom {
+        position: absolute;
+        bottom: 90px;
+        right: -100px;
+        scale: 1.2;
+    }
+
+    .textKra {
+        font-size: 12px;
     }
 }
 
@@ -516,6 +614,10 @@
         z-index: 6;
     }
 
+    .textKra {
+        font-size: 13px;
+    }
+
 
 }
 
@@ -603,6 +705,11 @@
         z-index: 6;
     }
 
+    .textKra {
+        font-size: 14px;
+        top: 3%;
+    }
+
 
 }
 
@@ -612,14 +719,14 @@
         display: block;
         position: absolute;
         bottom: 48rem;
-        left: 3rem;
+        left: 4rem;
         scale: 6;
         z-index: 5;
     }
 
     .left-images {
         left: 8%;
-        top: 60%;
+        top: 63%;
         scale: 2.2;
 
     }
@@ -636,7 +743,7 @@
 
     /* Изменения для цитаты */
     .quote-container {
-        bottom: -16rem;
+        bottom: -12rem;
         left: 50%;
         transform: translateX(-50%);
         width: 300px;
@@ -679,83 +786,95 @@
 
     }
 
+    
+    .textKra {
+        font-size: 12px;
+        top: 8%;
+        text-align: center;
+    }
+
 
 }
 
 @media (max-width: 430px) {
 
-.imageRightNone {
-    display: block;
-    position: absolute;
-    bottom: 51rem;
-    left: 2rem;
-    scale: 7.5;
-    z-index: 5;
+    .imageRightNone {
+        display: block;
+        position: absolute;
+        bottom: 47rem;
+        left: 3rem;
+        scale: 7.5;
+        z-index: 5;
+    }
+
+    .left-images {
+        left: 8%;
+        top: 60%;
+        scale: 2.5;
+
+    }
+
+    .center-content {
+        left: 50%;
+        top: 38%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        width: 82%;
+        z-index: 3;
+    }
+
+
+    /* Изменения для цитаты */
+    .quote-container {
+        bottom: -15rem;
+        left: 47%;
+        transform: translateX(-50%);
+        width: 250px;
+        text-align: right;
+    }
+
+    .quote {
+        font-size: 12px;
+        /* Адаптивный размер шрифта */
+        font-style: italic;
+        color: #d3cbcb;
+    }
+
+    .author {
+        font-size: 12px;
+        /* Адаптивный размер шрифта */
+        color: #cfcbcb;
+        margin-top: 10px;
+    }
+
+
+    .grafKara {
+        display: none;
+    }
+
+    .topKara {
+        display: none;
+    }
+
+    .nizKara {
+        display: none;
+    }
+
+    .tocKara {
+        display: none;
+    }
+
+    .phoneToc {
+        display: none;
+
+    }
+
+    .textKra {
+        font-size: 10px;
+        top: 8%;
+        text-align: center;
+    }
+
+
 }
-
-.left-images {
-    left: 8%;
-    top: 52%;
-    scale: 2.5;
-
-}
-
-.center-content {
-    left: 50%;
-    top: 35%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-    width: 82%;
-    z-index: 3;
-}
-
-
-/* Изменения для цитаты */
-.quote-container {
-    bottom: -16rem;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 300px;
-    text-align: right;
-}
-
-.quote {
-    font-size: 14px;
-    /* Адаптивный размер шрифта */
-    font-style: italic;
-    color: #d3cbcb;
-}
-
-.author {
-    font-size: 14px;
-    /* Адаптивный размер шрифта */
-    color: #cfcbcb;
-    margin-top: 10px;
-}
-
-
-.grafKara {
-    display: none;
-}
-
-.topKara {
-    display: none;
-}
-
-.nizKara {
-    display: none;
-}
-
-.tocKara {
-    display: none;
-}
-
-.phoneToc {
-    display: none;
-
-}
-
-
-}
-
 </style>
