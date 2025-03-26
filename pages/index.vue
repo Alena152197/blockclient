@@ -390,15 +390,15 @@
 
     /* Изменения для цитаты */
     .quote-container {
-        bottom: -10rem;
-        left: 90%;
+        bottom: -14rem;
+        left: 92%;
         transform: translateX(-50%);
         width: 300px;
         text-align: center;
     }
 
     .quote {
-        font-size: clamp(0.8rem, 1.5vw, 1rem);
+        font-size: 14px;
         /* Адаптивный размер шрифта */
         font-style: italic;
         color: #b0b3b0;
@@ -454,7 +454,7 @@
 
 @media (max-width: 875px) {
     .quote-container {
-        bottom: -13rem;
+        bottom: -16rem;
         left: 80%;
         transform: translateX(-50%);
         width: 300px;
@@ -572,8 +572,8 @@
     .grafKara {
         display: block;
         position: absolute;
-        bottom: 7rem;
-        left: -19rem;
+        bottom: 4rem;
+        left: -16rem;
         scale: 2.6;
         z-index: 5;
     }
@@ -581,7 +581,7 @@
     .topKara {
         display: block;
         position: absolute;
-        bottom: 5rem;
+        bottom: 2rem;
         left: -16rem;
         scale: 1;
         z-index: 6;
@@ -590,8 +590,8 @@
     .nizKara {
         display: block;
         position: absolute;
-        bottom: 5rem;
-        left: -21rem;
+        bottom: 4rem;
+        left: -20rem;
         scale: 0.6;
         z-index: 6;
     }
@@ -599,7 +599,7 @@
     .tocKara {
         display: block;
         position: absolute;
-        bottom: 12rem;
+        bottom: 8rem;
         left: -13rem;
         scale: 0.6;
         z-index: 6;
@@ -608,8 +608,8 @@
     .phoneToc {
         display: block;
         position: absolute;
-        bottom: 11rem;
-        left: -18rem;
+        bottom: 7rem;
+        left: -17rem;
         scale: 1;
         z-index: 6;
     }
@@ -652,7 +652,7 @@
 
     /* Изменения для цитаты */
     .quote-container {
-        bottom: -11rem;
+        bottom: -13rem;
         left: 75%;
         transform: translateX(-50%);
         width: 280px;
@@ -664,7 +664,7 @@
         display: block;
         position: absolute;
         bottom: 5rem;
-        left: -20rem;
+        left: -17rem;
         scale: 2.6;
         z-index: 5;
     }
@@ -673,7 +673,7 @@
         display: block;
         position: absolute;
         bottom: 2rem;
-        left: -21rem;
+        left: -18rem;
         scale: 1.2;
         z-index: 6;
     }
@@ -682,7 +682,7 @@
         display: block;
         position: absolute;
         bottom: 5rem;
-        left: -24rem;
+        left: -21rem;
         scale: 0.6;
         z-index: 6;
     }
@@ -690,8 +690,8 @@
     .tocKara {
         display: block;
         position: absolute;
-        bottom: 8rem;
-        left: -15rem;
+        bottom: 7rem;
+        left: -14rem;
         scale: 0.6;
         z-index: 6;
     }
@@ -699,8 +699,8 @@
     .phoneToc {
         display: block;
         position: absolute;
-        bottom: 8rem;
-        left: -20rem;
+        bottom: 7rem;
+        left: -18rem;
         scale: 1;
         z-index: 6;
     }
@@ -743,7 +743,7 @@
 
     /* Изменения для цитаты */
     .quote-container {
-        bottom: -12rem;
+        bottom: -14rem;
         left: 50%;
         transform: translateX(-50%);
         width: 300px;
