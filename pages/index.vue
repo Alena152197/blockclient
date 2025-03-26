@@ -69,7 +69,6 @@
     background-size: cover;
     background-position: right;
     background-repeat: no-repeat;
-    border: 2px solid red;
     overflow: hidden;
 }
 
