@@ -1,5 +1,9 @@
 <template>
-    <!-- <!— темная тема —> -->
+    <div>
+        <!-- Отладочный вывод -->
+        <p class="hidden">Текущая тема: {{ isDark ? 'темная' : 'светлая' }}</p>
+
+        <!-- Кнопка переключения темы -->
         <button @click="toggleTheme()" id="theme-toggle" type="button"
             class="text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 rounded-lg text-sm p-2.5 ml-4">
             <svg v-if="!isDark" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"
@@ -12,38 +16,56 @@
                     fill-rule="evenodd" clip-rule="evenodd"></path>
             </svg>
         </button>
+    </div>
 </template>
 
 <script setup>
-const isDarkMode = ref('') // класс для HTML
-const isDark = ref(false) // по умолчанию светлая тема
+import { ref, onMounted, watch } from 'vue';
+
+const isDark = ref(false);
 
 onMounted(() => {
-    if (localStorage.getItem('color-theme') === 'dark') {
+    const savedTheme = localStorage.getItem('color-theme');
+    if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         isDark.value = true;
-        isDarkMode.value = 'dark'
+        document.documentElement.classList.add('dark');
     } else {
         isDark.value = false;
-        isDarkMode.value = ''
+        document.documentElement.classList.remove('dark');
     }
 });
 
-// // Функция для переключения темы
 const toggleTheme = () => {
     isDark.value = !isDark.value;
     if (isDark.value) {
         document.documentElement.classList.add('dark');
         localStorage.setItem('color-theme', 'dark');
-        console.log(isDark.value)
     } else {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('color-theme', 'light');
     }
 };
 
-useHead({
-    htmlAttrs: {
-        class: isDarkMode.value
+watch(isDark, (newVal) => {
+    if (newVal) {
+        document.documentElement.classList.add('dark');
+    } else {
+        document.documentElement.classList.remove('dark');
     }
-})
+});
 </script>
+
+<style>
+/* Общие стили */
+body {
+    background-color: white;
+    color: black;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+/* Стили для темной темы */
+.dark body {
+    background-color: #121212;
+    color: white;
+}
+</style>

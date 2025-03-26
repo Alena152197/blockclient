@@ -726,7 +726,7 @@
 
     .left-images {
         left: 8%;
-        top: 63%;
+        top: 58%;
         scale: 2.2;
 
     }
