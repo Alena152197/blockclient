@@ -29,11 +29,11 @@
                     class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">Зарегистрироваться</button>
                 <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
             </form>
-            <p>Есть аккаунт? <button @click="index.authToggle = true">Войди</button></p>
+            <p>Есть аккаунт? <button @click="index.authToggle = true" class="cursor-pointer">Войди</button></p>
         </div>
     </div>
-    <div v-else class="text-center mx-1.5">
-        Вы авторизованы, <button @click="index.logout">Выйти</button>
+    <div v-else class="text-center mx-1.5 cursor-pointer">
+        Вы авторизованы, <button @click="index.logout" class="cursor-pointer">Выйти</button>
 
         <ul>
             <li>Email: {{ index.userMe.email }}</li>
