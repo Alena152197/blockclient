@@ -1,90 +1,92 @@
 <template>
-    <div class="containerForm">
-        <div class="boxForm">
-            <form class="registration-form" id="registrationForm">
-            <h2>Вход</h2>
-            <input type="email" id="email" placeholder="Email" required>
-            <input type="password" id="password" placeholder="Пароль" required>
-            <button type="submit">Войти</button>
-            <div class="error-message" id="errorMessage"></div>
-        </form>
+    <div v-if="!index.userMe.documentId" class="flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
+        <!-- Вход -->
+        <div v-if="index.authToggle" class="bg-white p-6 rounded-lg shadow-md w-full">
+            <form @submit.prevent="index.login(userForma)" class="registration-form" id="loginForm">
+                <h2 class="text-center text-2xl font-semibold mb-6">Вход</h2>
+                <input v-model="userForma.email" type="email" id="email" placeholder="Email" required
+                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input v-model="userForma.password" type="password" id="password" placeholder="Пароль" required
+                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button type="submit"
+                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">Войти</button>
+                <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
+            </form>
+            <p>Нет ааканута? <button @click="index.authToggle = false">Создать аакаунт</button></p>
+        </div>
+
+        <!-- Регистрация -->
+        <div v-else class="bg-white p-6 rounded-lg shadow-md w-full">
+            <form @submit.prevent="registr" class="registration-form" id="registrationForm">
+                <h2 class="text-center text-2xl font-semibold mb-6">Регистрация</h2>
+                <input v-model="userForma.email" type="email" id="email" placeholder="Email" required
+                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input v-model="userForma.password" type="password" id="password" placeholder="Пароль" required
+                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required
+                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                <button type="submit"
+                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">Зарегистрироваться</button>
+                <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
+            </form>
+            <p>Есть аккаунт? <button @click="index.authToggle = true">Войди</button></p>
         </div>
     </div>
+    <div v-else class="text-center mx-1.5">
+        Вы авторизованы, <button @click="index.logout">Выйти</button>
 
+        <ul>
+            <li>Email: {{ index.userMe.email }}</li>
+        </ul>
+    </div>
 </template>
 
+<script setup>
+const index = useSearchStore();
+const userForma = ref({})
+const newID = ref(0)
 
-<style scoped>
+const fetchUsers = async () => {
+    try {
+        const response = await $fetch('https://324cbb377ef9.vps.myjino.ru/api/users?fields=username&sort=username:desc');
+        const lastUser = response[0];
 
-.containerForm {
-    max-width: 500px;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    margin: 0 auto;
+        if (lastUser && lastUser.username) {
+            const match = lastUser.username.match(/\d+/);
+            if (match) {
+                newID.value = match[0];
+            }
+        } 
+    } catch (error) {
+        console.log(`Не вышло получить последний id пользователя: ${error}`);
+    }
+};
+
+const registr = async () => {
+    try {
+        await fetchUsers()
+        console.log(newID.value);
+        if (newID) {
+            const response = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/auth/local/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: {
+                    "username": `id${+newID.value + 1}`,
+                    "email": userForma.value.email,
+                    "password": userForma.value.password
+                },
+            });
+
+            const data = await response;
+            localStorage.setItem('jwt', data.jwt);
+        }
+
+    } catch (error) {
+        console.error('Ошибка при обновлении просмотров:', error);
+    } finally {
+        userForma.value = {}
+    }
 }
-
-.boxForm {
-    max-width: 700px;
-    height: 300px;
-    border-radius: 10px;
-    margin: 3rem;
-    
-}
-
-.registration-form {
-    background: #fff;
-    padding: 50px;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    
-}
-
-.registration-form h2 {
-    text-align: center;
-    margin-bottom: 30px;
-    margin-top: 10px;
-}
-
-.registration-form input[type="email"],
-.registration-form input[type="password"] {
-    max-width: 300px;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-}
-
-.registration-form button {
-    width: 40%;
-    padding: 10px;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    
-}
-
-.registration-form button:hover {
-    background-color: #218838;
-}
-.error-message {
-    color: red;
-    font-size: 14px;
-    margin-top: 10px;
-    text-align: center;
-}
-
-
-</style>
-
-
+</script>
