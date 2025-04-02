@@ -9,10 +9,10 @@
                 <input v-model="userForma.password" type="password" id="password" placeholder="Пароль" required
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
                 <button type="submit"
-                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">Войти</button>
+                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200 cursor-pointer">Войти</button>
                 <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
             </form>
-            <p>Нет ааканута? <button @click="index.authToggle = false">Создать аакаунт</button></p>
+            <p>Нет ааканута? <button @click="index.authToggle = false" class="cursor-pointer">Создать аакаунт</button></p>
         </div>
 
         <!-- Регистрация -->
@@ -26,14 +26,14 @@
                 <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
                 <button type="submit"
-                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200">Зарегистрироваться</button>
+                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200 cursor-pointer">Зарегистрироваться</button>
                 <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
             </form>
             <p>Есть аккаунт? <button @click="index.authToggle = true" class="cursor-pointer">Войди</button></p>
         </div>
     </div>
     <div v-else class="text-center mx-1.5 cursor-pointer">
-        Вы авторизованы, <button @click="index.logout" class="cursor-pointer">Выйти</button>
+        Вы авторизованы, <button @click="index.logout" class="cursor-pointer border-1 rounded bg-white p-1">Выйти</button>
 
         <ul>
             <li>Email: {{ index.userMe.email }}</li>
