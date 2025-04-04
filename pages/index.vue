@@ -40,7 +40,6 @@
 
         <!-- Правая часть -->
         <div class="right-images">
-
             <img src="../public/img/завиток_большой.png" alt="Картинка 6" class="image-right-bottom">
             <img src="../public/img/карандаш.png" alt="Картинка 4" class="image-right-top">
             <img src="../public/img/карандаш_top.png" alt="Картинка 5" class="image-right-middle">
