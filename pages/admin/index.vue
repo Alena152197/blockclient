@@ -1,4 +1,5 @@
 <template>
+
     <div v-if="!index.userMe.documentId" class="flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
         <!-- Вход -->
         <div v-if="index.authToggle" class="bg-white p-6 rounded-lg shadow-md w-full">
@@ -32,13 +33,16 @@
             <p>Есть аккаунт? <button @click="index.authToggle = true" class="cursor-pointer">Войди</button></p>
         </div>
     </div>
-    <div v-else class="text-center mx-1.5 cursor-pointer">
+    <div v-else class="text-center mx-1.5">
         Вы авторизованы, <button @click="index.logout" class="cursor-pointer border-1 rounded bg-white p-1">Выйти</button>
 
         <ul>
             <li>Email: {{ index.userMe.email }}</li>
         </ul>
     </div>
+
+    
+
 </template>
 
 <script setup>
