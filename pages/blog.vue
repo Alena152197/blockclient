@@ -1,7 +1,7 @@
 <template>
 <!-- gap-2 mb-4 p-4 -->
     <div class="">
-        <h2 class="text-4xl font-extrabold my-0 p-4 dark:text-white text-center">Блог</h2>
+        <h2 class="text-4xl font-extrabold my-0 p-1 dark:text-white text-center">Блог</h2>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">

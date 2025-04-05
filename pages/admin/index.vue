@@ -3,7 +3,7 @@
         class="flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
         <!-- Вход -->
         <div v-if="index.authToggle" class="bg-white p-6 rounded-lg shadow-md w-full">
-            <form @submit.prevent="login" class="registration-form" id="loginForm">
+            <form @submit.prevent="login(userForma)" class="registration-form" id="loginForm">
                 <h2 class="text-center text-2xl font-semibold mb-6">Вход</h2>
                 <input v-model="userForma.email" type="email" id="email" placeholder="Email" required
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
@@ -11,7 +11,10 @@
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
                 <button type="submit"
                     class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200 cursor-pointer">Войти</button>
-                <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
+                <div v-if="loginError" class="error-message text-red-500 text-center mt-2">{{ loginError }}</div>
+                <!-- Сообщение об успехе -->
+                <div v-if="loginSuccessMessage" class="success-message text-green-500 text-center mt-2">{{
+                    loginSuccessMessage }}</div>
             </form>
             <p>Нет аккаунта? <button @click="index.authToggle = false" class="cursor-pointer">Создать аккаунт</button>
             </p>
@@ -25,12 +28,12 @@
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
                 <input v-model="userForma.password" type="password" id="password" placeholder="Пароль" required
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input v-model="userForma.confirmPassword" type="password" id="confirmPassword"
-                    placeholder="Подтвердите пароль" required
+                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required
                     class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
                 <button type="submit"
                     class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200 cursor-pointer">Зарегистрироваться</button>
-                <div class="error-message text-red-500 text-center mt-2" id="errorMessage"></div>
+                <div v-if="registrationError" class="error-message text-red-500 text-center mt-2">{{ registrationError
+                    }}</div>
             </form>
             <p>Есть аккаунт? <button @click="index.authToggle = true" class="cursor-pointer">Войти</button></p>
         </div>
@@ -46,15 +49,17 @@
 </template>
 
 <script setup>
-
+import { ref } from 'vue';
+import { useRouter } from 'vue-router'; // Импортируем useRouter
 const index = useSearchStore();
-const userForma = ref({
-    email: '',
-    password: '',
-    confirmPassword: ''
-});
+const userForma = ref({});
 const newID = ref(0);
-const router = useRouter(); // Создаем экземпляр router
+const router = useRouter(); // Инициализируем router
+
+// Переменные для хранения сообщений об ошибках и успехе
+const loginError = ref('');
+const registrationError = ref('');
+const loginSuccessMessage = ref(''); // Новое состояние для сообщения об успехе
 
 const fetchUsers = async () => {
     try {
@@ -68,31 +73,16 @@ const fetchUsers = async () => {
             }
         }
     } catch (error) {
-        console.log(`Не удалось получить последний id пользователя: ${error}`);
-    }
-};
-
-const login = async () => {
-    try {
-        await index.login(userForma.value); // Предполагается, что метод login возвращает Promise
-        router.push('/'); // Перенаправление на главную страницу после успешного входа
-    } catch (error) {
-        document.getElementById('errorMessage').innerText = error.message; // Отображение сообщения об ошибке
+        console.log(`Не вышло получить последний id пользователя: ${error}`);
     }
 };
 
 const registr = async () => {
+    registrationError.value = ''; // Сброс сообщения об ошибке
     try {
         await fetchUsers();
         console.log(newID.value);
-
-        // Проверка на совпадение паролей
-        if (userForma.value.password !== userForma.value.confirmPassword) {
-            document.getElementById('errorMessage').innerText = "Пароли не совпадают.";
-            return;
-        }
-
-        if (newID.value) {
+        if (newID) {
             const response = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/auth/local/register`, {
                 method: 'POST',
                 headers: {
@@ -107,14 +97,45 @@ const registr = async () => {
 
             const data = await response;
             localStorage.setItem('jwt', data.jwt);
-            userForma.value = { email: '', password: '', confirmPassword: '' }; // Сброс формы только после успешной регистрации
-            document.getElementById('errorMessage').innerText = ""; // Очистка сообщения об ошибке
-        } else {
-            throw new Error("Не удалось получить новый ID пользователя.");
+            router.push('/'); // Перенаправление на главную страницу после успешной регистрации
         }
+
     } catch (error) {
+        registrationError.value = 'Ошибка при регистрации: ' + error.message; // Установка сообщения об ошибке
         console.error('Ошибка при регистрации:', error);
-        document.getElementById('errorMessage').innerText = error.message; // Отображение сообщения об ошибке
+    } finally {
+        userForma.value = {};
+    }
+}
+
+const login = async (userForma) => {
+    loginError.value = ''; // Сброс сообщения об ошибке
+    try {
+        const response = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/auth/local`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: {
+                "identifier": userForma.email,
+                "password": userForma.password
+            },
+        });
+
+        const data = await response;
+        localStorage.setItem('jwt', data.jwt);
+
+        // Показываем сообщение об успешном входе
+        loginSuccessMessage.value = 'Вход выполнен успешно!';
+
+        // Задержка перед перенаправлением
+        setTimeout(() => {
+            router.push('/'); // Перенаправление на главную страницу
+        }, 2000); // Ждем 3 секунды
+
+    } catch (error) {
+        loginError.value = 'Ошибка при входе, неверно введённые данные'; // Установка сообщения об ошибке
+        console.error('Ошибка при входе');
     }
 }
 </script>

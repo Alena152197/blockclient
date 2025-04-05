@@ -74,7 +74,8 @@
                         <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="avatarButton">
                             <li>
                                 <NuxtLink to="/profile"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
                                     Профиль
                                 </NuxtLink>
                             </li>
