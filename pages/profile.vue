@@ -1,10 +1,10 @@
 <template>
   <div class="profMain p-6 rounded-lg shadow-2xl w-full max-w-md mx-auto my-12 text-left flex flex-col md:flex-row">
     <!-- Фотография и кнопка смены фото -->
-    <div class="flex flex-col justify-center items-center mr-0 md:mr-6 mb-6 md:mb-0">
+    <div class="flex flex-col  items-center mt-15 mr-0 md:mr-6 mb-6 md:mb-0">
       <div
         class="relative w-32 h-32 mb-2 rounded-full overflow-hidden bg-gray-200 border-4 border-blue-500 cursor-pointer transition-transform transform hover:scale-105">
-        <img :src="profileImage" alt="Фото профиля" class="w-full h-full object-cover">
+        <img :src="profileImage" alt="Фото профиля" class="w-full h-full text-center object-cover">
       </div>
       <button
         class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-sm md:text-base"
