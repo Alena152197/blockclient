@@ -7,7 +7,8 @@
         <img :src="profileImage" alt="Фото профиля" class="w-full h-full object-cover">
       </div>
       <button
-        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-sm md:text-base">
+        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300 text-sm md:text-base"
+        @click="changeImage">
         Сменить фото
       </button>
       <input type="file" ref="uploadImage" accept="image/*" class="hidden" @change="onImageChange">
@@ -68,7 +69,8 @@
 
       <!-- Кнопка отправки -->
       <button
-        class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300 transform hover:scale-105 text-sm md:text-base">
+        class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300 transform hover:scale-105 text-sm md:text-base"
+        @click="submitForm">
         Отправить
       </button>
     </div>
@@ -89,10 +91,14 @@ const formData = ref({
   social: '' // Необязательное поле
 });
 
+// Референс для input[type="file"]
+const uploadImage = ref(null);
+
 // Метод для открытия окна выбора файла
 const changeImage = () => {
-  const uploadInput = document.querySelector('input[type="file"]');
-  uploadInput.click();
+  if (uploadImage.value) {
+    uploadImage.value.click(); // Программно вызываем клик на input
+  }
 };
 
 // Метод для обработки загруженного изображения
