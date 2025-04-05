@@ -1,79 +1,128 @@
 <template>
-
-<div class="max-w-3xl mx-auto my-10 p-6 bg-white rounded-lg shadow-md">
-    <h1 class="text-2xl font-bold text-center text-gray-800 mb-6">Заполните ваш профиль</h1>
-    <form action="/submit-profile" method="POST" enctype="multipart/form-data">
-      <!-- Фото -->
-      <div class="mb-4">
-        <label for="avatar" class="block text-sm font-medium text-gray-700">Фото профиля:</label>
-        <input type="file" id="avatar" name="avatar" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100" required>
+  <div class=" p-6 rounded-lg shadow-2xl w-full max-w-md mx-auto my-12 text-left flex">
+    <!-- Фотография и кнопка смены фото -->
+    <div class="flex flex-col justify-center items-center mr-6">
+      <div
+        class="relative w-32 h-32 mb-2 rounded-full overflow-hidden bg-gray-200 border-4 border-blue-500 cursor-pointer transition-transform transform hover:scale-105">
+        <img :src="profileImage" alt="Фото профиля" class="w-full h-full object-cover">
       </div>
+      <button class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition duration-300"
+        @click="changeImage">
+        Сменить фото
+      </button>
+      <input type="file" ref="uploadImage" accept="image/*" class="hidden" @change="onImageChange">
+    </div>
+
+    <div class="flex-1">
+      <h1 class="text-3xl font-bold mb-6 text-gray-800">Мой профиль</h1>
 
       <!-- Имя и фамилия -->
       <div class="mb-4">
-        <label for="name" class="block text-sm font-medium text-gray-700">Имя и фамилия:</label>
-        <input type="text" id="name" name="name" placeholder="Введите ваше имя и фамилию" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
+        <label for="firstName" class="block text-left text-sm font-medium text-gray-700 mb-2">Имя</label>
+        <input v-model="formData.firstName" type="text" id="firstName" placeholder="Введите ваше имя"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
       </div>
 
+      <div class="mb-4">
+        <label for="lastName" class="block text-left text-sm font-medium text-gray-700 mb-2">Фамилия</label>
+        <input v-model="formData.lastName" type="text" id="lastName" placeholder="Введите вашу фамилию"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+      </div>
+
+      <!-- Email -->
+      <div class="mb-4">
+        <label for="email" class="block text-left text-sm font-medium text-gray-700 mb-2">Email</label>
+        <input v-model="formData.email" type="email" id="email" placeholder="Введите ваш email"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+      </div>
+
+      <!-- Номер телефона -->
+      <div class="mb-4">
+        <label for="phone" class="block text-left text-sm font-medium text-gray-700 mb-2">Телефон
+          (необязательно)</label>
+        <input v-model="formData.phone" type="tel" id="phone" placeholder="Введите ваш номер телефона"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+      </div>
 
       <!-- Город -->
       <div class="mb-4">
-        <label for="city" class="block text-sm font-medium text-gray-700">Город:</label>
-        <input type="text" id="city" name="city" placeholder="Например: Москва, Россия" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-      </div>
-
-      <!-- Электронная почта -->
-      <div class="mb-4">
-        <label for="email" class="block text-sm font-medium text-gray-700">Электронная почта:</label>
-        <input type="email" id="email" name="email" placeholder="Введите ваш email" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" required>
-      </div>
-
-      <!-- Телефон -->
-      <div class="mb-4">
-        <label for="phone" class="block text-sm font-medium text-gray-700">Телефон:</label>
-        <input type="tel" id="phone" name="phone" placeholder="+7 (999) 123-45-67" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-      </div>
-
-      <!-- Профессия -->
-      <div class="mb-4">
-        <label for="profession" class="block text-sm font-medium text-gray-700">Профессия:</label>
-        <input type="text" id="profession" name="profession" placeholder="Например: Frontend-разработчик" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-      </div>
-
-      <!-- О себе -->
-      <div class="mb-4">
-        <label for="about" class="block text-sm font-medium text-gray-700">О себе:</label>
-        <textarea id="about" name="about" rows="4" placeholder="Расскажите о себе" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-      </div>
-
-      <!-- Навыки -->
-      <div class="mb-4">
-        <label for="skills" class="block text-sm font-medium text-gray-700">Навыки (через запятую):</label>
-        <input type="text" id="skills" name="skills" placeholder="Например: HTML, CSS, JavaScript" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-      </div>
-
-      <!-- Опыт работы -->
-      <div class="mb-4">
-        <label for="experience" class="block text-sm font-medium text-gray-700">Опыт работы:</label>
-        <textarea id="experience" name="experience" rows="4" placeholder="Опишите ваш опыт работы" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-      </div>
-
-      <!-- Портфолио -->
-      <div class="mb-4">
-        <label for="portfolio" class="block text-sm font-medium text-gray-700">Портфолио (ссылки через запятую):</label>
-        <input type="text" id="portfolio" name="portfolio" placeholder="Например: https://example.com" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+        <label for="city" class="block text-left text-sm font-medium text-gray-700 mb-2">Город</label>
+        <select v-model="formData.city"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
+          <option value="">Выберите город</option>
+          <option value="Москва">Москва</option>
+          <option value="Санкт-Петербург">Санкт-Петербург</option>
+          <option value="Казань">Казань</option>
+          <option value="Новосибирск">Новосибирск</option>
+          <option value="Екатеринбург">Екатеринбург</option>
+        </select>
       </div>
 
       <!-- Социальные сети -->
-      <div class="mb-4">
-        <label for="socials" class="block text-sm font-medium text-gray-700">Социальные сети (ссылки через запятую):</label>
-        <input type="text" id="socials" name="socials" placeholder="Например: Instagram, LinkedIn" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+      <div class="mb-6">
+        <label for="social" class="block text-left text-sm font-medium text-gray-700 mb-2">Социальные сети
+          (необязательно)</label>
+        <input v-model="formData.social" type="text" id="social" placeholder="Введите ссылку на соцсеть"
+          class="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">
       </div>
 
       <!-- Кнопка отправки -->
-      <button type="submit" class="w-full py-2 px-4 bg-indigo-600 text-white font-semibold rounded-md shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-        Сохранить профиль
+      <button
+        class="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-300 transform hover:scale-105"
+        @click="submitForm">
+        Отправить
       </button>
-    </form>
+    </div>
   </div>
 </template>
+
+<script setup>
+import { ref } from 'vue';
+
+// Реактивные данные
+const profileImage = ref('https://via.placeholder.com/100');
+const formData = ref({
+  firstName: '',
+  lastName: '',
+  email: '',
+  phone: '', // Необязательное поле
+  city: '',
+  social: '' // Необязательное поле
+});
+
+// Метод для открытия окна выбора файла
+const changeImage = () => {
+  const uploadInput = document.querySelector('input[type="file"]');
+  uploadInput.click();
+};
+
+// Метод для обработки загруженного изображения
+const onImageChange = (event) => {
+  const file = event.target.files[0];
+  if (file) {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      profileImage.value = e.target.result; // Обновляем src изображения
+    };
+    reader.readAsDataURL(file);
+  }
+};
+
+// Метод для отправки формы
+const submitForm = () => {
+  const { firstName, lastName, email, city } = formData.value;
+
+  // Проверяем только обязательные поля
+  if (!firstName || !lastName || !email || !city) {
+    alert('Пожалуйста, заполните все обязательные поля.');
+    return;
+  }
+
+  console.log('Данные профиля:', {
+    ...formData.value,
+    profileImage: profileImage.value
+  });
+
+  alert('Данные успешно отправлены!');
+};
+</script>
