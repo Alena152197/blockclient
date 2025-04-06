@@ -1,6 +1,6 @@
 <template>
     <div v-if="!index.userMe.documentId"
-        class="flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
+        class=" flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
         <!-- Вход -->
         <div v-if="index.authToggle" class="bg-white p-6 rounded-lg shadow-md w-full">
             <form @submit.prevent="login(userForma)" class="registration-form" id="loginForm">

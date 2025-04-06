@@ -1,16 +1,18 @@
 <template>
-<!-- gap-2 mb-4 p-4 -->
     <div class="">
         <h2 class="text-4xl font-extrabold my-0 p-1 dark:text-white text-center">Блог</h2>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
-                    <img class="rounded-t-lg" :src="base_url+post.img.url" :alt=post.img.alternativeText />
+                    <!-- Добавляем класс для изображений -->
+                    <img class="rounded-t-lg w-full h-48 object-cover" :src="base_url + post.img.url"
+                        :alt="post.img.alternativeText" />
                 </NuxtLink>
                 <div class="p-5">
                     <NuxtLink :to="'/post/' + post.documentId">
-                        <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-400">{{ post.title }}</h5>
+                        <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-400">{{
+                            post.title }}</h5>
                     </NuxtLink>
                     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ post.desc }}</p>
                     <NuxtLink :to="'/post/' + post.documentId"
@@ -26,7 +28,7 @@
             </article>
         </div>
         <button v-if="!(displayedPosts.length === posts.length)" @click="loadMore" type="button"
-            class="block m-auto w-40  my-8 bg-[#a79d1c]/50 text-[#a79d1c] hover:text-white border border-[#a79d1c] hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-[#a79d1c] font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
+            class="block m-auto w-40 my-8 bg-[#a79d1c]/50 text-[#a79d1c] hover:text-white border border-[#a79d1c] hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-[#a79d1c] font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
             Смотреть еще
         </button>
     </div>
@@ -45,5 +47,3 @@ const loadMore = () => {
 
 const base_url = "https://324cbb377ef9.vps.myjino.ru"
 </script>
-
-

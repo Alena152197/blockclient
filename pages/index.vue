@@ -56,7 +56,12 @@
 
 </template>
 
+
+
 <style scoped>
+
+
+
 .phoneMain {
     position: relative;
     display: flex;
