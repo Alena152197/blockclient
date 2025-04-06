@@ -13,6 +13,7 @@
 const base = 'https://324cbb377ef9.vps.myjino.ru'
 const api = await $fetch(`${base}/api/config?populate=*`)
 const config = api.data
+const index = useSearchStore();
 
 useHead({
   title: config.title,
@@ -33,6 +34,13 @@ useHead({
     ]
   }
 })
+
+onMounted(() => {
+  index.fetchUserMe();
+  index.config = config;
+  
+})
+
 </script>
 
 

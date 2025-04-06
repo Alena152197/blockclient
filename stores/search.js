@@ -3,12 +3,13 @@ export const useSearchStore = defineStore('search', {
     searchQuery: ref(' '),
     authToggle: true, //перключатель
     userMe: {},
+    config: {},
   }),
   actions: {
     async fetchUserMe() {
       try {
         const token = localStorage.getItem('jwt')
-        const response = await fetch('https://324cbb377ef9.vps.myjino.ru/api/users/me',
+        const response = await fetch('https://324cbb377ef9.vps.myjino.ru/api/users/me?populate=*',
           {
             method: 'GET',
             headers: {
@@ -19,6 +20,9 @@ export const useSearchStore = defineStore('search', {
 
         const data = await response.json();
         this.userMe = data;
+
+        console.log(data);
+        
       } catch (error) {
         console.log(error);
       }
@@ -53,5 +57,6 @@ export const useSearchStore = defineStore('search', {
         console.log('Ошибка при авторизации:', error);
       }
     },
-  }
+  },
+  persist: true,
 })

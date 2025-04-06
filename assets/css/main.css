@@ -120,12 +120,11 @@ article img {
 }
 
 
-img {
-    user-select: none; /* Запрет выделения */
-    -webkit-user-drag: none; /* Запрет перетаскивания */
-    pointer-events: none; /* Отключение взаимодействия с изображением */
-}
-
+/* img {
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none; 
+} */
 
 
 

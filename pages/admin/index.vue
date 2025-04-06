@@ -97,6 +97,11 @@ const registr = async () => {
 
             const data = await response;
             localStorage.setItem('jwt', data.jwt);
+
+            if(!response.ok) {
+                index.userMe = data.user;
+            }
+
             router.push('/'); // Перенаправление на главную страницу после успешной регистрации
         }
 
@@ -124,6 +129,10 @@ const login = async (userForma) => {
 
         const data = await response;
         localStorage.setItem('jwt', data.jwt);
+
+        if(!response.ok) {
+            index.userMe = data.user;
+        }
 
         // Показываем сообщение об успешном входе
         loginSuccessMessage.value = 'Вход выполнен успешно!';

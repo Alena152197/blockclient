@@ -6,9 +6,8 @@
             <img src="../public/img/блокнот_море.png" alt="Картинка 1" class="image-left-top">
             <img src="../public/img/блокнот_горы.png" alt="Картинка 2" class="image-left-bottom">
         </div>
-
         <!-- Центральная часть -->
-        <div class="center-content">
+        <div class="center-content" v-if="index.config.primeryBlock">
             <img src="../public/img/блокнот_зебра (2).png" alt="Картинка 3" class="center-image">
             <div class="textKra">
                 <h4>Всем привет! <br>
@@ -56,6 +55,10 @@
 
 </template>
 
+
+<script setup>
+const index = useSearchStore();
+</script>
 
 
 <style scoped>
