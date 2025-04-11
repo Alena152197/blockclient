@@ -75,14 +75,14 @@
                             <li>
                                 <NuxtLink to="/profile"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
+                                    :class="{ 'md:text-gray-700': isActive('profile'), 'dark:text-blue-700': isActive('profile') }">
                                     Профиль
                                 </NuxtLink>
                             </li>
                             <li>
                                 <NuxtLink to="/console"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
+                                    :class="{ 'md:text-gray-700': isActive('console'), 'dark:text-blue-700': isActive('console') }">
                                     Консоль
                                 </NuxtLink>
                             </li>
@@ -101,11 +101,13 @@
                                 :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
                                 Войти
                             </NuxtLink>
-                            <button @click="search.logout()" v-if="search.userMe?.id"
+                            <NuxtLink
+                                to="/admin" 
+                                @click="search.logout()" v-if="search.userMe?.id"
                                 class="block w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
                                 :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
                                 exit
-                            </button>
+                            </NuxtLink>
                         </div>
                     </div>
                 </div>
@@ -151,6 +153,7 @@
 </template>
 
 <script setup>
+import { NuxtLink } from '#components'
 import { useSearchStore } from '~/stores/search'
 
 const search = useSearchStore()

@@ -36,7 +36,7 @@ const off = () => {
 
 onMounted(() => {
     if(index.userMe.role?.id !== 3) {
-        navigateTo('/profile', )
+        navigateTo('/profile')
     }
 })
 
