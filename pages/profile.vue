@@ -128,7 +128,7 @@ const uploadProfileImage = async (event) => {
   formData.append('data', JSON.stringify({}))
 
   try {
-    const response = await fetch(`${baseUrl}/api/users/me`, {
+    const response = await fetch(`${baseUrl}/api/users/me/avatar`, {
       method: 'PUT',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt')}`
