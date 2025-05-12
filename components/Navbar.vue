@@ -58,11 +58,14 @@
                         </svg>
                     </button>
 
-                    <img id="avatarButton" @click="toggleDropdown" data-dropdown-toggle="userDropdown"
+                    <button id="avatarButton" type="button" data-dropdown-toggle="userDropdown"
                         data-dropdown-placement="bottom-start"
+                        class="flex items-center focus:outline-none">
+                        <img
                         class="w-10 h-10 rounded-full border-2 bg-gray-300 cursor-pointer"
                         src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
                         alt="User dropdown" />
+                    </button>
 
                     <!-- Dropdown menu -->
                     <div id="userDropdown"
