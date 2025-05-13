@@ -169,31 +169,29 @@ function goToSearch() {
 
 // Подключение Flowbite
 useHead({
-    script: [
-        {
-            src: 'https://cdn.jsdelivr.net/npm/flowbite @2.5.2/dist/flowbite.min.js',
-            async: true,
-            defer: true,
-            onload: () => {
-                console.log('Flowbite успешно загружен')
-            },
-            crossorigin: 'anonymous'
-        }
-    ]
+    script: [{
+        src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js',
+        async: true,
+        defer: true,
+        onload: () => {
+            console.log('Flowbite успешно загружен')
+        },
+        crossorigin: 'anonymous'
+    }]
 })
 
-// Альтернативная реализация dropdown на случай, если Flowbite не сработает
 onMounted(() => {
     const button = document.getElementById('avatarButton');
     const dropdown = document.getElementById('userDropdown');
 
     if (button && dropdown) {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', (e) => {
+            e.stopPropagation();
             dropdown.classList.toggle('hidden');
         });
 
         document.addEventListener('click', (e) => {
-            if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+            if (!dropdown.contains(e.target) && !button.contains(e.target)) {
                 dropdown.classList.add('hidden');
             }
         });
