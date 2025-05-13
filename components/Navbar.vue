@@ -142,7 +142,7 @@
                             <NuxtLink to="/blog"
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                                 :class="{ 'md:text-white': isActive('blog') || isActive('post') || isActive('category'), 'dark:text-blue-700': isActive('blog') || isActive('post') || isActive('category') }">
-                                МОЯ ИНТЕРЕСЫ</NuxtLink>
+                                М ИНТЕРЕСЫ</NuxtLink>
                         </li>
                     </ul>
                 </div>
