@@ -31,86 +31,85 @@
 
                 </NuxtLink>
 
-               <div class="flex gap-8 md:order-2">
-                 <DarkMode />
+                <div class="flex gap-8 md:order-2">
+                    <DarkMode />
 
-                 <!-- Поиск -->
-              <div class="relative hidden md:block">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                  <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                  </svg>
-                  <span class="sr-only">Search icon</span>
+                    <div class="relative hidden md:block">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                            <span class="sr-only">Search icon</span>
+                        </div>
+                        <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar"
+                            class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                            placeholder="Поиск...">
+                    </div>
+                    <button data-collapse-toggle="navbar-search" type="button"
+                        class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
+                        aria-controls="navbar-search" aria-expanded="false">
+                        <span class="sr-only">Open main menu</span>
+                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 17 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M1 1h15M1 7h15M1 13h15" />
+                        </svg>
+                    </button>
+
+                    <button id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start"
+                        aria-expanded="false" aria-controls="userDropdown" type="button"
+                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 bg-gray-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <img src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
+                            alt="User profile" class="w-full h-full rounded-full object-cover" />
+                    </button>
+
+                    <!-- Dropdown menu -->
+                    <div id="userDropdown"
+                        class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
+                            <div>{{ search.userMe.username }}</div>
+                            <div v-if="search.userMe.email" class="font-medium truncate">{{ search.userMe.email }}</div>
+                        </div>
+                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="avatarButton">
+                            <li>
+                                <NuxtLink to="/profile"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    :class="{ 'md:text-gray-700': isActive('profile'), 'dark:text-blue-700': isActive('profile') }">
+                                    Профиль
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink to="/console"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                    :class="{ 'md:text-gray-700': isActive('console'), 'dark:text-blue-700': isActive('console') }">
+                                    Консоль
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
+                            </li>
+                            <li>
+                                <a href="#"
+                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+                            </li>
+                        </ul>
+                        <div class="py-1">
+                            <NuxtLink to="/admin" v-if="!search.userMe?.id"
+                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
+                                Войти
+                            </NuxtLink>
+                            <NuxtLink to="/admin" @click="search.logout()" v-if="search.userMe?.id"
+                                class="block w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+                                :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
+                                exit
+                            </NuxtLink>
+                        </div>
+                    </div>
                 </div>
-                <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar"
-                  class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="Поиск...">
-              </div>
-
-              <!-- Кнопка мобильного меню -->
-              <button data-collapse-toggle="navbar-search" type="button"
-                class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
-                aria-controls="navbar-search" aria-expanded="false">
-                <span class="sr-only">Open main menu</span>
-                <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-                  <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                    d="M1 1h15M1 7h15M1 13h15" />
-                </svg>
-              </button>
-
-              <!-- Аватар -->
-              <img id="avatarButton"
-                   @click="toggleDropdown"
-                   class="w-10 h-10 rounded-full border-2 bg-gray-300 cursor-pointer"
-                   src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
-                   alt="User dropdown" />
-
-              <!-- Выпадающее меню -->
-              <div v-if="isDropdownOpen"
-                   id="userDropdown"
-                   class="z-10 absolute right-0 mt-12 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
-                <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                  <div>{{ search.userMe.username }}</div>
-                  <div v-if="search.userMe.email" class="font-medium truncate">{{ search.userMe.email }}</div>
-                </div>
-                <ul class="py-2 text-sm text-gray-700 dark:text-gray-200">
-                  <li>
-                    <NuxtLink to="/profile"
-                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                              :class="{ 'md:text-gray-700': isActive('profile'), 'dark:text-blue-700': isActive('profile') }">
-                      Профиль
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <NuxtLink to="/console"
-                              class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                             :class="{ 'md:text-gray-700': isActive('console'), 'dark:text-blue-700': isActive('console') }">
-                      Консоль
-                    </NuxtLink>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                  </li>
-                  <li>
-                    <a href="#" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                 </li>
-                </ul>
-                <div class="py-1">
-                  <NuxtLink v-if="!search.userMe?.id" to="/admin"
-                            class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                            :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
-                    Войти
-                  </NuxtLink>
-                  <NuxtLink v-else to="/admin" @click="search.logout()"
-                            class="block w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                            :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
-                    exit
-                  </NuxtLink>
-                </div>
-              </div>
-            </div>
 
                 <div class="items-center justify-between hidden w-full lg:flex md:w-auto md:order-1" id="navbar-search">
                     <div class="relative mt-3 md:hidden ">
@@ -153,43 +152,51 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { NuxtLink } from '#components'
 import { useSearchStore } from '~/stores/search'
-import { useRoute, useRouter } from 'vue-router'
+import { onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 
 const search = useSearchStore()
 const route = useRoute()
 const router = useRouter()
 
-const isDropdownOpen = ref(false)
+const isActive = (path) => route.path.split('/')[1] === path
 
-const toggleDropdown = () => {
-  isDropdownOpen.value = !isDropdownOpen.value
+function goToSearch() {
+    router.push({ path: '/search' })
 }
 
-const isActive = (path) => {
-  return route.path.split('/')[1] === path
-}
+// Подключение Flowbite
+useHead({
+    script: [
+        {
+            src: 'https://cdn.jsdelivr.net/npm/flowbite @2.5.2/dist/flowbite.min.js',
+            async: true,
+            defer: true,
+            onload: () => {
+                console.log('Flowbite успешно загружен')
+            },
+            crossorigin: 'anonymous'
+        }
+    ]
+})
 
-const goToSearch = () => {
-  router.push({ path: '/search' })
-}
-
-// Закрытие меню при клике вне области
-const handleClickOutside = (event) => {
-  const dropdown = document.getElementById('userDropdown')
-  const button = document.getElementById('avatarButton')
-
-  if (!dropdown?.contains(event.target) && !button?.contains(event.target)) {
-    isDropdownOpen.value = false
-  }
-}
-
+// Альтернативная реализация dropdown на случай, если Flowbite не сработает
 onMounted(() => {
-  window.addEventListener('click', handleClickOutside)
-})
+    const button = document.getElementById('avatarButton');
+    const dropdown = document.getElementById('userDropdown');
 
-onBeforeUnmount(() => {
-  window.removeEventListener('click', handleClickOutside)
-})
+    if (button && dropdown) {
+        button.addEventListener('click', () => {
+            dropdown.classList.toggle('hidden');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!button.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+    }
+});
 </script>
