@@ -161,6 +161,7 @@ const router = useRouter()
 
 const isDropdownOpen = ref(false);
 const toggleDropdown = () => {
+    console.log('Клик по аватару сработал! Новое состояние:', !isDropdownOpen.value);
     isDropdownOpen.value = !isDropdownOpen.value;
 };
 
