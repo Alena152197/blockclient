@@ -58,15 +58,15 @@
                         </svg>
                     </button>
 
-                    <button id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start"
-                        aria-expanded="false" aria-controls="userDropdown" type="button"
+                    <button id="avatarButton" @click="isDropdownOpen = !isDropdownOpen" type="button"
                         class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 bg-gray-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <img src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
                             alt="User profile" class="w-full h-full rounded-full object-cover" />
                     </button>
 
+
                     <!-- Dropdown menu -->
-                    <div id="userDropdown"
+                    <div id="userDropdown" v-show="isDropdownOpen"
                         class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
                         <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
                             <div>{{ search.userMe.username }}</div>
@@ -167,6 +167,7 @@ function goToSearch() {
     router.push({ path: '/search' })
 }
 
+const isDropdownOpen = ref(false)
 // Подключение Flowbite
 useHead({
     script: [{
