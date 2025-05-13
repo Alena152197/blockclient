@@ -58,16 +58,16 @@
                         </svg>
                     </button>
 
-                    <button id="avatarButton" @click="isDropdownOpen = !isDropdownOpen" type="button"
-                        class="flex items-center justify-center w-10 h-10 rounded-full border-2 border-gray-300 bg-gray-300 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <img src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
-                            alt="User profile" class="w-full h-full rounded-full object-cover" />
-                    </button>
-
+                    <img id="avatarButton" @click="toggleDropdown" type="button" data-dropdown-toggle="userDropdown"
+                        data-dropdown-placement="bottom-start"
+                        class="w-10 h-10 rounded-full border-2 bg-gray-300 cursor-pointer"
+                        src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
+                        alt="User dropdown" />
 
                     <!-- Dropdown menu -->
-                    <div id="userDropdown" v-show="isDropdownOpen"
-                        class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                    <div id="userDropdown"
+                        class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
+                        :class="{ 'hidden': !isDropdownOpen }">
                         <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
                             <div>{{ search.userMe.username }}</div>
                             <div v-if="search.userMe.email" class="font-medium truncate">{{ search.userMe.email }}</div>
@@ -154,48 +154,26 @@
 <script setup>
 import { NuxtLink } from '#components'
 import { useSearchStore } from '~/stores/search'
-import { onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
-
-const search = useSearchStore()
-const route = useRoute()
+const search = useSearchStore();
+const route = useRoute();
+const isActive = (path) => route.path.split('/')[1] === path
 const router = useRouter()
 
-const isActive = (path) => route.path.split('/')[1] === path
+const isDropdownOpen = ref(false);
+const toggleDropdown = () => {
+    isDropdownOpen.value = !isDropdownOpen.value;
+};
 
 function goToSearch() {
-    router.push({ path: '/search' })
-}
-
-const isDropdownOpen = ref(false)
-// Подключение Flowbite
+    router.push({ path: '/search' });
+};
 useHead({
-    script: [{
-        src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js',
-        async: true,
-        defer: true,
-        onload: () => {
-            console.log('Flowbite успешно загружен')
-        },
-        crossorigin: 'anonymous'
-    }]
-})
-
-onMounted(() => {
-    const button = document.getElementById('avatarButton');
-    const dropdown = document.getElementById('userDropdown');
-
-    if (button && dropdown) {
-        button.addEventListener('click', (e) => {
-            e.stopPropagation();
-            dropdown.classList.toggle('hidden');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!dropdown.contains(e.target) && !button.contains(e.target)) {
-                dropdown.classList.add('hidden');
-            }
-        });
-    }
+    script: [
+        {
+            src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js',
+            async: true,
+            defer: true
+        }
+    ]
 });
 </script>
