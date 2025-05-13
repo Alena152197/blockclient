@@ -86,6 +86,7 @@
                                     Консоль
                                 </NuxtLink>
                             </li>
+
                             <li>
                                 <a href="#"
                                     class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
@@ -164,6 +165,11 @@ const router = useRouter()
 function goToSearch() {
     router.push({ path: '/search' })
 
+}
+
+const toggleDropdown = () => {
+    const dropdown = document.getElementById('userDropdown');
+    dropdown.classList.toggle('hidden');
 }
 
 useHead({
