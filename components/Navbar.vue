@@ -58,7 +58,7 @@
                         </svg>
                     </button>
 
-                    <img id="avatarButton" type="button" data-dropdown-toggle="userDropdown"
+                    <img id="avatarButton" @click="toggleDropdown" type="button" data-dropdown-toggle="userDropdown"
                         data-dropdown-placement="bottom-start"
                         class="w-10 h-10 rounded-full border-2 bg-gray-300 cursor-pointer"
                         src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
@@ -66,7 +66,8 @@
 
                     <!-- Dropdown menu -->
                     <div id="userDropdown"
-                        class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600">
+                        class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
+                        :class="{ 'hidden': !isDropdownOpen }">
                         <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
                             <div>{{ search.userMe.username }}</div>
                             <div v-if="search.userMe.email" class="font-medium truncate">{{ search.userMe.email }}</div>
@@ -141,7 +142,7 @@
                             <NuxtLink to="/blog"
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0 md:dark:hover:text-blue-500 dark:text-white dark:hover:bg-gray-700 dark:hover:text-white md:dark:hover:bg-transparent dark:border-gray-700"
                                 :class="{ 'md:text-white': isActive('blog') || isActive('post') || isActive('category'), 'dark:text-blue-700': isActive('blog') || isActive('post') || isActive('category') }">
-                                М ИНТЕРЕСЫ</NuxtLink>
+                                МОЯ ИНТЕРЕСЫ</NuxtLink>
                         </li>
                     </ul>
                 </div>
@@ -153,12 +154,16 @@
 <script setup>
 import { NuxtLink } from '#components'
 import { useSearchStore } from '~/stores/search'
-
 const search = useSearchStore();
 const route = useRoute();
 const isActive = (path) => route.path.split('/')[1] === path
 const router = useRouter()
 
+const isDropdownOpen = ref(false);
+const toggleDropdown = () => {
+    console.log('Клик по аватару сработал! Новое состояние:', !isDropdownOpen.value);
+    isDropdownOpen.value = !isDropdownOpen.value;
+};
 
 function goToSearch() {
     router.push({ path: '/search' });
