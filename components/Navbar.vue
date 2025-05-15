@@ -117,7 +117,7 @@ useHead({
         {
             src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js',
             async: true,
-            defer: true
+            defer: 'anonymous'
         }
     ]
 });
