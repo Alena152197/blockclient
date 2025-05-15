@@ -1,5 +1,5 @@
 <template>
-  <h1>hello</h1>
+  <h1>hello bro</h1>
   <!-- <div class="flex justify-center items-center min-h-screen bg-gray-100">
     <div class="text-center">
       <div class="relative group inline-block mx-auto">
