@@ -58,58 +58,6 @@
                         </svg>
                     </button>
 
-                    <img id="avatarButton" @click="toggleDropdown" type="button" data-dropdown-toggle="userDropdown"
-                        data-dropdown-placement="bottom-start"
-                        class="w-10 h-10 rounded-full border-2 bg-gray-300 cursor-pointer"
-                        src="#"
-                        alt="User dropdown" />
-                        <!-- ../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png -->
-                    <!-- Dropdown menu -->
-                    <div id="userDropdown"
-                        class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
-                        :class="{ 'hidden': !isDropdownOpen }">
-                        <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                            <div>{{ search.userMe.username }}</div>
-                            <div v-if="search.userMe.email" class="font-medium truncate">{{ search.userMe.email }}</div>
-                        </div>
-                        <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="avatarButton">
-                            <li>
-                                <NuxtLink to="/profile"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    :class="{ 'md:text-gray-700': isActive('profile'), 'dark:text-blue-700': isActive('profile') }">
-                                    Профиль
-                                </NuxtLink>
-                            </li>
-                            <li>
-                                <NuxtLink to="/console"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                    :class="{ 'md:text-gray-700': isActive('console'), 'dark:text-blue-700': isActive('console') }">
-                                    Консоль
-                                </NuxtLink>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
-                            </li>
-                        </ul>
-                        <div class="py-1">
-                            <NuxtLink to="/admin" v-if="!search.userMe?.id"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
-                                Войти
-                            </NuxtLink>
-                            <NuxtLink to="/admin" @click="search.logout()" v-if="search.userMe?.id"
-                                class="block w-full text-left cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
-                                :class="{ 'md:text-gray-700': isActive('admin'), 'dark:text-blue-700': isActive('admin') }">
-                                exit
-                            </NuxtLink>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="items-center justify-between hidden w-full lg:flex md:w-auto md:order-1" id="navbar-search">
                     <div class="relative mt-3 md:hidden ">
@@ -159,11 +107,7 @@ const route = useRoute();
 const isActive = (path) => route.path.split('/')[1] === path
 const router = useRouter()
 
-const isDropdownOpen = ref(false);
-const toggleDropdown = () => {
-    console.log('Клик по аватару сработал! Новое состояние:', !isDropdownOpen.value);
-    isDropdownOpen.value = !isDropdownOpen.value;
-};
+
 
 function goToSearch() {
     router.push({ path: '/search' });
@@ -171,7 +115,7 @@ function goToSearch() {
 useHead({
     script: [
         {
-            src: 'https://cdn.jsdelivr.net/npm/flowbite @2.5.2/dist/flowbite.min.js',
+            src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js',
             async: true,
             defer: true
         }
