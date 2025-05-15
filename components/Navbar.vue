@@ -2,7 +2,7 @@
     <header class="z-20 relative">
         <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200 dark:bg-gray-900">
             <!-- отвечает за расположение навигации -->
-            <div class="navigHead max-w-screen-xl flex flex-wrap items-center justify-evenly mx-auto p-2">
+            <div class="max-w-screen-xl flex flex-wrap items-center justify-evenly mx-auto p-2">
                 <NuxtLink to="/">
                     <svg width="300" height="62" viewBox="0 0 397 62" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <g clip-path="url(#clip0_153_3)">
@@ -58,7 +58,7 @@
                         </svg>
                     </button>
 
-
+                </div>
                 <div class="items-center justify-between hidden w-full lg:flex md:w-auto md:order-1" id="navbar-search">
                     <div class="relative mt-3 md:hidden ">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -100,7 +100,7 @@
 </template>
 
 <script setup>
-import { NuxtLink } from '#components'
+
 import { useSearchStore } from '~/stores/search'
 const search = useSearchStore();
 const route = useRoute();
