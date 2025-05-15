@@ -61,9 +61,9 @@
                     <img id="avatarButton" @click="toggleDropdown" type="button" data-dropdown-toggle="userDropdown"
                         data-dropdown-placement="bottom-start"
                         class="w-10 h-10 rounded-full border-2 bg-gray-300 cursor-pointer"
-                        src="../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png"
+                        src="#"
                         alt="User dropdown" />
-
+                        <!-- ../public/img/avatar_person_boy_male_people_guy_character_user_profile_young_man_metaverse_technology_metaglobal_sweater_hoodie_west_shirt_short_hair_with_vr_icon_262232.png -->
                     <!-- Dropdown menu -->
                     <div id="userDropdown"
                         class="z-10 bg-white divide-y divide-gray-100 rounded-lg shadow-sm w-44 dark:bg-gray-700 dark:divide-gray-600"
