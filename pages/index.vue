@@ -1,5 +1,5 @@
 <template>
-
+    <h1>Здесь был Олег :)</h1>
     <div class="phoneMain">
         <!-- Левая часть -->
         <div class="left-images">
