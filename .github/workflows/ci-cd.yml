@@ -1,4 +1,4 @@
-name: 🚀 Деплой всего Nuxt.js проекта
+name: 🚀 Деплой Nuxt.js проекта (Node 22 + PM2)
 
 on:
   push:
@@ -13,7 +13,7 @@ jobs:
       - name: 📦 Получить код
         uses: actions/checkout@v4
 
-      - name: 📦 Установить Node.js
+      - name: 📦 Установить Node.js 22
         uses: actions/setup-node@v3
         with:
           node-version: '22'
@@ -42,7 +42,7 @@ jobs:
           tar_dereference: true
 
       - name: 🔁 Перезапустить PM2
-        uses: appleboy/ssh-action@v0.1.10
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -50,5 +50,5 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/blockclient
-            npm install --production
-            pm2 restart all
+            ~/.nvm/versions/node/v22.0.0/bin/npm install --production
+            ~/.nvm/versions/node/v22.0.0/bin/pm2 restart all || echo "PM2 не запущен или нет процессов"
