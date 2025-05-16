@@ -1,0 +1,31 @@
+name: CI/CD Конвейер
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Проверка кода
+        uses: actions/checkout@v4
+
+      - name: Установка зависимостей
+        run: npm install
+
+      - name: Сборка проекта
+        run: npm run build
+
+      - name: Развертывание через SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /var/www/blockclient
+            pm2 restart all
