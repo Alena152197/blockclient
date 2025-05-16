@@ -28,4 +28,5 @@ jobs:
           port: ${{ secrets.PORT }}
           script: |
             cd /var/www/blockclient
+            npm install -g pm2
             pm2 restart all
