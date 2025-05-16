@@ -1,4 +1,4 @@
-name: CI/CD Конвейер
+name: 🔧 Деплой Nuxt приложения
 
 on:
   push:
@@ -6,27 +6,39 @@ on:
       - main
 
 jobs:
-  build-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Проверка кода
+      - name: 📦 Получить код из репозитория
         uses: actions/checkout@v4
 
-      - name: Установка зависимостей
+      - name: 📦 Установить зависимости
         run: npm install
 
-      - name: Сборка проекта
+      - name: 🗑 Очистить кэш
+        run: rm -rf .nuxt dist .output
+
+      - name: 🔨 Собрать проект
         run: npm run build
 
-      - name: Развертывание через SSH
-        uses: appleboy/ssh-action@master
+      - name: 📁 Передать файлы на сервер (SCP)
+        uses: appleboy/scp-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "."
+          target: "/var/www/blockclient"
+
+      - name: 🔁 Перезапуск PM2 на сервере
+        uses: appleboy/ssh-action@v0.1.10
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USER }}
+          port: ${{ secrets.PORT }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/blockclient
-            npm install -g pm2
             pm2 restart all
