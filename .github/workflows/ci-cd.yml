@@ -1,4 +1,4 @@
-name: 🔧 Деплой Nuxt приложения
+name: 🚀 Деплой всего Nuxt.js проекта
 
 on:
   push:
@@ -10,35 +10,45 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 📦 Получить код из репозитория
+      - name: 📦 Получить код
         uses: actions/checkout@v4
+
+      - name: 📦 Установить Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '22'
 
       - name: 📦 Установить зависимости
         run: npm install
 
       - name: 🗑 Очистить кэш
-        run: rm -rf .nuxt dist .output
+        run: rm -rf .nuxt dist .output || true
 
       - name: 🔨 Собрать проект
         run: npm run build
 
-      - name: 📁 Передать файлы на сервер (SCP)
-        uses: appleboy/scp-action@v0.1.6
+      - name: 🔍 Проверить содержимое
+        run: ls -la
+
+      - name: 📁 Передать проект на сервер
+        uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "."
           target: "/var/www/blockclient"
+          tar_dereference: true
 
-      - name: 🔁 Перезапуск PM2 на сервере
-        uses: appleboy/ssh-action@v0.1.10
+      - name: 🔁 Перезапустить PM2
+        uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
+          username: ${{ secrets.USER }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             cd /var/www/blockclient
+            npm install --production
             pm2 restart all
