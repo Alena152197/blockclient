@@ -42,7 +42,7 @@ jobs:
           tar_dereference: true
 
       - name: 🔁 Перезапустить PM2
-        uses: appleboy/ssh-action@master
+        uses: appleboy/ssh-action@v0.1.10
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
