@@ -4,23 +4,16 @@
     <div class="text-center">
       <div class="relative group inline-block mx-auto">
         <div
-          class="w-28 h-28 rounded-full overflow-hidden border-4 border-transparent bg-gradient-to-tr from-pink-400 via-purple-400 to-indigo-500 p-[2px] group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-500"
-        >
-          <img
-            :src="profileImage || 'https://placehold.co/350x350 '"
-            alt="Фото профиля"
-            class="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500"
-          />
+          class="w-28 h-28 rounded-full overflow-hidden border-4 border-transparent bg-gradient-to-tr from-pink-400 via-purple-400 to-indigo-500 p-[2px] group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-500">
+          <img :src="profileImage || 'https://placehold.co/350x350 '" alt="Фото профиля"
+            class="w-full h-full object-cover rounded-full group-hover:scale-105 transition-transform duration-500" />
         </div>
         <label
-          class="absolute bottom-0 right-0 bg-gradient-to-r from-green-500 to-teal-400 text-white rounded-full p-2 cursor-pointer shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300"
-        >
+          class="absolute bottom-0 right-0 bg-gradient-to-r from-green-500 to-teal-400 text-white rounded-full p-2 cursor-pointer shadow-lg opacity-0 group-hover:opacity-100 translate-y-2 group-hover:translate-y-0 transition-all duration-300">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-            <path
-              fill-rule="evenodd"
+            <path fill-rule="evenodd"
               d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
-              clip-rule="evenodd"
-            />
+              clip-rule="evenodd" />
           </svg>
           <input type="file" accept="image/*" @change="uploadProfileImage" class="hidden" />
         </label>
@@ -100,18 +93,12 @@
 //       alert('Не удалось загрузить файл')
 //       return
 //     }
-
 //     const uploadedFile = await uploadResponse.json()
-
 //     const updateUserResponse = await fetch(`${baseUrl}/api/users/${userId}`, {
-//       method: 'PUT',
-//       headers: {
+//       method: 'PUT', headers: {
 //         Authorization: `Bearer ${localStorage.getItem('jwt')}`,
 //         'Content-Type': 'application/json'
-//       },
-//       body: JSON.stringify({
-//         avatar: uploadedFile[0].id
-//       })
+//       }, body: JSON.stringify({ avatar: uploadedFile[0].id })
 //     })
 
 //     if (!updateUserResponse.ok) {
@@ -125,16 +112,12 @@
 //       headers: {
 //         Authorization: `Bearer ${localStorage.getItem('jwt')}`
 //       }
-//     }).then(res => res.json())
-
+//     }).then(res => res.json(
 //     if (updatedUser.avatar?.url) {
 //       const avatarUrl = `${baseUrl}${updatedUser.avatar.url}`
 //       profileImage.value = avatarUrl
-//       localStorage.setItem(`userAvatar_${userId}`, avatarUrl)
-//       alert('Фото успешно загружено!')
-//     } else {
-//       alert('Файл загружен, но не привязан к пользователю')
-//     }
+//       localStorage.setItem(`userAvatar_${userId}`, avatarUrl)       alert('Фото успешно загружено!')
+//     } else { alert('Файл загружен, но не привязан к пользователю') }
 //   } catch (e) {
 //     console.error('Ошибка сети:', e)
 //     alert('Ошибка сети')
