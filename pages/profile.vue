@@ -20,8 +20,8 @@
           <div class="group relative">
             <div
               class="w-32 h-32 rounded-full overflow-hidden border-4 border-transparent bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 p-[3px] group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-500 animate-pulse-slow">
-              <img :src="profileImage || 'https://placehold.co/550x550'" alt="Фото профиля"
-                class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-700" />
+              <img :src="profileImage || 'https://placehold.co/550x550'" alt="Фото профиля" @click="openModal"
+                class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-700 cursor-pointer" />
             </div>
             <label
               class="absolute bottom-0 right-0 bg-white text-gray-900 rounded-full p-2 cursor-pointer shadow-lg transform translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
@@ -69,6 +69,23 @@
         </div>
       </div>
     </div>
+
+    <!-- Модальное окно -->
+    <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
+      <div class="relative max-w-xl w-full">
+        <!-- Кнопка закрытия -->
+        <button @click="closeModal"
+          class="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70 z-10">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+
+        <!-- Изображение в оригинальном размере -->
+        <img :src="profileImage || 'https://placehold.co/650x650'" alt="Полноразмерное фото"
+          class="w-full h-auto rounded-lg shadow-2xl" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -80,6 +97,8 @@ import { useSearchStore } from '@/stores/search'
 const router = useRouter()
 const search = useSearchStore()
 const profileImage = ref(null)
+const isModalOpen = ref(false) // Для модального окна
+
 const baseUrl = 'https://324cbb377ef9.vps.myjino.ru'
 
 // Данные пользователя
@@ -111,6 +130,14 @@ onMounted(() => {
     initProfileImage()
   }
 })
+
+// Открыть / закрыть модальное окно
+const openModal = () => {
+  isModalOpen.value = true
+}
+const closeModal = () => {
+  isModalOpen.value = false
+}
 
 // Загрузка аватара
 const uploadProfileImage = async (event) => {
