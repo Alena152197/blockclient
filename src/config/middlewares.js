@@ -1,13 +1,16 @@
 // src/config/middlewares.js
 
-module.exports = {
-  config: {
-    cors: {
+module.exports = [
+  // ...
+  {
+    name: 'strapi::cors',
+    config: {
       enabled: true,
-      origin: ['http://192.168.0.108:3000'], // замени на свой адрес фронтенда
-      headers: ['Content-Type', 'Authorization', 'X-Requested-With'],
-      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'HEAD', 'OPTIONS'],
+      origin: ['http://localhost:3000', 'http://192.168.0.108:3000'], // разреши тут свои домены
+      methods: ['GET', 'POST', 'PUT', 'DELETE'],
+      headers: ['Content-Type', 'Authorization'],
       credentials: true,
     },
   },
-}
+  // ...
+];

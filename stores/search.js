@@ -1,62 +1,79 @@
+import { defineStore } from 'pinia'
+import { ref } from 'vue'
+
 export const useSearchStore = defineStore('search', {
   state: () => ({
-    searchQuery: ref(' '),
-    authToggle: true, //перключатель
-    userMe: {},
+    searchQuery: ref(''),
+    authToggle: true,
+    userMe: {}, // Всегда плоский объект: id, username, email, avatar и т.д.
     config: {},
   }),
+
   actions: {
     async fetchUserMe() {
       try {
         const token = localStorage.getItem('jwt')
-        const response = await fetch('https://324cbb377ef9.vps.myjino.ru/api/users/me?populate=*',
-          {
-            method: 'GET',
-            headers: {
-              'Authorization': `Bearer ${token}`,
-            },
-          }
-        )
+        if (!token) return
 
-        const data = await response.json();
-        this.userMe = data;
+        const response = await fetch('https://324cbb377ef9.vps.myjino.ru/api/users/me?populate=avatar', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
 
-        console.log(data);
-        
+        const data = await response.json()
+        if (!response.ok) throw new Error(data.error?.message || 'Ошибка получения пользователя')
+
+        // Явно сохраняем только нужные поля
+        this.userMe = {
+          id: data.id,
+          username: data.username,
+          email: data.email,
+          avatar: data.avatar // Может быть null или объект с url
+        }
+
+        console.log('Пользователь загружен:', this.userMe)
+
       } catch (error) {
-        console.log(error);
+        console.log('Ошибка в fetchUserMe:', error)
+        this.userMe = {}
       }
     },
+
     logout() {
       localStorage.removeItem('jwt')
       this.userMe = {}
     },
+
     async login(loginData) {
       try {
-        console.log(loginData.email);
-        console.log(loginData.password);
-
         const response = await fetch('https://324cbb377ef9.vps.myjino.ru/api/auth/local', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json', // Указываем тип контента
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            "identifier": loginData.email,
-            "password": loginData.password
+            identifier: loginData.email,
+            password: loginData.password,
           }),
-        });
+        })
 
-        const data = await response.json();
-        localStorage.setItem('jwt', data.jwt)
-        this.userMe = data.user
+        const data = await response.json()
         if (!response.ok) {
-          throw new Error(data.error.message); // Обработка ошибок
+          throw new Error(data.error?.message || 'Ошибка при входе')
         }
+
+        localStorage.setItem('jwt', data.jwt)
+
+        // Подгружаем полные данные с аватаром
+        await this.fetchUserMe()
+
       } catch (error) {
-        console.log('Ошибка при авторизации:', error);
+        console.log('Ошибка при авторизации:', error)
       }
     },
   },
+
   persist: true,
 })
