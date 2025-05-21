@@ -9,7 +9,7 @@
                         <svg class="w-3 h-3 me-2.5" viewBox="0 0 20 20" fill="currentColor"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
-                                d="m19.707 9.293-2-2-7-7a1 0 0 0-1.414 0l-7 7-2 2a1 0 0 0 1.414 1.414L2 10.414V18a2 0 0 0 2 2h3a1 0 0 0 1-1v-4a1 0 0 1 1-1h2a1 0 0 1 1 1v4a1 0 0 0 1 1h3a2 0 0 0 2-2v-7.586l.293.293a1 0 0 0 1.414-1.414Z" />
+                                d="M10.707 1.707a1 1 0 0 0-1.414 0l-7 7A1 1 0 0 0 3 10h1v6a1 1 0 0 0 1 1h4v-4h2v4h4a1 1 0 0 0 1-1v-6h1a1 1 0 0 0 .707-1.707l-7-7z" />
                         </svg>
                         Блог
                     </NuxtLink>
@@ -43,8 +43,7 @@
         </nav>
 
         <!-- Фоновое изображение -->
-        <div v-if="post.img && post.img.url"
-            class="bg-no-repeat bg-top h-96 rounded-se-2xl my-10 bg-fixed bg-[length:50%_800px]"
+        <div v-if="post?.img?.url" class="bg-no-repeat bg-top h-96 rounded-se-2xl my-10 bg-fixed bg-[length:50%_800px]"
             :style="{ backgroundImage: 'url(' + base_url + post.img.url + ')' }">
         </div>
 
@@ -56,47 +55,8 @@
 
         <!-- Контент -->
         <div class="ns_post mt-8" v-html="mark"></div>
-
-        <!-- Комментарии -->
-        <section class="mt-16">
-            <h2 class="text-xl font-bold mb-4">Комментарии</h2>
-
-            <!-- Форма добавления -->
-            <form @submit.prevent="submitComment" class="mb-8 p-4 border rounded-md bg-gray-50">
-                <div class="mb-4">
-                    <label for="author" class="block text-sm font-medium mb-1">Имя</label>
-                    <input v-model="newComment.author" id="author" type="text" required
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
-                </div>
-                <div class="mb-4">
-                    <label for="email" class="block text-sm font-medium mb-1">Email</label>
-                    <input v-model="newComment.email" id="email" type="email" required
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400" />
-                </div>
-                <div class="mb-4">
-                    <label for="content" class="block text-sm font-medium mb-1">Ваш комментарий</label>
-                    <textarea v-model="newComment.content" id="content" rows="4" required
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"></textarea>
-                </div>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md transition">
-                    Оставить комментарий
-                </button>
-            </form>
-
-            <!-- Список комментариев -->
-            <div v-if="comments.length > 0" class="space-y-4">
-                <div v-for="comment in comments" :key="comment.id"
-                    class="border-t pt-4 pb-2 px-2 hover:bg-gray-100 transition">
-                    <p class="font-semibold">{{ comment.attributes.author }}</p>
-                    <p class="text-gray-600 text-sm mb-1">{{ comment.attributes.email }}</p>
-                    <p>{{ comment.attributes.content }}</p>
-                </div>
-            </div>
-            <p v-else class="italic text-gray-500">Нет комментариев. Будьте первым!</p>
-        </section>
     </main>
 </template>
-
 
 <script setup>
 import MarkdownIt from "markdown-it";
@@ -106,33 +66,26 @@ import { useRoute, useHead } from "#app";
 const markdown = new MarkdownIt();
 const mark = ref('');
 const route = useRoute();
-
-// Реактивные данные формы и комментариев
-const newComment = ref({
-    author: '',
-    email: '',
-    content: ''
-});
-const comments = ref([]);
-
-const { id } = route.params;
 const base_url = 'https://324cbb377ef9.vps.myjino.ru';
 
-let post = null;
+const post = ref(null);
+const { id } = route.params;
 
 // Загрузка данных статьи
 try {
     const api = await $fetch(`${base_url}/api/posts/${id}?populate=*`);
-    post = api.data;
-    if (post.body) mark.value = markdown.render(post.body);
+    post.value = api.data;
+    if (post.value.body) {
+        mark.value = markdown.render(post.value.body);
+    }
 } catch (error) {
     console.error('Ошибка при загрузке поста:', error);
 }
 
 // Форматирование даты
 function formatDate() {
-    if (!post?.publishedAt) return 'Дата отсутствует...';
-    const date = new Date(post.publishedAt);
+    if (!post.value?.publishedAt) return 'Дата отсутствует...';
+    const date = new Date(post.value.publishedAt);
     const months = [
         "января", "февраля", "марта", "апреля", "мая", "июня",
         "июля", "августа", "сентября", "октября", "ноября", "декабря"
@@ -140,69 +93,19 @@ function formatDate() {
     return `${date.getUTCDate()} ${months[date.getUTCMonth()]} ${date.getUTCFullYear()} г.`;
 }
 
-// Установка заголовка страницы
-useHead({
-    title: `${post?.title || 'Без названия'} - Блог`
-});
+// Заголовок страницы
+useHead(() => ({
+    title: `${post.value?.title || 'Без названия'} - Блог`,
+}));
 
-// При монтировании компонента загружаем комментарии
-onMounted(async () => {
+// Стилизация изображений в контенте
+onMounted(() => {
     document.querySelectorAll('.ns_post img').forEach(img => {
         img.classList.add('max-w-[700px]', 'h-auto', 'mx-auto', 'block');
     });
-
-    await loadComments();
 });
-
-// Загрузка комментариев к посту
-async function loadComments() {
-    try {
-        const res = await $fetch(`${base_url}/api/comments?filters[post][id][$eq]=${id}&sort=createdAt:asc`);
-        comments.value = res.data || [];
-    } catch (err) {
-        console.error('Не удалось загрузить комментарии:', err);
-        comments.value = [];
-    }
-}
-
-// Отправка нового комментария
-async function submitComment() {
-    if (!newComment.value.author || !newComment.value.email || !newComment.value.content) {
-        alert("Пожалуйста, заполните все поля");
-        return;
-    }
-
-    try {
-        const response = await $fetch(`${base_url}/api/comments`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                data: {
-                    author: newComment.value.author,
-                    email: newComment.value.email,
-                    content: newComment.value.content,
-                    post: Number(id) // ❗ ОЧЕНЬ ВАЖНО: преобразование в число
-                }
-            })
-        });
-
-        comments.value.push(response.data);
-        newComment.value = { author: '', email: '', content: '' };
-        alert("Комментарий успешно отправлен!");
-    } catch (error) {
-        console.error('Ошибка при отправке:', error);
-
-        if (error.response && error.response._data) {
-            console.error('Детали ошибки:', error.response._data);
-            alert('Ошибка: ' + JSON.stringify(error.response._data));
-        } else {
-            alert('Не удалось отправить комментарий.');
-        }
-    }
-}
 </script>
+
 
 
 <style scoped>
