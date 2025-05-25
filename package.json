@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@pinia/nuxt": "^0.11.0",
+    "@strapi/provider-email-nodemailer": "^5.13.1",
     "@tailwindcss/vite": "^4.0.0",
     "flowbite": "^2.5.2",
     "markdown-it": "^14.1.0",
