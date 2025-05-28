@@ -1,3 +1,13 @@
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-ZQS55GYH8F"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-ZQS55GYH8F');
+</script>
+
 <template>
     <div class="">
         <h2 class="text-4xl font-extrabold my-0 p-1 dark:text-white text-center">Блог</h2>
