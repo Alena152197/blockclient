@@ -61,27 +61,10 @@
             </label>
           </div>
 
-          <!-- Текст на листке -->
-          <div class="space-y-2">
-            <div class="flex items-center justify-between text-sm text-gray-400">
-              <label for="profile-note">Текст на листке</label>
-              <span class="text-[11px] text-gray-500">Хранится локально в браузере</span>
-            </div>
-            <textarea id="profile-note" v-model="noteDraft" rows="6"
-              class="w-full px-5 py-4 text-white bg-gray-800 border border-gray-700 rounded-2xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300 placeholder:text-gray-500 resize-none"
-              placeholder="Например: важная мысль, планы или ваша мотивация"></textarea>
-          </div>
-
           <!-- Кнопка сохранить -->
           <button @click="updateUserProfile"
             class="w-full py-3 mt-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
             Сохранить изменения
-          </button>
-
-          <!-- Кнопка сохранить только текст -->
-          <button @click="saveProfileNote"
-            class="w-full py-3 bg-gray-800 text-white font-semibold rounded-xl border border-gray-700 hover:border-purple-400 hover:bg-gray-800 transition-all duration-300">
-            Обновить текст на листке
           </button>
         </div>
       </div>
@@ -107,7 +90,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSearchStore } from '@/stores/search'
 
@@ -115,7 +98,6 @@ const router = useRouter()
 const search = useSearchStore()
 const profileImage = ref(null)
 const isModalOpen = ref(false) // Для модального окна
-const noteDraft = ref(search.profileNote || '')
 
 const baseUrl = 'https://324cbb377ef9.vps.myjino.ru'
 
@@ -123,12 +105,6 @@ const baseUrl = 'https://324cbb377ef9.vps.myjino.ru'
 const username = computed(() => search.userMe?.username || 'Гость')
 const userEmail = computed(() => search.userMe?.email)
 const userId = computed(() => search.userMe?.id)
-
-const syncNoteFromStore = () => {
-  noteDraft.value = search.profileNote || ''
-}
-
-watch(() => search.profileNote, syncNoteFromStore)
 
 // Инициализация аватара
 const initProfileImage = () => {
@@ -148,16 +124,12 @@ onMounted(() => {
     return
   }
 
-  search.loadProfileNote(userId.value)
-
   if (!search.userMe?.id) {
     search.fetchUserMe().then(() => {
       initProfileImage()
-      syncNoteFromStore()
     })
   } else {
     initProfileImage()
-    syncNoteFromStore()
   }
 })
 
@@ -227,8 +199,6 @@ const uploadProfileImage = async (event) => {
 // Обновление данных пользователя
 const updateUserProfile = async () => {
   try {
-    search.saveProfileNote(noteDraft.value)
-
     const res = await fetch(`${baseUrl}/api/users/${userId.value}`, {
       method: 'PUT',
       headers: {
@@ -248,18 +218,13 @@ const updateUserProfile = async () => {
       return
     }
 
-    alert('Данные успешно обновлены! Текст на листке сохранён.')
+    alert('Данные успешно обновлены!')
     await search.fetchUserMe()
 
   } catch (err) {
     console.error('Ошибка сети:', err)
     alert('Ошибка при сохранении данных')
   }
-}
-
-const saveProfileNote = () => {
-  search.saveProfileNote(noteDraft.value)
-  alert('Текст на листке обновлён!')
 }
 </script>
 
