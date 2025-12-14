@@ -409,10 +409,10 @@ onMounted(() => {
 }
 
 .left-images {
-    left: 19%;
+    left: 24%;
     top: 46%;
     transform: translateY(-50%);
-    width: 20%;
+    width: 19%;
 }
 
 .left-images img {
@@ -422,11 +422,11 @@ onMounted(() => {
 }
 
 .center-content {
-    left: 54%;
+    left: 56%;
     top: 45%;
     transform: translate(-50%, -50%);
     text-align: center;
-    width: 50%;
+    width: 47%;
 }
 
 .center-image {
