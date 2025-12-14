@@ -1,12 +1,31 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
+const defaultProfileNote = `В этом блоге я хочу рассказать
+про свой жизненный путь, с чего всё началось, поиски себя и своего места
+в жизни, и всё ли так просто, как кажется на первый взгляд.
+Надеюсь, моя история будет для кого-то полезной, как преодолеть трудности,
+как не потерять себя и найти силы на что-то новое.
+Жизнь, мягко говоря, непредсказуема. В один момент все идет хорошо,
+а потом вдруг что-то происходит, и вся жизнь переворачивается с ног на голову,
+так случилось и у меня...`
+
+const getInitialProfileNote = () => {
+  try {
+    const stored = localStorage.getItem('profile_note_guest')
+    return stored && stored.trim().length ? stored : defaultProfileNote
+  } catch (e) {
+    return defaultProfileNote
+  }
+}
+
 export const useSearchStore = defineStore('search', {
   state: () => ({
     searchQuery: ref(''),
     authToggle: true,
     userMe: {}, // Всегда плоский объект: id, username, email, avatar и т.д.
     config: {},
+    profileNote: getInitialProfileNote(),
   }),
 
   actions: {
@@ -34,16 +53,36 @@ export const useSearchStore = defineStore('search', {
         }
 
         console.log('Пользователь загружен:', this.userMe)
+        this.loadProfileNote(data.id)
 
       } catch (error) {
         console.log('Ошибка в fetchUserMe:', error)
         this.userMe = {}
+        this.profileNote = defaultProfileNote
       }
+    },
+
+    loadProfileNote(userId) {
+      const key = userId ? `profile_note_${userId}` : 'profile_note_guest'
+      try {
+        const stored = localStorage.getItem(key)
+        this.profileNote = stored && stored.trim().length ? stored : defaultProfileNote
+      } catch (e) {
+        this.profileNote = defaultProfileNote
+      }
+    },
+
+    saveProfileNote(note) {
+      const key = this.userMe?.id ? `profile_note_${this.userMe.id}` : 'profile_note_guest'
+      const cleaned = note && note.trim().length ? note.trim() : defaultProfileNote
+      this.profileNote = cleaned
+      localStorage.setItem(key, cleaned)
     },
 
     logout() {
       localStorage.removeItem('jwt')
       this.userMe = {}
+      this.profileNote = defaultProfileNote
     },
 
     async login(loginData) {

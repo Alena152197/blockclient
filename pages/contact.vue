@@ -29,27 +29,27 @@
             </div>
             
             <!-- Горизонтальные шнурки, соединяющие страницы через отверстия (21 штука) -->
-            <div class="book-thread absolute top-[12%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[15.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[19.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[23.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[27.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[31%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[34.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[38.7%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[42.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[46.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[50%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[54%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[57.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[61.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[65.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[69.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[73%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[77%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[80.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[84.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[88.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[3px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[16.1%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[19.5%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[22.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[26.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[29.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[32.7%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[36.1%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[39.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[42.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[46.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[49.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[52.9%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[56.3%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[59.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[63%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[66.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[69.7%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[73%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[76.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[79.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread absolute top-[83.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
           
             
             <!-- правая страница -->
@@ -211,23 +211,25 @@ onMounted(() => {
 .book-thread {
     background: linear-gradient(
         to right,
-        #8b6f47 0%,
-        #6b5230 10%,
-        #5a4220 20%,
-        #4a3210 30%,
-        #5a4220 40%,
-        #6b5230 50%,
-        #5a4220 60%,
-        #4a3210 70%,
-        #6b5230 80%,
-        #8b6f47 100%
+        #654321 0%,
+        #5a3a1f 10%,
+        #4a2c15 20%,
+        #3d2410 30%,
+        #4a2c15 40%,
+        #5a3a1f 50%,
+        #4a2c15 60%,
+        #3d2410 70%,
+        #5a3a1f 80%,
+        #654321 100%
     );
     box-shadow: 
-        0 0 6px rgba(0, 0, 0, 0.7),
-        0 0 3px rgba(139, 111, 71, 0.5),
-        inset 0 1px 2px rgba(255, 255, 255, 0.2),
-        inset 0 -1px 2px rgba(0, 0, 0, 0.4);
+        0 0 8px rgba(0, 0, 0, 0.8),
+        0 0 4px rgba(101, 67, 33, 0.6),
+        0 2px 4px rgba(0, 0, 0, 0.6),
+        inset 0 1px 3px rgba(255, 255, 255, 0.15),
+        inset 0 -1px 3px rgba(0, 0, 0, 0.8);
     border-radius: 2px;
+    border: 1px solid rgba(101, 67, 33, 0.5);
 }
 
 /* Отверстия уже есть на изображении книги, поэтому дополнительные элементы не нужны */
@@ -272,6 +274,13 @@ onMounted(() => {
     perspective: 1000px;
     animation: pageFlipPrew 1s ease-in-out;
     z-index: 20;
+}
+
+/* Скрываем текст во время перелистывания */
+.pageFlip .book-text-content,
+.pageFlipPrew .book-text-content {
+    opacity: 0;
+    transition: opacity 0.1s ease-in-out;
 }
 
 /* Эффект старой бумаги для текстового контента */

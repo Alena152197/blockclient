@@ -1,17 +1,17 @@
 <template>
     <div class="">
-        <h2 class="text-4xl font-extrabold my-0 p-1 dark:text-white text-center">Блог</h2>
+        <h2 class="text-4xl font-extrabold my-4 mb-6 p-1 text-[#4a4a4a] dark:text-white text-center">Блог</h2>
         <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
                     <!-- Добавляем класс для изображений -->
-                    <img class="rounded-t-lg w-full h-48 object-cover" :src="base_url + post.img.url"
+                    <img class="rounded-t-lg w-full h-36 object-cover" :src="base_url + post.img.url"
                         :alt="post.img.alternativeText" />
                 </NuxtLink>
-                <div class="p-5">
+                <div class="p-4">
                     <NuxtLink :to="'/post/' + post.documentId">
-                        <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-900 dark:text-slate-400">{{
+                        <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-800 dark:text-gray-100">{{
                             post.title }}</h5>
                     </NuxtLink>
                     <p class="mb-3 font-normal text-gray-700 dark:text-gray-400">{{ post.desc }}</p>
@@ -47,3 +47,9 @@ const loadMore = () => {
 
 const base_url = "https://324cbb377ef9.vps.myjino.ru"
 </script>
+
+<style scoped>
+h2 {
+    color: #4a4a4a !important;
+}
+</style>
