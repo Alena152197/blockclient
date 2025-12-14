@@ -29,27 +29,28 @@
             </div>
             
             <!-- Горизонтальные шнурки, соединяющие страницы через отверстия (21 штука) -->
-            <div class="book-thread absolute top-[16.1%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[19.5%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[22.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[26.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[29.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[32.7%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[36.1%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[39.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[42.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[46.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[49.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[52.9%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[56.3%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[59.6%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[63%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[66.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[69.7%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[73%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[76.4%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[79.8%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread absolute top-[83.2%] left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <!-- Фиксированные позиции в пикселях для стабильности (рассчитано для высоты 598px) -->
+            <div class="book-thread book-thread-1 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-2 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-3 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-4 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-5 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-6 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-7 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-8 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-9 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-10 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-11 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-12 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-13 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-14 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-15 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-16 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-17 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-18 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-19 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-20 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
+            <div class="book-thread book-thread-21 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
           
             
             <!-- правая страница -->
@@ -230,6 +231,105 @@ onMounted(() => {
         inset 0 -1px 3px rgba(0, 0, 0, 0.8);
     border-radius: 2px;
     border: 1px solid rgba(101, 67, 33, 0.5);
+}
+
+/* Фиксированные позиции для шнурков (равномерно распределены по всей высоте страницы 598px, расстояние ~28px) */
+.book-thread-1 { top: 115px; }
+.book-thread-2 { top: 141px; }
+.book-thread-3 { top: 168px; }
+.book-thread-4 { top: 195px; }
+.book-thread-5 { top: 222px; }
+.book-thread-6 { top: 250px; }
+.book-thread-7 { top: 278px; }
+.book-thread-8 { top: 304px; }
+.book-thread-9 { top: 332px; }
+.book-thread-10 { top: 359px; }
+.book-thread-11 { top: 386px; }
+.book-thread-12 { top: 413px; }
+.book-thread-13 { top: 440px; }
+.book-thread-14 { top: 468px; }
+.book-thread-15 { top: 495px; }
+.book-thread-16 { top: 522px; }
+.book-thread-17 { top: 550px; }
+.book-thread-18 { top: 576px; }
+.book-thread-19 { top: 603px; }
+.book-thread-20 { top: 630px; }
+.book-thread-21 { top: 657px; }
+
+/* Адаптивные позиции для разных размеров экрана */
+@media (max-width: 1024px) {
+    /* Для высоты 520px (md) - равномерно распределены, расстояние ~24px */
+    .book-thread-1 { top: 80px; }
+    .book-thread-2 { top: 104px; }
+    .book-thread-3 { top: 128px; }
+    .book-thread-4 { top: 152px; }
+    .book-thread-5 { top: 176px; }
+    .book-thread-6 { top: 200px; }
+    .book-thread-7 { top: 224px; }
+    .book-thread-8 { top: 248px; }
+    .book-thread-9 { top: 272px; }
+    .book-thread-10 { top: 296px; }
+    .book-thread-11 { top: 320px; }
+    .book-thread-12 { top: 344px; }
+    .book-thread-13 { top: 368px; }
+    .book-thread-14 { top: 392px; }
+    .book-thread-15 { top: 416px; }
+    .book-thread-16 { top: 440px; }
+    .book-thread-17 { top: 464px; }
+    .book-thread-18 { top: 488px; }
+    .book-thread-19 { top: 512px; }
+    .book-thread-20 { top: 536px; }
+    .book-thread-21 { top: 560px; }
+}
+
+@media (max-width: 768px) {
+    /* Для высоты 440px (sm) - равномерно распределены, расстояние ~20px */
+    .book-thread-1 { top: 75px; }
+    .book-thread-2 { top: 95px; }
+    .book-thread-3 { top: 115px; }
+    .book-thread-4 { top: 135px; }
+    .book-thread-5 { top: 155px; }
+    .book-thread-6 { top: 175px; }
+    .book-thread-7 { top: 195px; }
+    .book-thread-8 { top: 215px; }
+    .book-thread-9 { top: 235px; }
+    .book-thread-10 { top: 255px; }
+    .book-thread-11 { top: 275px; }
+    .book-thread-12 { top: 295px; }
+    .book-thread-13 { top: 315px; }
+    .book-thread-14 { top: 335px; }
+    .book-thread-15 { top: 355px; }
+    .book-thread-16 { top: 375px; }
+    .book-thread-17 { top: 395px; }
+    .book-thread-18 { top: 415px; }
+    .book-thread-19 { top: 435px; }
+    .book-thread-20 { top: 455px; }
+    .book-thread-21 { top: 475px; }
+}
+
+@media (max-width: 480px) {
+    /* Для высоты 380px (max-[480px]) - равномерно распределены, расстояние ~17px */
+    .book-thread-1 { top: 47px; }
+    .book-thread-2 { top: 64px; }
+    .book-thread-3 { top: 81px; }
+    .book-thread-4 { top: 98px; }
+    .book-thread-5 { top: 115px; }
+    .book-thread-6 { top: 132px; }
+    .book-thread-7 { top: 149px; }
+    .book-thread-8 { top: 166px; }
+    .book-thread-9 { top: 183px; }
+    .book-thread-10 { top: 200px; }
+    .book-thread-11 { top: 217px; }
+    .book-thread-12 { top: 234px; }
+    .book-thread-13 { top: 251px; }
+    .book-thread-14 { top: 268px; }
+    .book-thread-15 { top: 285px; }
+    .book-thread-16 { top: 302px; }
+    .book-thread-17 { top: 319px; }
+    .book-thread-18 { top: 336px; }
+    .book-thread-19 { top: 353px; }
+    .book-thread-20 { top: 370px; }
+    .book-thread-21 { top: 387px; }
 }
 
 /* Отверстия уже есть на изображении книги, поэтому дополнительные элементы не нужны */
