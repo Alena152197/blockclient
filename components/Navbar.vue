@@ -19,7 +19,8 @@
                             <span class="sr-only">Search icon</span>
                         </div>
                         <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar"
-                            class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                            placeholder="Поиск статей..."
+                            class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-center">
                     </div>
 
                     <!-- Обёртка для аватара и выпадающего меню -->
@@ -60,11 +61,7 @@
                                 </li>
                                 <li>
                                     <a href="#"
-                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Settings</a>
-                                </li>
-                                <li>
-                                    <a href="#"
-                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Earnings</a>
+                                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Настройки</a>
                                 </li>
                             </ul>
                             <div class="py-1">
@@ -104,9 +101,9 @@
                                     stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar"
-                            class="block w-full p-2 ps-10 text-sm text-gray-900 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                            placeholder="Поиск...">
+                        <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar-mobile"
+                            placeholder="Поиск статей..."
+                            class="block w-full p-2 ps-10 text-sm text-gray-900 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 placeholder-center">
                     </div>
                     <ul
                         class="flex flex-col p-5 mt-4 font-bold md:space-x-8  md:flex-row md:mt-0  sm:flex-row sm:justify-center sm:mt-0 dark:border-gray-700">
@@ -143,8 +140,6 @@ const route = useRoute();
 const isActive = (path) => route.path.split('/')[1] === path
 const router = useRouter()
 
-console.log("userMe:", search.userMe);
-
 
 const backendUrl = 'https://324cbb377ef9.vps.myjino.ru'
 
@@ -168,3 +163,9 @@ useHead({
     ]
 });
 </script>
+
+<style scoped>
+.placeholder-center::placeholder {
+    text-align: center;
+}
+</style>

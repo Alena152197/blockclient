@@ -1,7 +1,23 @@
 <template>
     <div class="">
-        <h2 class="text-4xl font-extrabold my-4 mb-6 p-1 text-[#4a4a4a] dark:text-white text-center">Блог</h2>
-        <div class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
+        <h2 class="text-4xl font-extrabold my-4 mb-6 p-1 text-[#4a4a4a] dark:text-white text-center">Мои интересы</h2>
+        
+        <!-- Индикатор загрузки -->
+        <div v-if="isLoading" class="flex justify-center items-center py-20">
+            <div class="relative">
+                <div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+            </div>
+        </div>
+
+        <!-- Сообщение если нет статей -->
+        <div v-else-if="posts.length === 0" class="text-center py-12">
+            <p class="text-xl text-gray-600 dark:text-gray-400">
+                Статей пока нет.
+            </p>
+        </div>
+
+        <!-- Список статей -->
+        <div v-else class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
@@ -27,7 +43,7 @@
                 </div>
             </article>
         </div>
-        <button v-if="!(displayedPosts.length === posts.length)" @click="loadMore" type="button"
+        <button v-if="posts.length > 0 && !(displayedPosts.length === posts.length)" @click="loadMore" type="button"
             class="block m-auto w-40 my-8 bg-[#a79d1c]/50 text-[#a79d1c] hover:text-white border border-[#a79d1c] hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-[#a79d1c] font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
             Смотреть еще
         </button>
@@ -37,15 +53,48 @@
 
 
 <script setup>
-const api = await $fetch('https://324cbb377ef9.vps.myjino.ru/api/posts?populate=*')
-const posts = api.data
+import { useSearchStore } from '~/stores/search';
+import { useRouter } from 'vue-router';
+import { onMounted } from 'vue';
 
-const displayedPosts = ref(posts.slice(0, 8));
+const search = useSearchStore();
+const router = useRouter();
+const base_url = "https://324cbb377ef9.vps.myjino.ru";
+
+const posts = ref([]);
+const displayedPosts = ref([]);
+const isLoading = ref(true);
+
+// Загрузка всех постов
+const loadPosts = async () => {
+    isLoading.value = true;
+    try {
+        // Загружаем все посты
+        const allPosts = await $fetch(`${base_url}/api/posts?populate=*&sort=createdAt:desc`);
+        if (allPosts.data && Array.isArray(allPosts.data)) {
+            posts.value = allPosts.data;
+        } else {
+            posts.value = [];
+        }
+        
+        displayedPosts.value = posts.value.slice(0, 8);
+    } catch (error) {
+        console.error('Ошибка при загрузке постов:', error);
+        posts.value = [];
+        displayedPosts.value = [];
+    } finally {
+        isLoading.value = false;
+    }
+};
+
 const loadMore = () => {
-    displayedPosts.value = posts.slice(0, displayedPosts.value.length + 4);
+    displayedPosts.value = posts.value.slice(0, displayedPosts.value.length + 4);
 }
 
-const base_url = "https://324cbb377ef9.vps.myjino.ru"
+// Загружаем посты на клиенте
+onMounted(() => {
+    loadPosts();
+});
 </script>
 
 <style scoped>

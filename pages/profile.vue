@@ -155,7 +155,8 @@ const uploadProfileImage = async (event) => {
   formData.append('files', file)
 
   try {
-    const res = await fetch(`${baseUrl}/api/upload`, {
+    // Используем локальный API route для обхода CORS
+    const res = await fetch('/api/upload', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt')}`
@@ -164,11 +165,12 @@ const uploadProfileImage = async (event) => {
     })
 
     if (!res.ok) {
-      alert('Ошибка загрузки файла')
-      return
+      const errorData = await res.json().catch(() => ({ message: 'Ошибка загрузки файла' }))
+      throw new Error(errorData.message || 'Ошибка загрузки файла')
     }
 
-    const data = await res.json()
+    const resData = await res.json()
+    const data = Array.isArray(resData) ? resData : [resData]
     const avatarId = data[0].id
 
     // Привязываем аватар к пользователю
@@ -192,7 +194,8 @@ const uploadProfileImage = async (event) => {
 
   } catch (err) {
     console.error('Ошибка сети:', err)
-    alert('Ошибка при загрузке фото')
+    const errorMessage = err?.data?.message || err?.message || 'Ошибка при загрузке фото'
+    alert(errorMessage)
   }
 }
 
