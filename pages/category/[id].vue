@@ -5,7 +5,14 @@
             <article v-for="post in displayedPosts" :key="post.id"
                 class="max-w-sm bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
-                    <img class="rounded-t-lg" :src="base_url + post.img[0].url" :alt=post.img[0].alternativeText />
+                    <!-- Проверяем разные варианты структуры изображения -->
+                    <img v-if="(post.img && Array.isArray(post.img) && post.img.length > 0 && post.img[0]?.url) || (post.img && post.img.url)" 
+                        class="rounded-t-lg w-full h-36 object-cover" 
+                        :src="base_url + (Array.isArray(post.img) ? post.img[0].url : post.img.url)" 
+                        :alt="(Array.isArray(post.img) ? post.img[0]?.alternativeText : post.img?.alternativeText) || post.title" />
+                    <div v-else class="rounded-t-lg w-full h-36 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                        <span class="text-gray-400 dark:text-gray-500 text-sm">Нет изображения</span>
+                    </div>
                 </NuxtLink>
                 <div class="p-5">
                     <NuxtLink :to="'/post/' + post.documentId">
