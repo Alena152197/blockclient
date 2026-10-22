@@ -1,11 +1,12 @@
 <template>
-    <main class="max-w-screen-lg min-w-96 md:min-w-[48rem] lg:min-w-[56rem] mx-auto py-2">
-        <!-- Хлебные крошки -->
-        <nav class="flex mb-4" aria-label="Breadcrumb">
-            <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse text-sm font-medium">
+    <main class="max-w-screen-sm min-w-96 md:min-w-[48rem] lg:min-w-[46rem] mx-auto py-2">
+        <!-- Хлебные крошки + редактирование (кнопка всегда сверху, если вы автор) -->
+        <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <nav class="flex min-w-0 flex-1" aria-label="Breadcrumb">
+            <ol class="inline-flex flex-wrap items-center space-x-1 md:space-x-2 rtl:space-x-reverse text-sm font-medium">
                 <li class="inline-flex items-center">
                     <NuxtLink to="/blog"
-                        class="inline-flex items-center text-black hover:text-blue-700 dark:text-white dark:hover:text-blue-300 font-semibold underline-offset-2 hover:underline">
+                        class="inline-flex items-center text-black hover:text-blue-700 font-semibold underline-offset-2 hover:underline">
                         <svg class="w-3 h-3 me-2.5" viewBox="0 0 20 20" fill="currentColor"
                             xmlns="http://www.w3.org/2000/svg">
                             <path
@@ -18,12 +19,12 @@
                 <!-- Категория -->
                 <li v-if="post?.categories && post.categories.length > 0">
                     <div class="flex items-center">
-                        <svg class="w-3 h-3 text-black dark:text-white mx-1" fill="none" stroke="currentColor" viewBox="0 0 6 10"
+                        <svg class="w-3 h-3 text-black mx-1" fill="none" stroke="currentColor" viewBox="0 0 6 10"
                             xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
                         </svg>
                         <NuxtLink :to="'/category/' + post.categories[0].documentId"
-                            class="ms-1 text-black hover:text-blue-700 md:ms-2 dark:text-white dark:hover:text-blue-300 font-semibold underline-offset-2 hover:underline">
+                            class="ms-1 text-black hover:text-blue-700 md:ms-2 font-semibold underline-offset-2 hover:underline">
                             {{ post.categories[0].title }}
                         </NuxtLink>
                     </div>
@@ -31,8 +32,8 @@
 
                 <!-- Название поста -->
                 <li v-if="post" aria-current="page">
-                    <div class="flex items-center text-black dark:text-white">
-                        <svg class="w-3 h-3 text-black dark:text-white mx-1" fill="none" stroke="currentColor" viewBox="0 0 6 10"
+                    <div class="flex items-center text-black">
+                        <svg class="w-3 h-3 text-black mx-1" fill="none" stroke="currentColor" viewBox="0 0 6 10"
                             xmlns="http://www.w3.org/2000/svg">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4" />
                         </svg>
@@ -41,26 +42,61 @@
                 </li>
             </ol>
         </nav>
-
-        <!-- Фоновое изображение -->
-        <div v-if="post?.img?.url" 
-            class="bg-no-repeat bg-center bg-contain rounded-se-2xl my-10 bg-fixed min-h-[600px] w-full"
-            :style="{ 
-                backgroundImage: 'url(' + base_url + post.img.url + ')',
-                backgroundSize: 'contain',
-                backgroundPosition: 'center center'
-            }">
+            <NuxtLink
+                v-if="canEditPost"
+                :to="editArticlePath"
+                class="inline-flex shrink-0 items-center justify-center gap-2 rounded-lg border-2 border-amber-700 bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-900 shadow-sm transition hover:bg-amber-100"
+            >
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                </svg>
+                Редактировать статью
+            </NuxtLink>
         </div>
 
-        <!-- Заголовок и дата -->
-        <div v-if="post">
-            <h1 class="text-2xl font-bold mb-2 text-gray-900 dark:text-white">{{ post.title || 'Без названия' }}</h1>
-            <p class="date text-gray-700 dark:text-gray-300">Дата публикации: <span>{{ formatDate() }}</span></p>
-        </div>
-        
+        <!-- Заголовок → обложка → дата → текст -->
+        <template v-if="post">
+            <h1 class="mb-6 text-2xl font-bold text-gray-900">{{ post.title || 'Без названия' }}</h1>
+
+            <figure
+                v-if="heroImageUrl"
+                class="post-hero mb-8 w-full"
+                :style="heroCoverStyles.figureStyle"
+            >
+                <div :style="heroCoverStyles.innerWrapStyle">
+                    <div
+                        class="group relative overflow-hidden rounded-2xl bg-gray-100 shadow-[0_22px_50px_-14px_rgba(15,23,42,0.22)] ring-1 ring-gray-900/8"
+                        :style="heroCoverStyles.boxStyle"
+                    >
+                        <img
+                            :src="heroImageUrl"
+                            :alt="heroImageAlt"
+                            class="absolute inset-0 h-full w-full transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.02]"
+                            :class="heroCoverStyles.imgClass"
+                            :style="heroCoverStyles.imgStyle"
+                            loading="eager"
+                            decoding="async"
+                            fetchpriority="high"
+                        />
+                    </div>
+                </div>
+            </figure>
+
+            <div class="mb-8">
+                <p class="date text-gray-700">Дата публикации: <span>{{ formatDate() }}</span></p>
+                <p
+                    v-if="!search.userMe?.id"
+                    class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950"
+                >
+                    <NuxtLink to="/admin" class="font-semibold text-amber-900 underline-offset-2 hover:underline">Войдите</NuxtLink>
+                    как администратор блога — над статьёй появится кнопка «Редактировать».
+                </p>
+            </div>
+        </template>
+
         <!-- Сообщение об ошибке -->
         <div v-else class="text-center py-12">
-            <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
+            <p class="text-xl text-gray-600 mb-4">
                 Статья не найдена или произошла ошибка при загрузке.
             </p>
             <NuxtLink to="/blog" 
@@ -70,18 +106,18 @@
         </div>
 
         <!-- Контент -->
-        <div v-if="post" class="ns_post mt-8 text-gray-900 dark:text-gray-100" v-html="mark"></div>
+        <div v-if="post" class="ns_post mt-8 text-gray-900" v-html="mark"></div>
 
         <!-- Секция комментариев -->
-        <div v-if="post" class="mt-8 border-t border-gray-200 dark:border-gray-700 pt-6">
-            <h2 class="text-2xl font-bold mb-4 text-gray-900 dark:text-white">Комментарии ({{ comments.length }})</h2>
+        <div v-if="post" class="mt-8 border-t border-gray-200 pt-6">
+            <h2 class="text-2xl font-bold mb-4 text-gray-900">Комментарии ({{ comments.length }})</h2>
             
             <!-- Форма добавления комментария -->
-            <div class="mb-6 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-lg hover:shadow-xl transition-shadow">
-                <div v-if="!search.userMe?.id" class="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 dark:from-amber-900/20 dark:to-yellow-900/20 border border-amber-200 dark:border-amber-800 rounded-xl">
-                    <p class="text-sm text-gray-800 dark:text-gray-200">
+            <div class="mb-6 bg-white p-6 rounded-2xl border border-gray-200 shadow-lg hover:shadow-xl transition-shadow">
+                <div v-if="!search.userMe?.id" class="p-4 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl">
+                    <p class="text-sm text-gray-800">
                         Чтобы оставить комментарий, пожалуйста, 
-                        <NuxtLink to="/admin" class="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold underline-offset-2 hover:underline transition-colors">войдите</NuxtLink> в систему.
+                        <NuxtLink to="/admin" class="text-blue-600 hover:text-blue-700 font-semibold underline-offset-2 hover:underline transition-colors">войдите</NuxtLink> в систему.
                     </p>
                 </div>
                 <form v-else @submit.prevent="submitComment" class="space-y-4">
@@ -91,7 +127,7 @@
                             v-model="newComment.text"
                             rows="4"
                             required
-                            class="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-white transition-all resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                            class="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all resize-none placeholder:text-gray-400"
                             placeholder="Напишите ваш комментарий..."
                         ></textarea>
                     </div>
@@ -114,13 +150,13 @@
                             </span>
                         </button>
                         <div class="flex items-center gap-2">
-                            <span v-if="commentError" class="text-sm text-red-600 dark:text-red-400 font-medium flex items-center gap-1">
+                            <span v-if="commentError" class="text-sm text-red-600 font-medium flex items-center gap-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
                                 {{ commentError }}
                             </span>
-                            <span v-if="commentSuccess" class="text-sm text-green-600 dark:text-green-400 font-medium flex items-center gap-1">
+                            <span v-if="commentSuccess" class="text-sm text-green-600 font-medium flex items-center gap-1">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                 </svg>
@@ -136,7 +172,7 @@
                 <div
                     v-for="comment in comments"
                     :key="comment.id"
-                    class="group bg-gray-800 dark:bg-gray-800 p-4 rounded-xl border border-gray-700 dark:border-gray-700 hover:border-gray-600 dark:hover:border-gray-600 transition-all shadow-sm hover:shadow-md"
+                    class="group bg-gray-50 p-4 rounded-xl border border-gray-200 hover:border-gray-300 transition-all shadow-sm hover:shadow-md"
                 >
                     <div class="flex items-start gap-3">
                         <div class="flex-shrink-0">
@@ -144,14 +180,14 @@
                                 :to="getAuthorProfileLink(comment)" 
                                 class="block hover:opacity-80 transition-opacity"
                             >
-                                <div v-if="getAuthorAvatar(comment)" class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-white dark:ring-gray-800 shadow-md">
+                                <div v-if="getAuthorAvatar(comment)" class="w-9 h-9 rounded-full overflow-hidden ring-2 ring-white shadow-md">
                                     <img 
                                         :src="getAuthorAvatar(comment)" 
                                         :alt="getAuthorName(comment)"
                                         class="w-full h-full object-cover"
                                     />
                                 </div>
-                                <div v-else class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white dark:ring-gray-800">
+                                <div v-else class="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 via-purple-500 to-pink-500 flex items-center justify-center text-white font-semibold text-sm shadow-md ring-2 ring-white">
                                     {{ getAuthorInitial(comment) }}
                                 </div>
                             </NuxtLink>
@@ -161,19 +197,19 @@
                                 <div class="flex items-center gap-2 flex-wrap">
                                     <NuxtLink 
                                         :to="getAuthorProfileLink(comment)"
-                                        class="font-semibold text-gray-900 dark:text-white text-sm hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                                        class="font-semibold text-gray-900 text-sm hover:text-blue-600 transition-colors"
                                     >
                                         {{ getAuthorName(comment) }}
                                     </NuxtLink>
-                                    <span class="text-xs text-gray-500 dark:text-gray-400">
+                                    <span class="text-xs text-gray-500">
                                         {{ formatCommentDate(comment.createdAt) }}
                                     </span>
                                 </div>
                                 <button
-                                    v-if="isMyComment(comment)"
+                                    v-if="canManageBlogContent(search.userMe)"
                                     @click="deleteComment(comment.id)"
                                     :disabled="isDeleting === comment.id"
-                                    class="opacity-0 group-hover:opacity-100 text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-all disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded hover:bg-red-50 dark:hover:bg-red-900/20"
+                                    class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded hover:bg-red-50"
                                     title="Удалить комментарий"
                                 >
                                     <svg v-if="isDeleting !== comment.id" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,12 +218,12 @@
                                     <span v-else class="text-xs">...</span>
                                 </button>
                             </div>
-                            <p class="text-white whitespace-pre-wrap text-sm leading-relaxed">{{ comment.Content || comment.content || comment.text || comment.message || comment.body || comment.commentText || comment.description || 'Комментарий без текста' }}</p>
+                            <p class="text-gray-800 whitespace-pre-wrap text-sm leading-relaxed">{{ comment.Content || comment.content || comment.text || comment.message || comment.body || comment.commentText || comment.description || 'Комментарий без текста' }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-            <div v-else class="text-center py-6 text-gray-500 dark:text-gray-400">
+            <div v-else class="text-center py-6 text-gray-500">
                 <p class="text-sm">Пока нет комментариев. Будьте первым!</p>
             </div>
         </div>
@@ -196,24 +232,122 @@
 
 <script setup>
 import MarkdownIt from "markdown-it";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed, nextTick } from "vue";
 import { useRoute, useHead } from "#app";
 import { useSearchStore } from "~/stores/search";
+import { parseDescWithCover, coverLayoutStyle } from "~/utils/postCoverLayout";
+import { canManageBlogContent } from "~/utils/strapiUserRole";
+import { getOrCreateVisitorId } from "~/utils/blogVisitorId";
+import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const markdown = new MarkdownIt();
 const mark = ref('');
+
+function escapeHtml(s) {
+    if (typeof s !== 'string') return '';
+    return s
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+/** Есть ли реальные HTML-теги (<p>, <div>, <br>, <span …> и т.д.) */
+function isLikelyHtml(body) {
+    return /<\/?[a-z][a-z0-9]*(?:\s[^>]*)?>/i.test(body);
+}
+
+/** Похоже на Markdown (заголовки, списки, ссылки, цитаты) — иначе длинный текст с эмодзи ошибочно шёл в markdown и терял пробелы */
+function looksLikeMarkdown(body) {
+    if (/^#{1,6}\s+/m.test(body)) return true;
+    if (/^\s*[-*+]\s+/m.test(body)) return true;
+    if (/^\s*\d+\.\s+/m.test(body)) return true;
+    if (/\*\*[^*]+\*\*/.test(body)) return true;
+    if (/\[[^\]]+\]\([^)]+\)/.test(body)) return true;
+    if (/^>\s/m.test(body)) return true;
+    return false;
+}
+
+function renderPostBody(body) {
+    if (isLikelyHtml(body)) {
+        return body;
+    }
+    if (looksLikeMarkdown(body)) {
+        return markdown.render(body);
+    }
+    return `<div class="ns_post-plain">${escapeHtml(body)}</div>`;
+}
 const route = useRoute();
-const base_url = 'https://324cbb377ef9.vps.myjino.ru';
+const base_url = STRAPI_BASE;
 const search = useSearchStore();
 
 const post = ref(null);
 const comments = ref([]);
+
+const heroImageUrl = computed(() => {
+    const u = post.value?.img?.url;
+    if (!u) return '';
+    if (typeof u === 'string' && (u.startsWith('http://') || u.startsWith('https://'))) return u;
+    return `${base_url}${u}`;
+});
+
+const heroImageAlt = computed(() => {
+    const t = post.value?.title?.trim();
+    return t ? `Иллюстрация к статье «${t}»` : 'Обложка статьи';
+});
+
+const postCoverLayout = computed(() => parseDescWithCover(post.value?.desc || '').layout);
+const heroCoverStyles = computed(() => coverLayoutStyle(postCoverLayout.value));
+
+function normalizePostAuthor(p) {
+    if (!p) return null;
+    let raw = p.author;
+    if (raw == null || raw === undefined) return null;
+    if (Array.isArray(raw)) raw = raw[0];
+    if (raw?.data !== undefined) raw = Array.isArray(raw.data) ? raw.data[0] : raw.data;
+    if (raw?.attributes && typeof raw.attributes === 'object') {
+        const attr = raw.attributes;
+        return {
+            id: raw.id ?? attr.id,
+            documentId: raw.documentId ?? attr.documentId,
+            username: attr.username ?? raw.username,
+            email: attr.email ?? raw.email
+        };
+    }
+    if (raw && typeof raw === 'object') {
+        return {
+            id: raw.id,
+            documentId: raw.documentId,
+            username: raw.username,
+            email: raw.email
+        };
+    }
+    if (typeof raw === 'number' || typeof raw === 'string') {
+        return { id: raw, documentId: undefined, username: undefined, email: undefined };
+    }
+    return null;
+}
+
+const canEditPost = computed(() => {
+    if (!post.value) return false;
+    const me = search.userMe;
+    if (!me?.id && !me?.documentId) return false;
+    return canManageBlogContent(me);
+});
+
 const newComment = ref({ text: '' });
 const isSubmitting = ref(false);
 const isDeleting = ref(null);
 const commentError = ref('');
 const commentSuccess = ref('');
 const { id } = route.params;
+
+/** Тот же id, что в URL /post/:id — для ссылки на редактирование (надёжнее, чем post.documentId из API) */
+const editArticlePath = computed(() => {
+    const raw = route.params.id;
+    const segment = Array.isArray(raw) ? raw[0] : raw;
+    return '/console/edit/' + encodeURIComponent(String(segment ?? ''));
+});
 
 // Функция для загрузки комментариев
 const loadComments = async () => {
@@ -478,15 +612,8 @@ const loadPostData = async () => {
         // Загружаем пост (доступ открыт для всех)
         post.value = postData;
         if (post.value?.body) {
-            // Проверяем, является ли контент HTML (содержит теги)
             const body = post.value.body;
-            if (body.includes('<') && body.includes('>')) {
-                // Это HTML, отображаем напрямую
-                mark.value = body;
-            } else {
-                // Это Markdown, обрабатываем через markdown.render
-                mark.value = markdown.render(body);
-            }
+            mark.value = renderPostBody(body);
         }
         
         // Инициализируем пустой массив комментариев
@@ -507,6 +634,30 @@ const loadPostWithComments = async () => {
                 await search.fetchUserMe();
             }
         }
+
+        // Повторно запрашиваем пост с JWT: у публичного findOne поле author может быть скрыто,
+        // без него не показывается кнопка «Редактировать» у автора.
+        if (import.meta.client) {
+            const token = localStorage.getItem('jwt');
+            if (token) {
+                const authHeaders = { Authorization: `Bearer ${token}` };
+                // Strapi 5: несколько populate[field]=* в одном запросе часто даёт 400 — достаточно populate=*
+                try {
+                    const api = await $fetch(
+                        `${base_url}/api/posts/${encodeURIComponent(id)}?populate=*`,
+                        { headers: authHeaders }
+                    );
+                    if (api?.data) {
+                        post.value = api.data;
+                        if (post.value?.body) {
+                            mark.value = renderPostBody(post.value.body);
+                        }
+                    }
+                } catch (e) {
+                    console.warn('Не удалось обновить пост с авторизацией:', e);
+                }
+            }
+        }
         
         // Всегда загружаем комментарии отдельным запросом, так как они могут не загрузиться через populate
         await loadComments();
@@ -518,9 +669,35 @@ const loadPostWithComments = async () => {
 // Загружаем пост на сервере (для SEO)
 await loadPostData();
 
+async function registerPostViewOnce() {
+    if (!import.meta.client) return;
+    await nextTick();
+    const p = post.value;
+    if (!p) return;
+    /** Автор и контент-админ не попадают в журнал посещений */
+    if (canEditPost.value) return;
+    const documentId = p.documentId != null ? String(p.documentId).trim() : String(p.id ?? '').trim();
+    if (!documentId) return;
+    const key = `post_view_${documentId}`;
+    try {
+        if (sessionStorage.getItem(key)) return;
+        sessionStorage.setItem(key, '1');
+        const token = localStorage.getItem('jwt');
+        const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        await $fetch('/api/post-view', {
+            method: 'POST',
+            body: { documentId, visitorId: getOrCreateVisitorId() },
+            headers
+        });
+    } catch {
+        /* счётчик необязателен для отображения статьи */
+    }
+}
+
 // Загружаем комментарии и пользователя на клиенте (как в profile.vue)
-onMounted(() => {
-    loadPostWithComments();
+onMounted(async () => {
+    await loadPostWithComments();
+    await registerPostViewOnce();
 });
 
 // Отправка комментария
@@ -820,7 +997,11 @@ const isMyComment = (comment) => {
 // Удаление комментария
 const deleteComment = async (commentId) => {
     if (!commentId) return;
-    
+    if (!canManageBlogContent(search.userMe)) {
+        commentError.value = 'Удалять комментарии может только администратор.';
+        return;
+    }
+
     // Подтверждение удаления
     if (!confirm('Вы уверены, что хотите удалить этот комментарий?')) {
         return;
@@ -982,21 +1163,6 @@ h6,
     color: #1a1a1a;
 }
 
-.dark h1,
-.dark h2,
-.dark h3,
-.dark h4,
-.dark h5,
-.dark h6,
-.dark .h1,
-.dark .h2,
-.dark .h3,
-.dark .h4,
-.dark .h5,
-.dark .h6 {
-    color: #e5e5e5;
-}
-
 h1,
 .h1 {
     font-size: 2em;
@@ -1039,10 +1205,6 @@ p {
     color: #1a1a1a;
 }
 
-.dark p {
-    color: #e5e5e5;
-}
-
 .lead {
     margin-bottom: 1.5em;
     font-size: 1.15em;
@@ -1071,10 +1233,6 @@ mark,
 /* Цветовые стили */
 .text-muted {
     color: #4a5568;
-}
-
-.dark .text-muted {
-    color: #a0aec0;
 }
 
 .text-primary {
@@ -1122,18 +1280,25 @@ mark,
 /* Улучшение контрастности текста в контенте поста */
 .ns_post {
     color: #1a1a1a;
-}
-
-.dark .ns_post {
-    color: #e5e5e5;
+    line-height: 1.7;
 }
 
 .ns_post p {
     color: #1a1a1a;
+    margin: 0.65em 0;
 }
 
-.dark .ns_post p {
-    color: #e5e5e5;
+/* Текст из редактора (contenteditable) часто в виде div — отступы между «строками» */
+.ns_post > div:not([data-editor-img-wrap]) {
+    margin: 0.5em 0;
+    min-height: 0.25em;
+}
+
+/* Плоский текст без HTML/Markdown: сохраняем пробелы и переносы строк */
+.ns_post-plain {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 /* Стили для контейнеров изображений с выравниванием */
@@ -1186,28 +1351,7 @@ nav[aria-label="Breadcrumb"] span {
     color: #000000 !important;
 }
 
-.dark nav[aria-label="Breadcrumb"] a,
-.dark nav[aria-label="Breadcrumb"] span {
-    color: #ffffff !important;
-}
-
 nav[aria-label="Breadcrumb"] svg {
     color: #000000 !important;
-}
-
-.dark nav[aria-label="Breadcrumb"] svg {
-    color: #ffffff !important;
-}
-
-/* Стили для текста комментариев - белый цвет для обеих тем */
-.group > div > p,
-.group p.text-white,
-div.group p {
-    color: #ffffff !important;
-}
-
-/* Убеждаемся, что все параграфы в комментариях белые */
-.space-y-3 > div.group p {
-    color: #ffffff !important;
 }
 </style>

@@ -1,5 +1,21 @@
 <template>
-    <div class="">
+    <div
+        class="blog-page-root relative flex w-full min-h-0 flex-1 flex-col"
+        :class="interestsBgState?.url ? 'blog-page--custom-bg' : 'min-h-[calc(100vh-9rem)]'"
+    >
+        <div v-if="interestsBgState?.url" class="blog-page-bg" aria-hidden="true">
+            <img
+                class="blog-page-bg-img"
+                :src="interestsBgState.url"
+                alt=""
+                sizes="100vw"
+                decoding="async"
+                fetchpriority="low"
+                :style="interestsBgImageStyle"
+            />
+            <div class="blog-page-bg-overlay" :style="customInterestsBgOverlayStyle" />
+        </div>
+        <div class="relative z-10 w-full min-w-0 max-w-full">
         <h2 class="text-4xl font-extrabold my-4 mb-6 p-1 text-[#4a4a4a] dark:text-white text-center">Мои интересы</h2>
         
         <!-- Индикатор загрузки -->
@@ -16,12 +32,19 @@
             </p>
         </div>
 
-        <!-- Список статей -->
-        <div v-else class="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 mb-6 justify-self-center">
-            <article v-for="post in displayedPosts" :key="post.id"
-                class="max-w-sm overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 relative group">
-                <!-- Кнопка удаления (показывается при наведении) -->
+        <!-- Список статей: блок по центру, одинаковые отступы слева и справа -->
+        <div
+            v-else
+            class="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-10 lg:px-14"
+        >
+            <div :class="[postsGridClass, 'mb-6']">
+            <article
+                v-for="post in displayedPosts"
+                :key="post.id"
+                class="flex h-full min-h-0 w-full max-w-sm flex-col overflow-hidden bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700 relative group"
+            >
                 <button
+                    v-if="canDeletePosts"
                     @click.stop="deletePost(post.id, post.documentId)"
                     :disabled="isDeleting === post.id"
                     class="absolute top-2 right-2 z-20 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 opacity-0 group-hover:opacity-100 transition-opacity shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
@@ -32,24 +55,35 @@
                     </svg>
                     <span v-else class="text-xs">...</span>
                 </button>
-                <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
-                    <!-- Добавляем класс для изображений -->
-                    <img v-if="post.img && post.img.url" 
-                        class="rounded-t-lg w-full h-36 object-cover" 
+
+                <NuxtLink class="block shrink-0 overflow-hidden" :to="'/post/' + post.documentId">
+                    <img
+                        v-if="post.img && post.img.url"
+                        class="h-60 w-full rounded-t-lg object-cover sm:h-56"
                         :src="base_url + post.img.url"
-                        :alt="post.img.alternativeText || post.title" />
-                    <div v-else class="rounded-t-lg w-full h-36 bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
-                        <span class="text-gray-400 dark:text-gray-500 text-sm">Нет изображения</span>
+                        :alt="post.img.alternativeText || post.title"
+                    />
+                    <div
+                        v-else
+                        class="flex h-60 items-center justify-center rounded-t-lg bg-gray-200 dark:bg-gray-700 sm:h-56"
+                    >
+                        <span class="text-sm text-gray-400 dark:text-gray-500">Нет изображения</span>
                     </div>
                 </NuxtLink>
-                <div class="p-4">
-                    <NuxtLink :to="'/post/' + post.documentId">
-                        <h5 class="mb-3 text-2xl font-bold tracking-tight text-gray-800 dark:text-gray-100">{{
+                <div class="flex min-h-0 flex-1 flex-col p-3">
+                    <NuxtLink class="shrink-0" :to="'/post/' + post.documentId">
+                        <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-800 dark:text-gray-100 line-clamp-2">{{
                             post.title }}</h5>
                     </NuxtLink>
-                    <p class="mb-3 font-normal text-gray-800 dark:text-gray-200">{{ post.desc }}</p>
-                    <NuxtLink :to="'/post/' + post.documentId"
-                        class="inline-flex items-center px-3 py-2 text-sm font-medium text-center text-white bg-[#a79d1c]/50 rounded-lg hover:bg-[#a79d1c] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    <p
+                        class="mb-2 line-clamp-2 text-sm font-normal leading-snug text-gray-700 dark:text-gray-300"
+                    >
+                        {{ stripCoverFromDesc(post.desc) }}
+                    </p>
+                    <NuxtLink
+                        :to="'/post/' + post.documentId"
+                        class="mt-auto inline-flex shrink-0 items-center self-start px-3 py-2 text-sm font-medium text-center text-white bg-[#a79d1c]/50 rounded-lg hover:bg-[#a79d1c] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    >
                         Подробнее
                         <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
                             xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
@@ -59,11 +93,16 @@
                     </NuxtLink>
                 </div>
             </article>
+            </div>
+            <button
+                v-if="canLoadMore"
+                @click="loadMore"
+                type="button"
+                class="block mx-auto w-40 my-8 bg-[#a79d1c]/50 text-[#a79d1c] hover:text-white border border-[#a79d1c] hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-[#a79d1c] font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800"
+            >
+                Смотреть еще
+            </button>
         </div>
-        <button v-if="posts.length > 0 && !(displayedPosts.length === posts.length)" @click="loadMore" type="button"
-            class="block m-auto w-40 my-8 bg-[#a79d1c]/50 text-[#a79d1c] hover:text-white border border-[#a79d1c] hover:brightness-90 focus:ring-4 focus:outline-none focus:ring-[#a79d1c] font-black rounded-lg text-base py-4 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-500 dark:focus:ring-blue-800">
-            Смотреть еще
-        </button>
         
         <!-- Сообщения об ошибках и успехе -->
         <div v-if="deleteError" class="fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
@@ -72,26 +111,58 @@
         <div v-if="deleteSuccess" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50">
             {{ deleteSuccess }}
         </div>
+        </div>
     </div>
 </template>
 
 
 
 <script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { stripCoverFromDesc } from '~/utils/postCoverLayout';
+import {
+    loadPageBgState,
+    buildCustomBgImageStyle,
+    buildCustomBgOverlayStyle
+} from '~/utils/blogIndexBg';
+import { sortPostsList, POSTS_INTERESTS_GRID_CLASS } from '~/utils/blogPostsLayout';
 import { useSearchStore } from '~/stores/search';
-import { useRouter } from 'vue-router';
-import { onMounted } from 'vue';
+import { canManageBlogContent } from '~/utils/strapiUserRole';
+import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const search = useSearchStore();
-const router = useRouter();
-const base_url = "https://324cbb377ef9.vps.myjino.ru";
+const canDeletePosts = computed(() => canManageBlogContent(search.userMe));
+
+const interestsBgState = ref(null);
+
+function loadInterestsBackground() {
+    interestsBgState.value = loadPageBgState('interests');
+}
+
+/** Фон — один экран (fixed + 100dvh); режим вписывания — из настроек (cover / contain / fill), см. «Вписать в экран» */
+const interestsBgImageStyle = computed(() => buildCustomBgImageStyle(interestsBgState.value));
+const customInterestsBgOverlayStyle = computed(() => buildCustomBgOverlayStyle(interestsBgState.value));
+
+function onInterestsPageBgChanged() {
+    loadInterestsBackground();
+}
 
 const posts = ref([]);
-const displayedPosts = ref([]);
 const isLoading = ref(true);
 const isDeleting = ref(null);
 const deleteError = ref('');
 const deleteSuccess = ref('');
+
+const postsGridClass = POSTS_INTERESTS_GRID_CLASS;
+
+const sortedPosts = computed(() => sortPostsList(posts.value, 'newest'));
+const postsPageSize = ref(8);
+
+const displayedPosts = computed(() => sortedPosts.value.slice(0, postsPageSize.value));
+
+const canLoadMore = computed(() => sortedPosts.value.length > postsPageSize.value);
+
+const base_url = STRAPI_BASE;
 
 // Загрузка всех постов
 const loadPosts = async () => {
@@ -105,37 +176,28 @@ const loadPosts = async () => {
             posts.value = [];
         }
         
-        displayedPosts.value = posts.value.slice(0, 8);
+        postsPageSize.value = 8;
     } catch (error) {
         console.error('Ошибка при загрузке постов:', error);
         posts.value = [];
-        displayedPosts.value = [];
     } finally {
         isLoading.value = false;
     }
 };
 
 const loadMore = () => {
-    displayedPosts.value = posts.value.slice(0, displayedPosts.value.length + 4);
-}
-
-// Проверка, является ли пост принадлежащим текущему пользователю
-const isMyPost = (post) => {
-    // Проверяем разные варианты структуры автора
-    const postAuthorId = post.author?.id || post.author?.data?.id || post.author;
-    const postAuthorDocumentId = post.author?.documentId;
-    
-    // Сравниваем по ID (число или строка)
-    return postAuthorId === search.userMe?.id || 
-           postAuthorDocumentId === search.userMe?.id ||
-           String(postAuthorId) === String(search.userMe?.id) ||
-           (post.author && typeof post.author === 'object' && post.author.id === search.userMe?.id);
+    postsPageSize.value += 4;
 };
 
 // Удаление поста
 const deletePost = async (postId, postDocumentId) => {
     if (!postId && !postDocumentId) return;
-    
+    if (!canManageBlogContent(search.userMe)) {
+        deleteError.value = 'Удалять посты может только администратор.';
+        setTimeout(() => { deleteError.value = ''; }, 4000);
+        return;
+    }
+
     // Подтверждение удаления
     if (!confirm('Вы уверены, что хотите удалить этот пост? Это действие нельзя отменить.')) {
         return;
@@ -164,10 +226,8 @@ const deletePost = async (postId, postDocumentId) => {
             throw new Error(errorMessage);
         }
         
-        // Удаляем пост из списков
         posts.value = posts.value.filter(p => p.id !== postId && p.documentId !== postDocumentId);
-        displayedPosts.value = displayedPosts.value.filter(p => p.id !== postId && p.documentId !== postDocumentId);
-        
+
         deleteSuccess.value = 'Пост успешно удален';
         setTimeout(() => { deleteSuccess.value = ''; }, 3000);
         
@@ -183,10 +243,77 @@ const deletePost = async (postId, postDocumentId) => {
 // Загружаем посты на клиенте
 onMounted(async () => {
     await loadPosts();
+    if (!process.client) return;
+    try {
+        if (localStorage.getItem('jwt') && !search.userMe?.id) {
+            await search.fetchUserMe();
+        }
+    } catch {
+        /* ignore */
+    }
+    loadInterestsBackground();
+    window.addEventListener('interests-page-bg-changed', onInterestsPageBgChanged);
+});
+
+onUnmounted(() => {
+    if (process.client) {
+        window.removeEventListener('interests-page-bg-changed', onInterestsPageBgChanged);
+    }
 });
 </script>
 
 <style scoped>
+/*
+ * Фон «Мои интересы»: один размер с окном браузера (fixed + 100dvh), не растягивается на всю длину списка.
+ * object-fit задаётся в настройках фона (cover / contain / fill); подложка #141414 видна в полях при contain.
+ */
+.blog-page-root.blog-page--custom-bg {
+    width: 100%;
+    min-width: 0;
+}
+
+/* Непрозрачная подложка страницы под контентом при прокрутке */
+.blog-page--custom-bg {
+    background-color: #141414;
+}
+
+/* Один экран: фон не движется с прокруткой, всегда «перед глазами» целиком */
+.blog-page--custom-bg .blog-page-bg {
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100dvh;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    background-color: #141414;
+}
+
+.blog-page-bg-img {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    display: block;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    max-width: none;
+    background-color: #141414;
+    pointer-events: none;
+    user-select: none;
+}
+
+.blog-page-bg-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
 h2 {
     color: #4a4a4a !important;
 }

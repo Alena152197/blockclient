@@ -59,6 +59,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { STRAPI_BASE } from '~/utils/strapiBase'
 const index = useSearchStore();
 const userForma = ref({
     username: '',
@@ -75,7 +76,7 @@ const loginSuccessMessage = ref(''); // Новое состояние для с�
 
 const fetchUsers = async () => {
     try {
-        const response = await $fetch('https://324cbb377ef9.vps.myjino.ru/api/users?fields=username&sort=username:desc');
+        const response = await $fetch(`${STRAPI_BASE}/api/users?fields=username&sort=username:desc`);
         const lastUser = response[0];
 
         if (lastUser && lastUser.username) {
@@ -85,7 +86,7 @@ const fetchUsers = async () => {
             }
         }
     } catch (error) {
-        console.log(`Не вышло получить последний id пользователя: ${error}`);
+        console.warn(`Не вышло получить последний id пользователя: ${error}`);
     }
 };
 
@@ -99,9 +100,8 @@ const registr = async () => {
         }
 
         await fetchUsers();
-        console.log(newID.value);
         if (newID) {
-            const response = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/auth/local/register`, {
+            const data = await $fetch(`${STRAPI_BASE}/api/auth/local/register`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,12 +113,11 @@ const registr = async () => {
                 },
             });
 
-            const data = await response;
-            localStorage.setItem('jwt', data.jwt);
-
-            if (!response.ok) {
-                index.userMe = data.user;
+            if (!data?.jwt) {
+                throw new Error('Регистрация: нет токена')
             }
+            localStorage.setItem('jwt', data.jwt);
+            await index.fetchUserMe();
 
             router.push('/'); // Перенаправление на главную страницу после успешной регистрации
         }
@@ -138,7 +137,7 @@ const registr = async () => {
 const login = async (userForma) => {
     loginError.value = ''; // Сброс сообщения об ошибке
     try {
-        const response = await $fetch(`https://324cbb377ef9.vps.myjino.ru/api/auth/local`, {
+        const data = await $fetch(`${STRAPI_BASE}/api/auth/local`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -149,12 +148,16 @@ const login = async (userForma) => {
             },
         });
 
-        const data = await response;
-        localStorage.setItem('jwt', data.jwt);
-
-        if (!response.ok) {
-            index.userMe = data.user;
+        if (!data?.jwt) {
+            throw new Error('Нет токена в ответе')
         }
+        localStorage.setItem('jwt', data.jwt);
+        /**
+         * Ответ /auth/local почти никогда не содержит полную роль — пункт «Настройки» в шапке
+         * завязан на role из /users/me. Раньше подставляли data.user и !response.ok (у $fetch нет .ok),
+         * из-за чего после повторного входа пропадал доступ к настройкам.
+         */
+        await index.fetchUserMe();
 
         // Показываем сообщение об успешном входе
         loginSuccessMessage.value = 'Вход выполнен успешно!';
@@ -166,7 +169,7 @@ const login = async (userForma) => {
 
     } catch (error) {
         loginError.value = 'Ошибка при входе, неверно введённые данные'; // Установка сообщения об ошибке
-        console.error('Ошибка при входе');
+        console.error('Ошибка при входе', error);
     }
 }
 

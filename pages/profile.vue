@@ -93,13 +93,14 @@
 import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSearchStore } from '@/stores/search'
+import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const router = useRouter()
 const search = useSearchStore()
 const profileImage = ref(null)
 const isModalOpen = ref(false) // Для модального окна
 
-const baseUrl = 'https://324cbb377ef9.vps.myjino.ru'
+const baseUrl = STRAPI_BASE
 
 // Данные пользователя
 const username = computed(() => search.userMe?.username || 'Гость')

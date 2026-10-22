@@ -1,7 +1,8 @@
 import { defineEventHandler, getHeader, readBody, createError, getRouterParam } from 'h3'
+import { STRAPI_BASE } from '../../../../utils/strapiBase'
 
 export default defineEventHandler(async (event) => {
-  const baseUrl = 'https://324cbb377ef9.vps.myjino.ru'
+  const baseUrl = STRAPI_BASE
   const id = getRouterParam(event, 'id')
   
   if (!id) {
@@ -49,7 +50,6 @@ export default defineEventHandler(async (event) => {
 
     // Если не сработало, пробуем формат с connect
     if (!response.ok) {
-      console.log('Пробуем формат с connect...')
       response = await fetch(`${baseUrl}/api/posts/${id}`, {
         method: 'PUT',
         headers: {
@@ -68,7 +68,6 @@ export default defineEventHandler(async (event) => {
 
     // Если не сработало, пробуем формат с set
     if (!response.ok) {
-      console.log('Пробуем формат с set...')
       response = await fetch(`${baseUrl}/api/posts/${id}`, {
         method: 'PUT',
         headers: {
@@ -87,7 +86,6 @@ export default defineEventHandler(async (event) => {
 
     // Если не сработало, пробуем получить пользователя по ID и использовать его documentId
     if (!response.ok) {
-      console.log('Пробуем получить documentId пользователя...')
       try {
         const userResponse = await fetch(`${baseUrl}/api/users/${authorId}`, {
           headers: {

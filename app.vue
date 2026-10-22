@@ -1,22 +1,60 @@
 <template>
   <NuxtLoadingIndicator :throttle="0" />
   <Navbar />
-  <!-- flex auto -->
-  <main class=" bg-[#FFEE00]/70 flex-auto"> 
-  <NuxtPage />
+  <!-- flex-auto: заполняет место между шапкой и футером. flex/col + flex-1 на /blog и /contact — чтобы фон на всю высоту main; иначе ломается расклад (напр. настройки + аккордеоны). -->
+  <main class="flex-auto bg-[#FFEE00]/70" :class="isFullBleedMainPage ? 'flex min-h-0 flex-col' : ''">
+    <NuxtPage :class="nuxtPageLayoutClass" />
   </main>
   <Up />
   <Footer />
 </template>
 
 <script setup>
-const base = 'https://324cbb377ef9.vps.myjino.ru'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { readBlogDisplayTitle } from '~/utils/blogDisplayTitle'
+import { applyBlogSettingsPayload } from '~/utils/blogClientSettingsRemote'
+import { STRAPI_BASE } from '~/utils/strapiBase'
+
+const route = useRoute()
+
+const { data: blogSettings } = await useAsyncData('blog-settings', () =>
+  $fetch('/api/blog-settings').catch(() => ({}))
+)
+
+if (import.meta.client && blogSettings.value && typeof blogSettings.value === 'object') {
+  applyBlogSettingsPayload(blogSettings.value)
+}
+
+/** Страницы, где корень должен занимать всю высоту main (фон без «дыр» над/под контентом) */
+const isFullBleedMainPage = computed(() => route.path === '/blog' || route.path === '/contact')
+
+const nuxtPageLayoutClass = computed(() =>
+  isFullBleedMainPage.value ? 'flex min-h-0 w-full flex-1 flex-col' : 'w-full'
+)
+
+const base = STRAPI_BASE
 const api = await $fetch(`${base}/api/config?populate=*`)
 const config = api.data
 const index = useSearchStore();
 
+/** Свой заголовок вкладки из настроек (localStorage), обновляется событием blog-display-title-changed */
+const displayTitleOverride = ref('')
+
+function syncDisplayTitleFromStorage() {
+  displayTitleOverride.value = readBlogDisplayTitle()
+}
+
+const documentTitle = computed(
+  () =>
+    displayTitleOverride.value ||
+    (typeof blogSettings.value?.blog_display_title === 'string'
+      ? blogSettings.value.blog_display_title.trim()
+      : '') ||
+    config.title
+)
+
 useHead({
-  title: config.title,
+  title: documentTitle,
   meta: [
     { name: 'description', content: config.desc },
     { name: 'keywords', content: config.keywords },
@@ -26,7 +64,7 @@ useHead({
   ],
   // настройка боди на главной
   bodyAttrs: {
-    class: 'bg-white dark:bg-gray-900'
+    class: 'bg-white'
   },
   head: {
     script: [
@@ -36,12 +74,24 @@ useHead({
 })
 
 onMounted(() => {
+  if (import.meta.client) {
+    document.documentElement.classList.remove('dark')
+    try {
+      localStorage.removeItem('color-theme')
+    } catch {
+      /* ignore */
+    }
+    syncDisplayTitleFromStorage()
+    window.addEventListener('blog-display-title-changed', syncDisplayTitleFromStorage)
+  }
   index.fetchUserMe();
   index.config = config;
-  
+})
+
+onUnmounted(() => {
+  if (import.meta.client) {
+    window.removeEventListener('blog-display-title-changed', syncDisplayTitleFromStorage)
+  }
 })
 
 </script>
-
-
-++

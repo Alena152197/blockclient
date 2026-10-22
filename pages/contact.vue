@@ -1,88 +1,141 @@
 <template>
-    <div class="bg-[url('/public/img/фонЗебра.png')] bg-right bg-no-repeat bg-[length:83%_100%] h-full">
-        <div class="flex justify-center items-center h-full relative">
-            <div class="absolute flex z-0 lg:flex hidden">
-                <!-- левая страница -->
-                <div ref="left" class="relative w-[445px] h-[598px] lg:w-[445px] lg:h-[598px] md:w-[380px] md:h-[520px] sm:w-[320px] sm:h-[440px] max-[480px]:w-[280px] max-[480px]:h-[380px]">
-                    <img src="/public/img/лист_1.png" alt="" class="w-full h-full object-cover">
+    <div
+        class="contact-page-root relative flex min-h-0 w-full flex-1 flex-col bg-right bg-no-repeat bg-[length:83%_100%] bg-[url('/img/zebra-bg.png')]"
+        :class="{ 'contact-page--custom-bg': contactBgState?.url }"
+    >
+        <div v-if="contactBgState?.url" class="contact-page-bg" aria-hidden="true">
+            <div class="contact-page-bg-layer" :style="customContactBgLayerStyle" />
+            <div class="contact-page-bg-overlay" :style="customContactBgOverlayStyle" />
+        </div>
+        <div class="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-2 py-6">
+            <h2
+                v-if="spreadTitle"
+                class="max-w-[min(100vw,890px)] px-2 text-center font-serif text-xl font-semibold tracking-wide text-[#3d3428] md:text-2xl"
+            >
+                {{ spreadTitle }}
+            </h2>
+            <!-- Контейнер разворота: нитки позиционируются от его границ (иначе «уезжают» вверх относительно книги) -->
+            <div class="book-spread-wrap relative inline-flex max-w-[100vw] flex-row flex-nowrap items-stretch justify-center">
+                <div class="pointer-events-none absolute inset-0 -z-[1] hidden lg:flex" aria-hidden="true">
+                    <div
+                        class="relative h-[598px] w-[445px] md:h-[520px] md:w-[380px] sm:h-[440px] sm:w-[320px] max-[480px]:h-[380px] max-[480px]:w-[280px] lg:h-[598px] lg:w-[445px]"
+                    >
+                        <img src="/img/sheet-1.png" alt="" class="relative h-full w-full object-cover" />
+                    </div>
+                    <div
+                        class="relative h-[598px] w-[445px] md:h-[520px] md:w-[380px] sm:h-[440px] sm:w-[320px] max-[480px]:h-[380px] max-[480px]:w-[280px] lg:h-[598px] lg:w-[445px]"
+                    >
+                        <img src="/img/sheet-2.png" alt="" class="relative h-full w-full object-cover" />
+                    </div>
                 </div>
-                <!-- правая страница -->
-                <div ref="right" class="relative w-[445px] h-[598px] lg:w-[445px] lg:h-[598px] md:w-[380px] md:h-[520px] sm:w-[320px] sm:h-[440px] max-[480px]:w-[280px] max-[480px]:h-[380px]">
-                    <img src="/public/img/лист_2.png" alt="" class="w-full h-full object-cover">
+
+            <!-- Левая страница: фото (соседний лист — текст справа) -->
+            <div
+                :class="[
+                    'book-left relative z-[1] h-[598px] w-[445px] md:h-[520px] md:w-[380px] sm:h-[440px] sm:w-[320px] max-[480px]:h-[380px] max-[480px]:w-[280px] lg:h-[598px] lg:w-[445px]',
+                    'drop-shadow-[10px_15px_25px_rgba(0,0,0,0.4)] drop-shadow-[5px_8px_15px_rgba(0,0,0,0.3)]',
+                    { pageFlipPrew: pageFlipLeft },
+                    leftClass
+                ]"
+            >
+                <img src="/img/sheet-1.png" alt="" class="page-bg relative h-full w-full object-cover" />
+                <div
+                    class="book-spine absolute bottom-0 right-[-4px] top-0 z-[10] w-2 rounded-r-sm bg-gradient-to-b from-[#8b7850] via-[#6b5a3a] via-[#5a4a2a] via-[#6b5a3a] to-[#8b7850] shadow-[inset_-2px_0_8px_rgba(0,0,0,0.4),inset_2px_0_8px_rgba(0,0,0,0.4),0_0_15px_rgba(0,0,0,0.3)]"
+                />
+                <div
+                    class="book-text-content absolute left-0 top-0 z-[5] box-border h-full w-full overflow-hidden bg-[rgba(255,252,248,0.85)] p-6 md:p-7 sm:p-5 max-[480px]:p-4 md:pl-[28px] md:pr-[30px] md:pt-[28px] md:pb-[28px] sm:pl-[26px] sm:pr-[28px] sm:pt-[26px] sm:pb-[26px] lg:p-8"
+                >
+                    <div v-if="spread.imageUrl" class="book-photo-frame h-full min-h-0 w-full">
+                        <img :src="spread.imageUrl" alt="" class="h-full w-full rounded-sm object-cover shadow-inner" />
+                    </div>
+                    <div
+                        v-else
+                        class="flex h-full min-h-[120px] flex-col items-center justify-center gap-2 px-3 text-center text-[13px] italic leading-snug text-[#6b5a4a]/75 md:text-[14px]"
+                    >
+                        <span>Здесь фото разворота.</span>
+                        <span class="text-[11px] not-italic text-[#8b7355]/80">
+                            В Strapi — поле картинки у записи «О себе», либо в начале текста строка
+                            <code class="rounded bg-black/5 px-1 font-mono text-[10px]">![](/uploads/…)</code>
+                        </span>
+                    </div>
                 </div>
             </div>
 
-            <!-- левая страница -->
-            <div ref="left"
+                <!-- Шнурки строго по центру разворота (переплёт), top в % высоты книги -->
+                <div
+                    class="pointer-events-none absolute inset-0 z-[15] overflow-visible"
+                    aria-hidden="true"
+                >
+                    <div
+                        v-for="n in 21"
+                        :key="n"
+                        class="book-thread absolute left-1/2 h-[6px] w-[24px] -translate-x-1/2 -translate-y-1/2"
+                        :style="{ top: bookThreadTop(n) }"
+                    />
+                </div>
+
+            <!-- Правая страница: текст разворота -->
+            <div
                 :class="[
-                    'relative z-[1] w-[445px] h-[598px] lg:w-[445px] lg:h-[598px] md:w-[380px] md:h-[520px] sm:w-[320px] sm:h-[440px] max-[480px]:w-[280px] max-[480px]:h-[380px]',
+                    'book-right relative z-[1] h-[598px] w-[445px] md:h-[520px] md:w-[380px] sm:h-[440px] sm:w-[320px] max-[480px]:h-[380px] max-[480px]:w-[280px] lg:h-[598px] lg:w-[445px]',
                     'drop-shadow-[10px_15px_25px_rgba(0,0,0,0.4)] drop-shadow-[5px_8px_15px_rgba(0,0,0,0.3)]',
-                    'book-left',
-                    { 'pageFlipPrew': pageFlipLeft }, 
-                    leftClass
-                ]">
-                <img src="/public/img/лист_1.png" alt="" class="w-full h-full object-cover relative page-bg">
-                <div class="book-spine absolute top-0 bottom-0 right-[-4px] w-2 bg-gradient-to-b from-[#8b7850] via-[#6b5a3a] via-[#5a4a2a] via-[#6b5a3a] to-[#8b7850] z-[10] rounded-r-sm shadow-[inset_-2px_0_8px_rgba(0,0,0,0.4),inset_2px_0_8px_rgba(0,0,0,0.4),0_0_15px_rgba(0,0,0,0.3)]"></div>
-                <div class="absolute top-0 left-0 p-32 md:p-[28px_30px] sm:p-[26px_28px] max-[480px]:p-[24px_26px] w-full h-full overflow-hidden box-border z-[5] bg-[rgba(255,252,248,0.7)] book-text-content">
-                    <div class="book-text font-serif text-[17px] md:text-[15px] sm:text-[14px] max-[480px]:text-[13px] leading-[1.7] md:leading-[1.65] sm:leading-[1.5] max-[480px]:leading-[1.4] text-[#1f1f1f] text-justify tracking-[0.3px] sm:tracking-[0.2px] word-spacing-[0.1em] w-full h-full max-h-full block box-border overflow-hidden break-words transition-colors duration-300" style="text-shadow: 0.3px 0.3px 0.5px rgba(255, 255, 255, 0.9), 0.1px 0.1px 0.2px rgba(0, 0, 0, 0.05);" v-html="currentPages[1]?.content ? markdown.render(currentPages[1].content) : ''"></div>
+                    { pageFlip: pageFlipRight }
+                ]"
+            >
+                <img src="/img/sheet-2.png" alt="" class="page-bg relative h-full w-full object-cover" />
+                <div
+                    class="book-spine absolute bottom-0 left-[-4px] top-0 z-[10] w-2 rounded-l-sm bg-gradient-to-b from-[#8b7850] via-[#6b5a3a] via-[#5a4a2a] via-[#6b5a3a] to-[#8b7850] shadow-[inset_-2px_0_8px_rgba(0,0,0,0.4),inset_2px_0_8px_rgba(0,0,0,0.4),0_0_15px_rgba(0,0,0,0.3)]"
+                />
+                <div
+                    class="book-text-content absolute left-0 top-0 z-[5] box-border h-full w-full overflow-y-auto overflow-x-hidden bg-[rgba(255,252,248,0.7)] p-32 md:p-[28px_30px] sm:p-[26px_28px] max-[480px]:p-[24px_26px]"
+                >
+                    <div
+                        class="book-text block h-full min-h-0 w-full max-w-full break-words rounded-sm font-serif text-[17px] leading-[1.7] tracking-[0.3px] text-justify text-[#1f1f1f] [word-spacing:0.1em] transition-colors duration-300 md:text-[15px] md:leading-[1.65] sm:text-[14px] sm:leading-[1.5] sm:tracking-[0.2px] max-[480px]:text-[13px] max-[480px]:leading-[1.4]"
+                        style="text-shadow: 0.3px 0.3px 0.5px rgba(255, 255, 255, 0.9), 0.1px 0.1px 0.2px rgba(0, 0, 0, 0.05)"
+                        v-html="textHtml"
+                    />
                 </div>
             </div>
-            
-            <!-- Горизонтальные шнурки, соединяющие страницы через отверстия (21 штука) -->
-            <!-- Фиксированные позиции в пикселях для стабильности (рассчитано для высоты 598px) -->
-            <div class="book-thread book-thread-1 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-2 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-3 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-4 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-5 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-6 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-7 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-8 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-9 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-10 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-11 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-12 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-13 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-14 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-15 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-16 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-17 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-18 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-19 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-20 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-            <div class="book-thread book-thread-21 absolute left-1/2 transform -translate-x-1/2 w-[20px] h-[5px] z-[15] pointer-events-none"></div>
-          
-            
-            <!-- правая страница -->
-            <div ref="right" :class="[
-                'relative z-[1] w-[445px] h-[598px] lg:w-[445px] lg:h-[598px] md:w-[380px] md:h-[520px] sm:w-[320px] sm:h-[440px] max-[480px]:w-[280px] max-[480px]:h-[380px]',
-                'drop-shadow-[10px_15px_25px_rgba(0,0,0,0.4)] drop-shadow-[5px_8px_15px_rgba(0,0,0,0.3)]',
-                'book-right',
-                { 'pageFlip': pageFlipRight }
-            ]">
-                <img src="/public/img/лист_2.png" alt="" class="w-full h-full object-cover relative page-bg">
-                <div class="book-spine absolute top-0 bottom-0 left-[-4px] w-2 bg-gradient-to-b from-[#8b7850] via-[#6b5a3a] via-[#5a4a2a] via-[#6b5a3a] to-[#8b7850] z-[10] rounded-l-sm shadow-[inset_-2px_0_8px_rgba(0,0,0,0.4),inset_2px_0_8px_rgba(0,0,0,0.4),0_0_15px_rgba(0,0,0,0.3)]"></div>
-                <div class="absolute top-0 left-0 p-32 md:p-[28px_30px] sm:p-[26px_28px] max-[480px]:p-[24px_26px] w-full h-full overflow-hidden box-border z-[5] bg-[rgba(255,252,248,0.7)] book-text-content">
-                    <div class="book-text font-serif text-[17px] md:text-[15px] sm:text-[14px] max-[480px]:text-[13px] leading-[1.7] md:leading-[1.65] sm:leading-[1.5] max-[480px]:leading-[1.4] text-[#1f1f1f] text-justify tracking-[0.3px] sm:tracking-[0.2px] word-spacing-[0.1em] w-full h-full max-h-full block box-border overflow-hidden break-words transition-colors duration-300" style="text-shadow: 0.3px 0.3px 0.5px rgba(255, 255, 255, 0.9), 0.1px 0.1px 0.2px rgba(0, 0, 0, 0.05);" v-html="currentPages[0]?.content ? markdown.render(currentPages[0].content) : ''"></div>
-                </div>
             </div>
-            <div class="absolute bottom-0">
-                <button class="size-12 hover:text-red-600 active:text-black"
-                    :class="{ 'opacity-40': currentPage <= 1, 'cursor-not-allowed': currentPage <= 1 }"
-                    @click="prevPage">
-                    <!-- gr -->
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+
+            <div v-if="canEditAbout" class="flex justify-center px-2">
+                <button
+                    type="button"
+                    class="rounded-md border border-[#a08b6a] bg-[#f5efe6] px-4 py-2 text-sm font-medium text-[#4a3d32] shadow-sm hover:bg-[#ebe4d8]"
+                    @click="bookEditorOpen = true"
+                >
+                    Редактировать этот разворот
+                </button>
+            </div>
+
+            <ContactBookEditor v-model="bookEditorOpen" :entry="currentEntry" @saved="fetchSpread" />
+
+            <div class="relative flex flex-wrap items-center justify-center gap-4 pb-1 pt-1">
+                <button
+                    type="button"
+                    class="size-12 hover:text-red-600 active:text-black disabled:opacity-40"
+                    :disabled="currentPage <= 1"
+                    aria-label="Предыдущий разворот"
+                    @click="prevPage"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path
-                            d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H20C20.5523 21 21 20.5523 21 20V4C21 3.44772 20.5523 3 20 3H4ZM6.34277 11.9996L12.2925 6.0498V10.9996H17.6565V12.9996H12.2925V17.9493L6.34277 11.9996Z">
-                        </path>
+                            d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H20C20.5523 21 21 20.5523 21 20V4C21 3.44772 20.5523 3 20 3H4ZM6.34277 11.9996L12.2925 6.0498V10.9996H17.6565V12.9996H12.2925V17.9493L6.34277 11.9996Z"
+                        />
                     </svg>
                 </button>
-                <button class="size-12 hover:text-red-600 active:text-black"
-                    :class="{ 'opacity-40': currentPage > 1, 'cursor-not-allowed': currentPage > 1 }" @click="nextPage">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <span class="select-none text-sm tabular-nums text-[#5a4a3a]">{{ currentPage }} / {{ totalPages || 1 }}</span>
+                <button
+                    type="button"
+                    class="size-12 hover:text-red-600 active:text-black disabled:opacity-40"
+                    :disabled="currentPage >= totalPages"
+                    aria-label="Следующий разворот"
+                    @click="nextPage"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path
-                            d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H20C20.5523 21 21 20.5523 21 20V4C21 3.44772 20.5523 3 20 3H4ZM17.6575 11.9996L11.7077 17.9493V12.9996H6.34375V10.9996H11.7077V6.0498L17.6575 11.9996Z">
-                        </path>
+                            d="M4 3C3.44772 3 3 3.44772 3 4V20C3 20.5523 3.44772 21 4 21H20C20.5523 21 21 20.5523 21 20V4C21 3.44772 20.5523 3 20 3H4ZM17.6575 11.9996L11.7077 17.9493V12.9996H6.34375V10.9996H11.7077V6.0498L17.6575 11.9996Z"
+                        />
                     </svg>
                 </button>
             </div>
@@ -91,41 +144,97 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
-import MarkdownIt from "markdown-it";
+import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useSearchStore } from '~/stores/search';
+import { canManageBlogContent } from '~/utils/strapiUserRole';
+import MarkdownIt from 'markdown-it';
+import {
+    loadPageBgState,
+    buildCustomBgLayerStyle,
+    buildCustomBgOverlayStyle
+} from '~/utils/blogIndexBg';
+import { spreadFromAboutEntry } from '~/utils/contactBookSpread';
+import { STRAPI_BASE } from '~/utils/strapiBase';
+import { BOOK_THREAD_TOP_PERCENT } from '~/utils/contactBookThreads';
+
+const contactBgState = ref(null);
+
+function loadContactBackground() {
+    contactBgState.value = loadPageBgState('contact');
+}
+
+const customContactBgLayerStyle = computed(() => buildCustomBgLayerStyle(contactBgState.value));
+const customContactBgOverlayStyle = computed(() => buildCustomBgOverlayStyle(contactBgState.value));
+
+function onContactPageBgChanged() {
+    loadContactBackground();
+}
+
+const search = useSearchStore();
+const bookEditorOpen = ref(false);
+const canEditAbout = computed(
+    () => canManageBlogContent(search.userMe) && currentEntry.value != null
+);
 
 const pageFlipRight = ref(false);
 const pageFlipLeft = ref(false);
-const currentPages = ref([]);
-let currentPage = ref(1);
-const pageSize = 2;
-const totalPages = ref(0);
+const currentEntry = ref(null);
+const currentPage = ref(1);
+const pageSize = 1;
+const totalPages = ref(1);
 const markdown = new MarkdownIt();
 const leftClass = ref('');
 
-const fetchPages = async (animate = false) => {
+const spread = computed(() => spreadFromAboutEntry(currentEntry.value));
+
+const spreadTitle = computed(() => {
+    const t = spread.value?.title;
+    return typeof t === 'string' && t.trim() ? t.trim() : '';
+});
+
+const textHtml = computed(() => {
+    const md = spread.value.textMarkdown;
+    if (!md || !String(md).trim()) return '';
+    return markdown.render(md);
+});
+
+/** 21 нитки — top в % высоты разворота, совпадает с дырками на PNG (см. contactBookThreads.js) */
+function bookThreadTop(index) {
+    const pct = BOOK_THREAD_TOP_PERCENT[index - 1];
+    return pct != null ? `${pct}%` : '50%';
+}
+
+const fetchSpread = async () => {
     try {
-        const response = await fetch(`https://324cbb377ef9.vps.myjino.ru/api/abouts?pagination[page]=${currentPage.value}&pagination[pageSize]=${pageSize}`);
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
+        const url = `${STRAPI_BASE}/api/abouts?populate=*&sort=createdAt:asc&pagination[page]=${currentPage.value}&pagination[pageSize]=${pageSize}`;
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        currentPages.value = data.data;
-        totalPages.value = Math.ceil(data.meta.pagination.total / pageSize);
+        const list = Array.isArray(data.data) ? data.data : [];
+        currentEntry.value = list[0] ?? null;
+        const meta = data.meta?.pagination;
+        if (meta && typeof meta.pageCount === 'number') {
+            totalPages.value = Math.max(1, meta.pageCount);
+        } else if (meta && typeof meta.total === 'number') {
+            totalPages.value = Math.max(1, Math.ceil(meta.total / pageSize));
+        } else {
+            totalPages.value = list.length ? 1 : 1;
+        }
     } catch (error) {
         console.error('There has been a problem with your fetch operation:', error);
+        currentEntry.value = null;
     }
 };
 
-const flip = (params) => {
-    if (params === 'next') {
+const flip = (direction) => {
+    if (direction === 'next') {
         pageFlipRight.value = true;
         setTimeout(() => {
             pageFlipRight.value = false;
             leftClass.value = '';
         }, 1000);
     }
-    if (params === 'prev') {
+    if (direction === 'prev') {
         pageFlipLeft.value = true;
         leftClass.value = 'z-10';
         setTimeout(() => {
@@ -135,28 +244,87 @@ const flip = (params) => {
     }
 };
 
-const nextPage = () => {
-    if (currentPage.value < totalPages.value) {
-        currentPage.value++;
-        fetchPages(true); // Загрузка новых данных с анимацией
-        flip('next');
-    }
+const nextPage = async () => {
+    if (currentPage.value >= totalPages.value) return;
+    currentPage.value += 1;
+    await fetchSpread();
+    flip('next');
 };
 
-const prevPage = () => {
-    if (currentPage.value > 1) {
-        currentPage.value--;
-        fetchPages(true); // Загрузка новых данных с анимацией
-        flip('prev');
-    }
+const prevPage = async () => {
+    if (currentPage.value <= 1) return;
+    currentPage.value -= 1;
+    await fetchSpread();
+    flip('prev');
 };
 
-onMounted(() => {
-    fetchPages(false); // Загрузка контента при монтировании без анимации
+function onKeydown(e) {
+    if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextPage();
+    }
+    if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevPage();
+    }
+}
+
+onMounted(async () => {
+    await fetchSpread();
+    if (!process.client) return;
+    try {
+        if (localStorage.getItem('jwt') && !search.userMe?.id) {
+            await search.fetchUserMe();
+        }
+    } catch {
+        /* ignore */
+    }
+    loadContactBackground();
+    window.addEventListener('contact-page-bg-changed', onContactPageBgChanged);
+    window.addEventListener('keydown', onKeydown);
+});
+
+onUnmounted(() => {
+    if (process.client) {
+        window.removeEventListener('contact-page-bg-changed', onContactPageBgChanged);
+        window.removeEventListener('keydown', onKeydown);
+    }
 });
 </script>
 
 <style scoped>
+.contact-page-root {
+    position: relative;
+}
+
+.contact-page--custom-bg {
+    background-image: none !important;
+}
+
+.contact-page-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/* Подложка под режим contain: поля не просвечивают жёлтый main */
+.contact-page--custom-bg .contact-page-bg {
+    background-color: #141414;
+}
+
+.contact-page-bg-layer {
+    position: absolute;
+    inset: 0;
+}
+
+.contact-page-bg-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
 /* Псевдоэлементы для страниц книги - граница страницы */
 [class*="book-left"]::after,
 [class*="book-right"]::after {
@@ -208,128 +376,22 @@ onMounted(() => {
     z-index: 2;
 }
 
-/* Горизонтальные шнурки, соединяющие страницы через отверстия */
+/* Шнурки в «дырочках»: короткий сегмент у переплёта; вертикаль — через bookThreadTop() в % высоты разворота */
 .book-thread {
+    border-radius: 9999px;
     background: linear-gradient(
-        to right,
-        #654321 0%,
-        #5a3a1f 10%,
-        #4a2c15 20%,
-        #3d2410 30%,
-        #4a2c15 40%,
-        #5a3a1f 50%,
-        #4a2c15 60%,
-        #3d2410 70%,
-        #5a3a1f 80%,
-        #654321 100%
+        180deg,
+        #7a5c3e 0%,
+        #4a3018 22%,
+        #2d1a0c 50%,
+        #4a3018 78%,
+        #6b4a30 100%
     );
-    box-shadow: 
-        0 0 8px rgba(0, 0, 0, 0.8),
-        0 0 4px rgba(101, 67, 33, 0.6),
-        0 2px 4px rgba(0, 0, 0, 0.6),
-        inset 0 1px 3px rgba(255, 255, 255, 0.15),
-        inset 0 -1px 3px rgba(0, 0, 0, 0.8);
-    border-radius: 2px;
-    border: 1px solid rgba(101, 67, 33, 0.5);
-}
-
-/* Фиксированные позиции для шнурков (равномерно распределены по всей высоте страницы 598px, расстояние ~28px) */
-.book-thread-1 { top: 115px; }
-.book-thread-2 { top: 141px; }
-.book-thread-3 { top: 168px; }
-.book-thread-4 { top: 195px; }
-.book-thread-5 { top: 222px; }
-.book-thread-6 { top: 250px; }
-.book-thread-7 { top: 278px; }
-.book-thread-8 { top: 304px; }
-.book-thread-9 { top: 332px; }
-.book-thread-10 { top: 359px; }
-.book-thread-11 { top: 386px; }
-.book-thread-12 { top: 413px; }
-.book-thread-13 { top: 440px; }
-.book-thread-14 { top: 468px; }
-.book-thread-15 { top: 495px; }
-.book-thread-16 { top: 522px; }
-.book-thread-17 { top: 550px; }
-.book-thread-18 { top: 576px; }
-.book-thread-19 { top: 603px; }
-.book-thread-20 { top: 630px; }
-.book-thread-21 { top: 657px; }
-
-/* Адаптивные позиции для разных размеров экрана */
-@media (max-width: 1024px) {
-    /* Для высоты 520px (md) - равномерно распределены, расстояние ~24px */
-    .book-thread-1 { top: 80px; }
-    .book-thread-2 { top: 104px; }
-    .book-thread-3 { top: 128px; }
-    .book-thread-4 { top: 152px; }
-    .book-thread-5 { top: 176px; }
-    .book-thread-6 { top: 200px; }
-    .book-thread-7 { top: 224px; }
-    .book-thread-8 { top: 248px; }
-    .book-thread-9 { top: 272px; }
-    .book-thread-10 { top: 296px; }
-    .book-thread-11 { top: 320px; }
-    .book-thread-12 { top: 344px; }
-    .book-thread-13 { top: 368px; }
-    .book-thread-14 { top: 392px; }
-    .book-thread-15 { top: 416px; }
-    .book-thread-16 { top: 440px; }
-    .book-thread-17 { top: 464px; }
-    .book-thread-18 { top: 488px; }
-    .book-thread-19 { top: 512px; }
-    .book-thread-20 { top: 536px; }
-    .book-thread-21 { top: 560px; }
-}
-
-@media (max-width: 768px) {
-    /* Для высоты 440px (sm) - равномерно распределены, расстояние ~20px */
-    .book-thread-1 { top: 75px; }
-    .book-thread-2 { top: 95px; }
-    .book-thread-3 { top: 115px; }
-    .book-thread-4 { top: 135px; }
-    .book-thread-5 { top: 155px; }
-    .book-thread-6 { top: 175px; }
-    .book-thread-7 { top: 195px; }
-    .book-thread-8 { top: 215px; }
-    .book-thread-9 { top: 235px; }
-    .book-thread-10 { top: 255px; }
-    .book-thread-11 { top: 275px; }
-    .book-thread-12 { top: 295px; }
-    .book-thread-13 { top: 315px; }
-    .book-thread-14 { top: 335px; }
-    .book-thread-15 { top: 355px; }
-    .book-thread-16 { top: 375px; }
-    .book-thread-17 { top: 395px; }
-    .book-thread-18 { top: 415px; }
-    .book-thread-19 { top: 435px; }
-    .book-thread-20 { top: 455px; }
-    .book-thread-21 { top: 475px; }
-}
-
-@media (max-width: 480px) {
-    /* Для высоты 380px (max-[480px]) - равномерно распределены, расстояние ~17px */
-    .book-thread-1 { top: 47px; }
-    .book-thread-2 { top: 64px; }
-    .book-thread-3 { top: 81px; }
-    .book-thread-4 { top: 98px; }
-    .book-thread-5 { top: 115px; }
-    .book-thread-6 { top: 132px; }
-    .book-thread-7 { top: 149px; }
-    .book-thread-8 { top: 166px; }
-    .book-thread-9 { top: 183px; }
-    .book-thread-10 { top: 200px; }
-    .book-thread-11 { top: 217px; }
-    .book-thread-12 { top: 234px; }
-    .book-thread-13 { top: 251px; }
-    .book-thread-14 { top: 268px; }
-    .book-thread-15 { top: 285px; }
-    .book-thread-16 { top: 302px; }
-    .book-thread-17 { top: 319px; }
-    .book-thread-18 { top: 336px; }
-    .book-thread-19 { top: 353px; }
-    .book-thread-20 { top: 370px; }
-    .book-thread-21 { top: 387px; }
+    box-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.45),
+        0 0 1px rgba(255, 255, 255, 0.25) inset,
+        0 -1px 1px rgba(0, 0, 0, 0.5) inset;
+    border: 1px solid rgba(45, 26, 12, 0.35);
 }
 
 /* Отверстия уже есть на изображении книги, поэтому дополнительные элементы не нужны */

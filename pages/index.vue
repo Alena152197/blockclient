@@ -1,13 +1,17 @@
-﻿<template>
-    <div class="phoneMain">
+<template>
+    <div class="phoneMain" :class="{ 'phoneMain--custom-bg': blogBgState?.url }">
+        <div v-if="blogBgState?.url" class="phoneMain-bg" aria-hidden="true">
+            <div class="phoneMain-bg-layer" :style="customBgLayerStyle" />
+            <div class="phoneMain-bg-overlay" :style="customBgOverlayStyle" />
+        </div>
         <!-- Левая часть -->
         <div class="left-images">
-            <img src="../public/img/блокнот_море.png" alt="Картинка 1" class="image-left-top">
-            <img src="../public/img/блокнот_горы.png" alt="Картинка 2" class="image-left-bottom">
+            <img src="/img/notebook-sea.png" alt="Картинка 1" class="image-left-top">
+            <img src="/img/notebook-mountains.png" alt="Картинка 2" class="image-left-bottom">
         </div>
         <!-- Центральная часть -->
         <div class="center-content" v-if="index.config.primeryBlock">
-            <img src="../public/img/блокнот_зебра (2).png" alt="Картинка 3" class="center-image">
+            <img src="/img/notebook-zebra.png" alt="Картинка 3" class="center-image">
             <!-- Режим просмотра -->
             <div 
                 v-if="!isEditing"
@@ -58,24 +62,38 @@
 
         <!-- Правая часть -->
         <div class="right-images">
-            <img src="../public/img/завиток_большой.png" alt="Картинка 6" class="image-right-bottom">
-            <img src="../public/img/карандаш.png" alt="Картинка 4" class="image-right-top">
-            <img src="../public/img/карандаш_top.png" alt="Картинка 5" class="image-right-middle">
-            <img src="../public/img/блокнот_зебра1024 (3).png" alt="" class="imageRightBlock">
-            <img src="../public/img/блокнот_зебра768.png" alt="" class="imageRightNone">
-            <img src="../public/img/завиток большой_phone.png" alt="" class="topKara">
-            <img src="../public/img/завиток_top.png" alt="" class="nizKara">
-            <img src="../public/img/завиток_niz.png" alt="" class="tocKara">
-            <img src="../public/img/графит_phone.png" alt="" class="grafKara">
-            <img src="../public/img/точилкаPhone.png" alt="" class="phoneToc">
+            <img src="/img/swirl-large.png" alt="Картинка 6" class="image-right-bottom">
+            <img src="/img/pencil.png" alt="Картинка 4" class="image-right-top">
+            <img src="/img/pencil-top.png" alt="Картинка 5" class="image-right-middle">
+            <img src="/img/notebook-zebra-1024.png" alt="" class="imageRightBlock">
+            <img src="/img/notebook-zebra-768.png" alt="" class="imageRightNone">
+            <img src="/img/swirl-large-phone.png" alt="" class="topKara">
+            <img src="/img/swirl-top.png" alt="" class="nizKara">
+            <img src="/img/swirl-bottom.png" alt="" class="tocKara">
+            <img src="/img/graphite-phone-alt.png" alt="" class="grafKara">
+            <img src="/img/sharpener-phone.png" alt="" class="phoneToc">
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
+import {
+    loadBlogIndexBgState,
+    buildCustomBgLayerStyle,
+    buildCustomBgOverlayStyle
+} from '~/utils/blogIndexBg';
 
 const index = useSearchStore();
+
+const blogBgState = ref(null);
+
+function loadBlogIndexBackground() {
+    blogBgState.value = loadBlogIndexBgState();
+}
+
+const customBgLayerStyle = computed(() => buildCustomBgLayerStyle(blogBgState.value));
+const customBgOverlayStyle = computed(() => buildCustomBgOverlayStyle(blogBgState.value));
 
 const STORAGE_KEY = 'notebook-text';
 
@@ -259,9 +277,22 @@ const cancelEdit = () => {
     editingText.value = '';
 };
 
-// Загружаем текст при монтировании
+function onBlogIndexBgChanged() {
+    loadBlogIndexBackground();
+}
+
 onMounted(() => {
     loadText();
+    loadBlogIndexBackground();
+    if (typeof window !== 'undefined') {
+        window.addEventListener('blog-index-bg-changed', onBlogIndexBgChanged);
+    }
+});
+
+onUnmounted(() => {
+    if (typeof window !== 'undefined') {
+        window.removeEventListener('blog-index-bg-changed', onBlogIndexBgChanged);
+    }
 });
 </script>
 
@@ -274,11 +305,34 @@ onMounted(() => {
     height: calc(100vh - 151px);
     width: 100vw;
     max-width: 100vw;
-    background-image: url("../public/img/зебра_фон_полосы.png");
+    background-image: url("/img/zebra-bg-stripes.png");
     background-size: 100% 110%;
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
+}
+
+.phoneMain--custom-bg {
+    background-image: none !important;
+}
+
+.phoneMain-bg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.phoneMain-bg-layer {
+    position: absolute;
+    inset: 0;
+}
+
+.phoneMain-bg-overlay {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
 }
 
 .textKra {
@@ -406,6 +460,7 @@ onMounted(() => {
 .right-images,
 .center-content {
     position: absolute;
+    z-index: 1;
 }
 
 .left-images {
@@ -422,16 +477,22 @@ onMounted(() => {
 }
 
 .center-content {
-    left: 56%;
+    left: 50%;
     top: 45%;
     transform: translate(-50%, -50%);
     text-align: center;
-    width: 47%;
+    width: 50%;
+    max-width: 1041px;
 }
 
 .center-image {
+    display: block;
     width: 100%;
-    height: 100%;
+    max-width: 1041px;
+    aspect-ratio: 1041 / 708;
+    height: auto;
+    object-fit: contain;
+    margin: 0 auto;
 }
 
 .quote-container {
@@ -544,7 +605,7 @@ onMounted(() => {
 
 @media (max-width: 1500px) {
     .phoneMain {
-        background-image: url(../public/img/зебра_полосы1536.png);
+        background-image: url(/img/zebra-stripes-1536.png);
     }
 
     .left-images {
@@ -647,11 +708,13 @@ onMounted(() => {
     }
 
     .center-image {
-        content: url("../public/img/блокнотPhone.png");
+        content: url("/img/notebook-phone.png");
+        max-width: 315px;
+        aspect-ratio: 315 / 415;
     }
 
     .phoneMain {
-        background-image: url(../public/img/полоски1024.png);
+        background-image: url(/img/stripes-1024.png);
         background-size: cover;
     }
 
@@ -771,11 +834,13 @@ onMounted(() => {
     }
 
     .center-image {
-        content: url("../public/img/блокнотPhone.png");
+        content: url("/img/notebook-phone.png");
+        max-width: 315px;
+        aspect-ratio: 315 / 415;
     }
 
     .phoneMain {
-        background-image: url(../public/img/полосыPhone.png);
+        background-image: url(/img/stripes-phone.png);
         background-size: cover;
     }
 

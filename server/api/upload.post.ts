@@ -1,7 +1,8 @@
 import { defineEventHandler, getHeader, readMultipartFormData, createError } from 'h3'
+import { STRAPI_BASE } from '../../utils/strapiBase'
 
 export default defineEventHandler(async (event) => {
-  const baseUrl = 'https://324cbb377ef9.vps.myjino.ru'
+  const baseUrl = STRAPI_BASE
   
   // Получаем токен из заголовков
   const authHeader = getHeader(event, 'authorization')

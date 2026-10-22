@@ -1,15 +1,18 @@
 @import "tailwindcss";
 
 html,
-body,
-#__nuxt {
+body {
     width: 100%;
-    height: 100%;
+    min-height: 100%;
     margin: 0;
     padding: 0;
 }
 
+/* min-height вместо height: иначе колонка flex «зажата» в 100vh — при росте контента (аккордеоны) ломается расклад и футер визуально прыгает */
 #__nuxt {
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
 }
@@ -35,6 +38,11 @@ article:hover img {
 
 }
 
+/* «Мои интересы»: zoom обрезает обложку внутри overflow-hidden карточки */
+.blog-page-root article:hover img[data-blog-card] {
+    transform: none;
+}
+
 article p,
 article h5 {
     display: -webkit-box;
@@ -54,11 +62,19 @@ article h5 {
     height: 70px;
 }
 
-article img {
-    height: 200px;
-    width: 100%;
-    object-fit: cover;
+/* «Мои интересы»: глобальные height у p/h5 не нужны — иначе карточки искусственно высокие */
+.blog-page-root article p,
+.blog-page-root article h5 {
+    height: auto;
+}
 
+/* Карточки «Мои интересы»: высота и object-fit задаются только классами из настроек (см. data-blog-card на img). */
+@layer base {
+    article img:not([data-blog-card]) {
+        height: 200px;
+        width: 100%;
+        object-fit: cover;
+    }
 }
 
 .container {

@@ -1,14 +1,14 @@
 <template>
-    <footer class="z-10 bg-white dark:bg-gray-900">
+    <footer class="z-10 shrink-0 bg-white">
         <div class="footerHead w-full px-8 py-6 bg-black sm:flex sm:items-center sm:justify-between">
-            <span class="text-sm text-gray-200 sm:text-center dark:text-gray-400">&copy; 2024 <a
+            <span class="text-sm text-gray-200 sm:text-center">&copy; 2024 <a
                     href="https://flowbite.com/" class="hover:underline">Flowbite™</a>. Все права защищены.
             </span>
 
             <div class="flex mt-4 sm:justify-center sm:mt-0">
 
                 <a href="https://vk.com/id713643203?from=search"
-                    class="text-gray-300 hover:text-gray-900 dark:hover:text-white highlight-link">
+                    class="text-gray-300 hover:text-gray-900 highlight-link">
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 24 24">
                         <title>VK</title>
@@ -21,7 +21,7 @@
                 </a>
 
                 <a href="https://t.me/Alex152197"
-                    class="text-gray-300 hover:text-gray-900 dark:hover:text-white ms-5 highlight-link">
+                    class="text-gray-300 hover:text-gray-900 ms-5 highlight-link">
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 24 24">
                         <title>Telegram</title>
@@ -34,7 +34,7 @@
                 </a>
 
                 <a href="https://github.com/Alena152197"
-                    class="text-gray-300 hover:text-gray-900 dark:hover:text-white ms-5 highlight-link">
+                    class="text-gray-300 hover:text-gray-900 ms-5 highlight-link">
                     <svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
                         viewBox="0 0 20 20">
                         <path fill-rule="evenodd"
