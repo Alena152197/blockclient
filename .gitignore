@@ -13,11 +13,15 @@ node_modules
 logs
 *.log
 
+# Node localStorage backing file (dev SSR / --localstorage-file)
+.node-localstorage
+
 # Misc
 .DS_Store
 .fleet
 .idea
 
 # Local env files
-# # .env.*
-# !.env.example
+.env
+.env.*
+!.env.example
