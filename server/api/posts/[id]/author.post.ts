@@ -1,5 +1,5 @@
 import { defineEventHandler, getHeader, readBody, createError, getRouterParam } from 'h3'
-import { STRAPI_BASE } from '../../../../utils/strapiBase'
+import { STRAPI_BASE } from '../../../utils/strapiBase'
 
 export default defineEventHandler(async (event) => {
   const baseUrl = STRAPI_BASE

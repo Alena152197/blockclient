@@ -53,10 +53,17 @@
                 >
                     <NuxtLink class="block overflow-hidden" :to="'/post/' + post.documentId">
                         <img
+                            v-if="post.img?.url"
                             class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                             :src="home + post.img.url"
                             :alt="post.title"
                         />
+                        <div
+                            v-else
+                            class="flex h-48 w-full items-center justify-center bg-gray-100 text-sm text-gray-400"
+                        >
+                            Нет фото
+                        </div>
                     </NuxtLink>
                     <div class="p-5">
                         <NuxtLink :to="'/post/' + post.documentId">

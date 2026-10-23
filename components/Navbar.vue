@@ -17,9 +17,15 @@
                             </svg>
                             <span class="sr-only">Search icon</span>
                         </div>
-                        <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar"
+                        <input
+                            v-model="search.searchQuery"
+                            type="text"
+                            id="search-navbar"
                             placeholder="Поиск статей..."
-                            class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder-center">
+                            class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder-center"
+                            @focus="goToSearch"
+                            @keydown.enter.prevent="goToSearch"
+                        >
                     </div>
 
                     <!-- Меню пользователя на Vue (без Flowbite dropdown — скрипт async и ломался после смены DOM / навигации) -->
@@ -68,7 +74,7 @@
                                         Профиль
                                     </NuxtLink>
                                 </li>
-                                <li v-if="canManageBlogContent(search.userMe)">
+                                <li v-if="showConsole">
                                     <NuxtLink
                                         to="/console"
                                         class="block px-4 py-2 hover:bg-gray-100"
@@ -78,7 +84,7 @@
                                         Консоль
                                     </NuxtLink>
                                 </li>
-                                <li v-if="canAccessBlogSettings(search.userMe)">
+                                <li v-if="showSettings">
                                     <NuxtLink
                                         to="/settings"
                                         class="block px-4 py-2 hover:bg-gray-100"
@@ -112,9 +118,13 @@
                         </div>
                     </div>
 
-                    <button data-collapse-toggle="navbar-search" type="button"
+                    <button
+                        type="button"
                         class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                        aria-controls="navbar-search" aria-expanded="false">
+                        aria-controls="navbar-search"
+                        :aria-expanded="navOpen"
+                        @click.stop="navOpen = !navOpen"
+                    >
                         <span class="sr-only">Open main menu</span>
                         <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 17 14">
@@ -125,7 +135,11 @@
                 </div>
 
 
-                <div class="items-center justify-between hidden w-full lg:flex md:w-auto md:order-1" id="navbar-search">
+                <div
+                    id="navbar-search"
+                    class="items-center justify-between w-full md:w-auto md:order-1"
+                    :class="navOpen ? 'flex' : 'hidden lg:flex'"
+                >
                     <div class="relative mt-3 md:hidden ">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4 text-gray-500" aria-hidden="true"
@@ -134,28 +148,37 @@
                                     stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input v-model="search.searchQuery" @focus="goToSearch" type="text" id="search-navbar-mobile"
+                        <input
+                            v-model="search.searchQuery"
+                            type="text"
+                            id="search-navbar-mobile"
                             placeholder="Поиск статей..."
-                            class="block w-full p-2 ps-10 text-sm text-gray-900 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder-center">
+                            class="block w-full p-2 ps-10 text-sm text-gray-900 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder-center"
+                            @focus="goToSearch"
+                            @keydown.enter.prevent="goToSearch"
+                        >
                     </div>
                     <ul
                         class="flex flex-col p-5 mt-4 font-bold md:space-x-8  md:flex-row md:mt-0  sm:flex-row sm:justify-center sm:mt-0">
                         <li>
                             <NuxtLink to="/"
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
-                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('') }"> О БЛОГЕ
+                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('') }"
+                                @click="navOpen = false"> О БЛОГЕ
                             </NuxtLink>
                         </li>
                         <li>
                             <NuxtLink to="/contact"
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
-                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('contact') }">
+                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('contact') }"
+                                @click="navOpen = false">
                                 МОЯ ИСТОРИЯ</NuxtLink>
                         </li>
                         <li>
                             <NuxtLink to="/blog"
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
-                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('blog') || isActive('post') || isActive('category') }">
+                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('blog') || isActive('post') || isActive('category') }"
+                                @click="navOpen = false">
                                 МОЯ ИНТЕРЕСЫ</NuxtLink>
                         </li>
                     </ul>
@@ -166,20 +189,30 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, onUnmounted } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { useSearchStore } from '~/stores/search'
 import { canAccessBlogSettings, canManageBlogContent } from '~/utils/strapiUserRole'
 import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const search = useSearchStore()
 const route = useRoute()
+const runtimeConfig = useRuntimeConfig()
+const adminAllow = computed(() => ({
+    emails: runtimeConfig.public.contentAdminEmails || '',
+    usernames: runtimeConfig.public.contentAdminUsernames || '',
+}))
 const isActive = (path) => route.path.split('/')[1] === path
 const router = useRouter()
 
 const backendUrl = STRAPI_BASE
+const showConsole = computed(() => canManageBlogContent(search.userMe, adminAllow.value))
+const showSettings = computed(() => canAccessBlogSettings(search.userMe, adminAllow.value))
 
 const userMenuOpen = ref(false)
 const userMenuRoot = ref(null)
+/** Мобильное меню на Vue — без Flowbite (он ломал DOM и поиск при навигации) */
+const navOpen = ref(false)
+let searchNavLock = false
 
 function closeUserMenuOnOutside(e) {
     if (!userMenuOpen.value) return
@@ -190,13 +223,18 @@ function closeUserMenuOnOutside(e) {
 }
 
 function onEscape(e) {
-    if (e.key === 'Escape') userMenuOpen.value = false
+    if (e.key === 'Escape') {
+        userMenuOpen.value = false
+        navOpen.value = false
+    }
 }
 
 watch(
     () => route.fullPath,
     () => {
         userMenuOpen.value = false
+        navOpen.value = false
+        searchNavLock = false
     }
 )
 
@@ -210,23 +248,25 @@ onUnmounted(() => {
     document.removeEventListener('keydown', onEscape)
 })
 
-function goToSearch() {
-    router.push({ path: '/search' })
+async function goToSearch() {
+    if (route.path === '/search' || searchNavLock) return
+    searchNavLock = true
+    navOpen.value = false
+    try {
+        await nextTick()
+        await router.push({
+            path: '/search',
+            query: search.searchQuery ? { q: search.searchQuery } : {}
+        })
+    } catch {
+        searchNavLock = false
+    }
 }
 
 function onLogoutClick() {
     userMenuOpen.value = false
     search.logout()
 }
-useHead({
-    script: [
-        {
-            src: 'https://cdn.jsdelivr.net/npm/flowbite@2.5.2/dist/flowbite.min.js',
-            async: true,
-            defer: 'anonymous'
-        }
-    ]
-});
 </script>
 
 <style scoped>

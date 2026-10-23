@@ -51,6 +51,41 @@ function roleLooksUsable(role) {
   return Boolean(role && (String(role.name || '').trim() || String(role.type || '').trim()))
 }
 
+const AUTH_USER_KEY = 'strapi_auth_user'
+
+function readCachedAuthUser() {
+  try {
+    const raw = localStorage.getItem(AUTH_USER_KEY)
+    if (!raw) return null
+    const u = JSON.parse(raw)
+    return u && typeof u === 'object' ? u : null
+  } catch {
+    return null
+  }
+}
+
+function writeCachedAuthUser(user) {
+  try {
+    if (!user?.id && !user?.documentId) {
+      localStorage.removeItem(AUTH_USER_KEY)
+      return
+    }
+    localStorage.setItem(
+      AUTH_USER_KEY,
+      JSON.stringify({
+        id: user.id,
+        documentId: user.documentId,
+        username: user.username,
+        email: user.email,
+        avatar: user.avatar,
+        role: user.role,
+      })
+    )
+  } catch {
+    /* ignore */
+  }
+}
+
 export const useSearchStore = defineStore('search', {
   state: () => ({
     searchQuery: ref(''),
@@ -61,7 +96,10 @@ export const useSearchStore = defineStore('search', {
   }),
 
   actions: {
-    async fetchUserMe() {
+    /**
+     * @param {Record<string, unknown> | null} [fallbackUser] — user из /auth/local, если /users/me даёт 403
+     */
+    async fetchUserMe(fallbackUser = null) {
       try {
         const token = localStorage.getItem('jwt')
         if (!token) return
@@ -77,6 +115,7 @@ export const useSearchStore = defineStore('search', {
         ]
         let data = null
         let chosenRole = null
+        let lastStatus = 0
 
         for (const meUrl of tryUrls) {
           try {
@@ -86,6 +125,7 @@ export const useSearchStore = defineStore('search', {
                 Authorization: `Bearer ${token}`,
               },
             })
+            lastStatus = r.status
             const d = await r.json()
             if (!r.ok) continue
             const role = normalizeStrapiRole(d.role)
@@ -102,26 +142,57 @@ export const useSearchStore = defineStore('search', {
             /* следующий вариант populate */
           }
         }
+
+        // 403 = в Strapi выключен User.me — user из аргумента или из localStorage после логина
+        if (!data) {
+          const cached = fallbackUser || readCachedAuthUser()
+          if (cached && typeof cached === 'object') {
+            data = cached
+            chosenRole = normalizeStrapiRole(cached.role)
+            if (import.meta.dev) {
+              console.warn(
+                'fetchUserMe: /users/me HTTP ' +
+                  lastStatus +
+                  ' — используем кэш логина. В Strapi включите Authenticated → User → me.'
+              )
+            }
+          }
+        }
+
         if (!data) throw new Error('Ошибка получения пользователя')
 
         if (!roleLooksUsable(chosenRole)) {
           chosenRole = normalizeStrapiRole(data.role)
         }
 
-        // Явно сохраняем только нужные поля (Strapi 5: documentId для связей REST)
         this.userMe = {
           id: data.id,
           documentId: data.documentId,
           username: data.username,
           email: data.email,
-          avatar: data.avatar, // Может быть null или объект с url
+          avatar: data.avatar,
           role: chosenRole,
         }
+        writeCachedAuthUser(this.userMe)
         this.loadProfileNote(data.id)
 
       } catch (error) {
         if (import.meta.dev) {
           console.warn('fetchUserMe:', error)
+        }
+        // Не затираем сессию при 403 /users/me — оставляем кэш / pinia persist
+        const cached = readCachedAuthUser()
+        if (cached?.id || cached?.documentId) {
+          this.userMe = {
+            id: cached.id,
+            documentId: cached.documentId,
+            username: cached.username,
+            email: cached.email,
+            avatar: cached.avatar,
+            role: normalizeStrapiRole(cached.role),
+          }
+          this.loadProfileNote(cached.id)
+          return
         }
         this.userMe = {}
         this.profileNote = defaultProfileNote
@@ -147,6 +218,11 @@ export const useSearchStore = defineStore('search', {
 
     logout() {
       localStorage.removeItem('jwt')
+      try {
+        localStorage.removeItem(AUTH_USER_KEY)
+      } catch {
+        /* ignore */
+      }
       this.userMe = {}
       this.profileNote = defaultProfileNote
     },
@@ -170,9 +246,9 @@ export const useSearchStore = defineStore('search', {
         }
 
         localStorage.setItem('jwt', data.jwt)
+        if (data.user) writeCachedAuthUser(data.user)
 
-        // Подгружаем полные данные с аватаром
-        await this.fetchUserMe()
+        await this.fetchUserMe(data.user || null)
 
       } catch (error) {
         if (import.meta.dev) {

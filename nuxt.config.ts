@@ -18,15 +18,26 @@ export default defineNuxtConfig({
   compatibilityDate: '2024-04-03',
   devtools: { enabled: false },
 
+  /** Лимит тела запроса для прокси /api/upload (фото книги) */
+  nitro: {
+    // @ts-expect-error — поддерживается runtime Nitro 2.x / node-server
+    maxRequestBodySize: 25 * 1024 * 1024,
+  },
+
   runtimeConfig: {
     /** Серверный URL Strapi (можно задать STRAPI_URL) */
     strapiUrl: process.env.STRAPI_URL || process.env.NUXT_PUBLIC_STRAPI_URL || '',
+    /** Full-access API Token для записи About/upload (только сервер) */
+    strapiApiToken: process.env.STRAPI_API_TOKEN || process.env.STRAPI_TOKEN || '',
     public: {
       /** Клиентский URL Strapi — NUXT_PUBLIC_STRAPI_URL */
       strapiUrl:
         process.env.NUXT_PUBLIC_STRAPI_URL ||
         process.env.STRAPI_URL ||
         'https://324cbb377ef9.vps.myjino.ru',
+      /** Через запятую: email админов контента (запасной список, если в Strapi нет роли Admin) */
+      contentAdminEmails: process.env.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS || '',
+      contentAdminUsernames: process.env.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES || '',
     },
   },
 

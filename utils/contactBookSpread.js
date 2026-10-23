@@ -67,6 +67,35 @@ export function extractFirstMarkdownImage(md, base) {
 }
 
 /**
+ * Пустая строка в редакторе → `&nbsp;` в markdown.
+ * Иначе после сохранения markdown схлопывает «абзацный» пробел в обычный перенос.
+ * @param {string} text
+ */
+export function encodeBlankLinesForMarkdown(text) {
+  return String(text || '')
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => (line.trim() === '' ? '&nbsp;' : line))
+    .join('\n')
+}
+
+/**
+ * Обратно для textarea: строки `&nbsp;` → пустые (чтобы снова править абзацы).
+ * @param {string} text
+ */
+export function decodeBlankLinesFromMarkdown(text) {
+  return String(text || '')
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => {
+      const t = line.trim()
+      if (t === '&nbsp;' || t === '\u00a0') return ''
+      return line
+    })
+    .join('\n')
+}
+
+/**
  * Подставить или убрать ведущее фото `![](url)` в теле записи.
  * @param {string} md
  * @param {string | null} relativeUrl — путь вида `/uploads/...` или null при снятии

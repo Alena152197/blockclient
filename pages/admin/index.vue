@@ -1,5 +1,5 @@
 <template>
-    <div v-if="!index.userMe.documentId"
+    <div v-if="!isLoggedIn"
         class="flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
         <!-- Вход -->
         <div v-if="index.authToggle" class="bg-white p-6 rounded-lg shadow-md w-full">
@@ -45,22 +45,55 @@
         </div>
     </div>
 
-    <div v-else class="max-w-sm mx-auto bg-white rounded-lg shadow-md overflow-hidden p-6 mt-10">
-
-        <div class="text-center">
+    <div v-else class="mx-auto mt-10 max-w-sm overflow-hidden rounded-lg bg-white p-6 shadow-md">
+        <div class="space-y-4 text-center">
             <h2 class="text-2xl font-semibold text-gray-800">Вы авторизованы</h2>
+            <p class="text-sm text-gray-600">
+                {{ index.userMe.username || index.userMe.email }}
+                <span v-if="isContentAdmin" class="mt-1 block font-medium text-green-700">Администратор</span>
+                <span v-else class="mt-1 block text-amber-700">Обычный пользователь (правки книги недоступны)</span>
+            </p>
+            <div class="flex flex-col gap-2">
+                <NuxtLink
+                    to="/contact"
+                    class="rounded bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
+                >
+                    Открыть книгу (контакты)
+                </NuxtLink>
+                <NuxtLink
+                    v-if="isContentAdmin"
+                    to="/console"
+                    class="rounded border border-gray-300 px-4 py-2 text-sm text-gray-800 hover:bg-gray-50"
+                >
+                    Консоль
+                </NuxtLink>
+                <button
+                    type="button"
+                    class="rounded border border-red-200 px-4 py-2 text-sm text-red-800 hover:bg-red-50"
+                    @click="logout"
+                >
+                    Выйти
+                </button>
+            </div>
         </div>
-
     </div>
 
 
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import { STRAPI_BASE } from '~/utils/strapiBase'
+import { canManageBlogContent } from '~/utils/strapiUserRole'
 const index = useSearchStore();
+const runtimeConfig = useRuntimeConfig();
+const adminAllow = computed(() => ({
+    emails: runtimeConfig.public.contentAdminEmails || '',
+    usernames: runtimeConfig.public.contentAdminUsernames || '',
+}));
+const isLoggedIn = computed(() => Boolean(index.userMe?.id || index.userMe?.documentId));
+const isContentAdmin = computed(() => canManageBlogContent(index.userMe, adminAllow.value));
 const userForma = ref({
     username: '',
     email: '',
@@ -68,6 +101,11 @@ const userForma = ref({
 });
 const newID = ref(0);
 const router = useRouter();
+
+function logout() {
+    index.logout();
+    router.push('/');
+}
 
 // Переменные для хранения сообщений об ошибках и успехе
 const loginError = ref('');
@@ -117,7 +155,24 @@ const registr = async () => {
                 throw new Error('Регистрация: нет токена')
             }
             localStorage.setItem('jwt', data.jwt);
-            await index.fetchUserMe();
+            try {
+                if (data.user) {
+                    localStorage.setItem(
+                        'strapi_auth_user',
+                        JSON.stringify({
+                            id: data.user.id,
+                            documentId: data.user.documentId,
+                            username: data.user.username,
+                            email: data.user.email,
+                            avatar: data.user.avatar,
+                            role: data.user.role,
+                        })
+                    )
+                }
+            } catch {
+                /* ignore */
+            }
+            await index.fetchUserMe(data.user || null);
 
             router.push('/'); // Перенаправление на главную страницу после успешной регистрации
         }
@@ -152,12 +207,24 @@ const login = async (userForma) => {
             throw new Error('Нет токена в ответе')
         }
         localStorage.setItem('jwt', data.jwt);
-        /**
-         * Ответ /auth/local почти никогда не содержит полную роль — пункт «Настройки» в шапке
-         * завязан на role из /users/me. Раньше подставляли data.user и !response.ok (у $fetch нет .ok),
-         * из-за чего после повторного входа пропадал доступ к настройкам.
-         */
-        await index.fetchUserMe();
+        try {
+            if (data.user) {
+                localStorage.setItem(
+                    'strapi_auth_user',
+                    JSON.stringify({
+                        id: data.user.id,
+                        documentId: data.user.documentId,
+                        username: data.user.username,
+                        email: data.user.email,
+                        avatar: data.user.avatar,
+                        role: data.user.role,
+                    })
+                )
+            }
+        } catch {
+            /* ignore */
+        }
+        await index.fetchUserMe(data.user || null);
 
         // Показываем сообщение об успешном входе
         loginSuccessMessage.value = 'Вход выполнен успешно!';

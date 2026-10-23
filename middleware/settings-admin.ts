@@ -5,6 +5,12 @@ export default defineNuxtRouteMiddleware(async () => {
   if (import.meta.server) return
 
   const search = useSearchStore()
+  const runtimeConfig = useRuntimeConfig()
+  const allow = {
+    emails: String(runtimeConfig.public.contentAdminEmails || ''),
+    usernames: String(runtimeConfig.public.contentAdminUsernames || '')
+  }
+
   if (!search.userMe?.id) {
     try {
       await search.fetchUserMe()
@@ -13,7 +19,7 @@ export default defineNuxtRouteMiddleware(async () => {
     }
   }
 
-  if (!isContentAdminRole(search.userMe)) {
+  if (!isContentAdminRole(search.userMe, allow)) {
     return navigateTo('/')
   }
 })

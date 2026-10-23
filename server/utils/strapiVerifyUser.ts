@@ -1,4 +1,4 @@
-import { resolveStrapiBase } from '../../utils/strapiBase'
+import { resolveStrapiBase } from './strapiBase'
 
 /** Совпадает с клиентом; при необходимости задайте STRAPI_URL / NUXT_PUBLIC_STRAPI_URL. */
 function strapiBase(): string {

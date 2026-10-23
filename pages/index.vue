@@ -13,38 +13,128 @@
         <div class="center-content" v-if="index.config.primeryBlock">
             <img src="/img/notebook-zebra.png" alt="Картинка 3" class="center-image">
             <!-- Режим просмотра -->
-            <div 
+            <div
                 v-if="!isEditing"
-                class="textKra" 
+                class="textKra"
                 v-html="notebookText"
             ></div>
-            <!-- Режим редактирования -->
-            <textarea
-                v-else
-                class="textKra textKra-edit"
-                v-model="editingText"
-                @keydown.ctrl.enter="saveText"
-                @keydown.esc="cancelEdit"
-            ></textarea>
-            <!-- Кнопки управления -->
-            <div class="edit-controls">
-                <button 
+            <!-- Режим редактирования — панель как в книге -->
+            <div v-else class="textKra-editor">
+                <div
+                    class="notebook-fmt-toolbar"
+                    role="toolbar"
+                    aria-label="Форматирование текста"
+                >
+                    <button
+                        type="button"
+                        class="notebook-fmt-btn font-bold"
+                        title="Жирный"
+                        @mousedown.prevent
+                        @click="applyNotebookFormat('bold')"
+                    >
+                        Ж
+                    </button>
+                    <button
+                        type="button"
+                        class="notebook-fmt-btn italic"
+                        title="Курсив"
+                        @mousedown.prevent
+                        @click="applyNotebookFormat('italic')"
+                    >
+                        К
+                    </button>
+                    <button
+                        type="button"
+                        class="notebook-fmt-btn underline"
+                        title="Подчёркнутый"
+                        @mousedown.prevent
+                        @click="applyNotebookFormat('underline')"
+                    >
+                        Ч
+                    </button>
+                    <select
+                        v-model="draftFontSize"
+                        class="notebook-fmt-select"
+                        title="Размер текста"
+                        aria-label="Размер текста"
+                        @mousedown.stop
+                        @change="applyNotebookFormat('size')"
+                    >
+                        <option
+                            v-for="opt in BOOK_FONT_SIZE_OPTIONS"
+                            :key="opt.value"
+                            :value="opt.value"
+                        >
+                            {{ opt.label }}
+                        </option>
+                    </select>
+                    <label
+                        class="notebook-fmt-btn relative inline-flex cursor-pointer items-center justify-center"
+                        title="Цвет текста"
+                    >
+                        <span aria-hidden="true">А</span>
+                        <span
+                            class="absolute bottom-0.5 left-1 right-1 h-0.5 rounded-sm"
+                            :style="{ background: draftTextColor }"
+                        />
+                        <input
+                            v-model="draftTextColor"
+                            type="color"
+                            class="absolute inset-0 cursor-pointer opacity-0"
+                            @mousedown.prevent
+                            @change="applyNotebookFormat('color')"
+                        />
+                    </label>
+                    <button
+                        type="button"
+                        class="notebook-fmt-btn"
+                        title="Ссылка"
+                        @mousedown.prevent
+                        @click="applyNotebookFormat('link')"
+                    >
+                        URL
+                    </button>
+                </div>
+                <textarea
+                    ref="notebookEditRef"
+                    v-model="editingText"
+                    class="textKra textKra-edit"
+                    aria-label="Текст блокнота"
+                    @mousedown.stop
+                    @keydown.stop="onNotebookKeydown"
+                    @keyup.stop
+                    @keypress.stop
+                    @input="onNotebookInput"
+                />
+                <div class="notebook-edit-meta">
+                    <span
+                        class="notebook-char-count"
+                        :class="{ 'notebook-char-count--full': notebookPlainLen >= NOTEBOOK_BODY_MAX_CHARS }"
+                    >
+                        {{ notebookPlainLen }} / {{ NOTEBOOK_BODY_MAX_CHARS }}
+                    </span>
+                </div>
+            </div>
+            <!-- Кнопки управления — только администратор контента -->
+            <div v-if="canManageContent" class="edit-controls">
+                <button
                     v-if="!isEditing"
-                    @click="startEdit"
+                    type="button"
                     class="edit-btn"
                     title="Редактировать текст"
+                    @click="startEdit"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                         <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
                     </svg>
                 </button>
                 <div v-else class="edit-buttons">
-                    <button @click="saveText" class="save-btn" title="Сохранить (Ctrl+Enter)">
+                    <button type="button" class="save-btn" title="Сохранить (Ctrl+Enter)" @click="saveText">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                             <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
                         </svg>
                     </button>
-                    <button @click="cancelEdit" class="cancel-btn" title="Отмена (Esc)">
+                    <button type="button" class="cancel-btn" title="Отмена (Esc)" @click="cancelEdit">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
                             <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
                         </svg>
@@ -52,39 +142,90 @@
                 </div>
             </div>
             <div class="quote-container">
-                <blockquote class="quote">"Мы все, как карандаши.
-                    Каждый рисует свою судьбу.
-                    Один ломается, другой тупит,
-                    а кто-то затачивается и движется вперёд."</blockquote>
-                <p class="author">— Светлана Кременецкая</p>
+                <blockquote
+                    class="quote"
+                    aria-label="Мы все, как карандаши. Каждый рисует свою судьбу. Один ломается, другой тупит, а кто-то затачивается и движется вперёд."
+                >
+                    <span
+                        v-for="(line, lineIdx) in quoteWaveLines"
+                        :key="'ql' + lineIdx"
+                        class="quote-line"
+                    >
+                        <span
+                            v-for="(item, i) in line"
+                            :key="'q' + lineIdx + '-' + i"
+                            class="quote-char"
+                            :class="{ 'quote-char--space': item.space }"
+                            :style="waveCharStyle(lineIdx, i)"
+                            aria-hidden="true"
+                        >{{ item.ch }}</span>
+                    </span>
+                </blockquote>
+                <p class="author" aria-label="Светлана Кременецкая">
+                    <span
+                        v-for="(item, i) in authorWaveChars"
+                        :key="'a' + i"
+                        class="quote-char"
+                        :class="{ 'quote-char--space': item.space }"
+                        :style="waveCharStyle(quoteWaveLines.length, i)"
+                        aria-hidden="true"
+                    >{{ item.ch }}</span>
+                </p>
             </div>
-        </div>
-
-        <!-- Правая часть -->
-        <div class="right-images">
-            <img src="/img/swirl-large.png" alt="Картинка 6" class="image-right-bottom">
-            <img src="/img/pencil.png" alt="Картинка 4" class="image-right-top">
-            <img src="/img/pencil-top.png" alt="Картинка 5" class="image-right-middle">
-            <img src="/img/notebook-zebra-1024.png" alt="" class="imageRightBlock">
-            <img src="/img/notebook-zebra-768.png" alt="" class="imageRightNone">
-            <img src="/img/swirl-large-phone.png" alt="" class="topKara">
-            <img src="/img/swirl-top.png" alt="" class="nizKara">
-            <img src="/img/swirl-bottom.png" alt="" class="tocKara">
-            <img src="/img/graphite-phone-alt.png" alt="" class="grafKara">
-            <img src="/img/sharpener-phone.png" alt="" class="phoneToc">
+            <!-- Карандаши у правого нижнего угла блокнота, чуть ниже -->
+            <div class="right-images" aria-hidden="true">
+                <img src="/img/swirl-large.png" alt="" class="image-right-bottom">
+                <img src="/img/pencil.png" alt="" class="image-right-top">
+                <img src="/img/pencil-top.png" alt="" class="image-right-middle">
+                <img src="/img/notebook-zebra-1024.png" alt="" class="imageRightBlock">
+                <img src="/img/notebook-zebra-768.png" alt="" class="imageRightNone">
+                <img src="/img/swirl-large-phone.png" alt="" class="topKara">
+                <img src="/img/swirl-top.png" alt="" class="nizKara">
+                <img src="/img/swirl-bottom.png" alt="" class="tocKara">
+                <img src="/img/graphite-phone-alt.png" alt="" class="grafKara">
+                <img src="/img/sharpener-phone.png" alt="" class="phoneToc">
+            </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, nextTick, computed } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, computed, watch } from 'vue';
 import {
     loadBlogIndexBgState,
     buildCustomBgLayerStyle,
     buildCustomBgOverlayStyle
 } from '~/utils/blogIndexBg';
+import { canManageBlogContent } from '~/utils/strapiUserRole';
+import {
+    BOOK_FONT_SIZE_OPTIONS,
+    NOTEBOOK_BODY_MAX_CHARS,
+    wrapTextareaSelection,
+    wrapUnderline,
+    wrapColor,
+    wrapFontSize,
+    wrapHtmlBold,
+    wrapHtmlItalic,
+    wrapHtmlLink,
+    notebookHtmlToEditable,
+    notebookEditableToHtml,
+    notebookPlainLength,
+    clampNotebookBodyText
+} from '~/utils/contactBookFormat';
 
 const index = useSearchStore();
+const runtimeConfig = useRuntimeConfig();
+const adminAllow = computed(() => ({
+    emails: runtimeConfig.public.contentAdminEmails || '',
+    usernames: runtimeConfig.public.contentAdminUsernames || ''
+}));
+const canManageContent = computed(() =>
+    canManageBlogContent(index.userMe, adminAllow.value)
+);
+const notebookEditRef = ref(null);
+const draftTextColor = ref('#8b4513');
+const draftFontSize = ref('1em');
+const notebookPlainLen = computed(() => notebookPlainLength(editingText.value));
 
 const blogBgState = ref(null);
 
@@ -94,6 +235,57 @@ function loadBlogIndexBackground() {
 
 const customBgLayerStyle = computed(() => buildCustomBgLayerStyle(blogBgState.value));
 const customBgOverlayStyle = computed(() => buildCustomBgOverlayStyle(blogBgState.value));
+
+const QUOTE_WAVE_LINES = [
+    '"Мы все, как карандаши.',
+    'Каждый рисует свою судьбу.',
+    'Один ломается, другой тупит,',
+    'а кто-то затачивается и движется вперёд."'
+];
+const AUTHOR_WAVE_TEXT = '— Светлана Кременецкая';
+
+/** Сдвиг между соседними буквами (больше = медленнее) */
+const WAVE_CHAR_STEP_S = 0.11;
+/** Пауза в конце полного прохода, перед повтором */
+const WAVE_CYCLE_PAUSE_S = 1.2;
+
+function toWaveChars(text) {
+    return [...String(text)].map((ch) => ({
+        ch: ch === ' ' ? '\u00a0' : ch,
+        space: ch === ' '
+    }));
+}
+
+const quoteWaveLines = QUOTE_WAVE_LINES.map(toWaveChars);
+const authorWaveChars = toWaveChars(AUTHOR_WAVE_TEXT);
+
+/** Старт каждой строки = сразу после последней буквы предыдущей */
+const waveLineStarts = (() => {
+    const lengths = [
+        ...quoteWaveLines.map((l) => l.length),
+        authorWaveChars.length
+    ];
+    const starts = [];
+    let t = 0;
+    for (const len of lengths) {
+        starts.push(t);
+        t += Math.max(len, 1) * WAVE_CHAR_STEP_S;
+    }
+    return starts;
+})();
+
+const WAVE_CYCLE_S =
+    waveLineStarts[waveLineStarts.length - 1] +
+    authorWaveChars.length * WAVE_CHAR_STEP_S +
+    WAVE_CYCLE_PAUSE_S;
+
+function waveCharStyle(lineIdx, charIdx) {
+    const delay = waveLineStarts[lineIdx] + charIdx * WAVE_CHAR_STEP_S;
+    return {
+        '--wave-delay': `${delay.toFixed(3)}s`,
+        '--wave-duration': `${WAVE_CYCLE_S.toFixed(3)}s`
+    };
+}
 
 const STORAGE_KEY = 'notebook-text';
 
@@ -135,49 +327,68 @@ const saveToStorage = (text) => {
     }
 };
 
+function onNotebookInput() {
+    if (notebookPlainLength(editingText.value) > NOTEBOOK_BODY_MAX_CHARS) {
+        editingText.value = clampNotebookBodyText(editingText.value);
+    }
+}
+
+/** Esc / Ctrl+Enter; пробел и обычный Enter не трогаем */
+function onNotebookKeydown(e) {
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelEdit();
+        return;
+    }
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        saveText();
+    }
+}
+
+function applyNotebookFormat(kind) {
+    const el = notebookEditRef.value;
+    if (!el) return;
+    const setValue = (next) => {
+        editingText.value = clampNotebookBodyText(next);
+    };
+    if (kind === 'bold') {
+        wrapTextareaSelection(el, wrapHtmlBold, setValue);
+        return;
+    }
+    if (kind === 'italic') {
+        wrapTextareaSelection(el, wrapHtmlItalic, setValue);
+        return;
+    }
+    if (kind === 'underline') {
+        wrapTextareaSelection(el, wrapUnderline, setValue);
+        return;
+    }
+    if (kind === 'color') {
+        wrapTextareaSelection(el, (sel) => wrapColor(sel, draftTextColor.value), setValue);
+        return;
+    }
+    if (kind === 'size') {
+        wrapTextareaSelection(el, (sel) => wrapFontSize(sel, draftFontSize.value), setValue);
+        return;
+    }
+    if (kind === 'link') {
+        const url = window.prompt('Адрес ссылки (https://…)', 'https://');
+        if (!url || !String(url).trim()) return;
+        wrapTextareaSelection(el, (sel) => wrapHtmlLink(sel, url), setValue);
+    }
+}
+
 // Начать редактирование
 const startEdit = () => {
-    // Конвертируем HTML в простой текст для textarea с сохранением форматирования
-    let htmlText = notebookText.value;
-    
-    // Заменяем закрывающие теги параграфов и заголовков на двойные переносы строк
-    htmlText = htmlText.replace(/<\/p>/gi, '\n\n');
-    htmlText = htmlText.replace(/<\/h4>/gi, '\n\n');
-    htmlText = htmlText.replace(/<\/h[1-6]>/gi, '\n\n');
-    
-    // Заменяем <br> и <br/> на одинарные переносы строк
-    htmlText = htmlText.replace(/<br\s*\/?>/gi, '\n');
-    
-    // Заменяем &nbsp; на обычные пробелы перед удалением тегов
-    htmlText = htmlText.replace(/&nbsp;/gi, ' ');
-    
-    // Удаляем открывающие теги
-    htmlText = htmlText.replace(/<p[^>]*>/gi, '');
-    htmlText = htmlText.replace(/<h4[^>]*>/gi, '');
-    htmlText = htmlText.replace(/<h[1-6][^>]*>/gi, '');
-    
-    // Удаляем все остальные HTML теги, но сохраняем текст с пробелами
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlText;
-    // Используем textContent вместо innerText, чтобы лучше сохранить пробелы
-    let plainText = tempDiv.textContent || tempDiv.innerText || '';
-    
-    // Нормализуем переносы строк, но сохраняем все пробелы
-    plainText = plainText
-        .replace(/\r\n/g, '\n')
-        .replace(/\r/g, '\n')
-        .replace(/\n{3,}/g, '\n\n'); // Максимум 2 переноса подряд
-    // Убираем только начальные и конечные пробелы всего текста (не внутри)
-    plainText = plainText.trim();
-    
-    editingText.value = plainText;
+    if (!canManageContent.value) return;
+    // Абзацы → переносы, жирный/цвет/ссылки сохраняем как HTML-теги
+    editingText.value = notebookHtmlToEditable(notebookText.value);
     isEditing.value = true;
-    // Фокусируемся на textarea после переключения
     nextTick(() => {
-        const textarea = document.querySelector('.textKra-edit');
+        const textarea = notebookEditRef.value;
         if (textarea) {
             textarea.focus();
-            // Устанавливаем курсор в конец текста
             textarea.setSelectionRange(textarea.value.length, textarea.value.length);
         }
     });
@@ -185,88 +396,18 @@ const startEdit = () => {
 
 // Сохранить изменения
 const saveText = () => {
+    if (!canManageContent.value) {
+        cancelEdit();
+        return;
+    }
     if (!editingText.value.trim()) {
         notebookText.value = defaultText;
     } else {
-        // Конвертируем простой текст обратно в HTML с сохранением форматирования
-        let formattedText = editingText.value
-            .replace(/\r\n/g, '\n') // Нормализуем переносы строк
-            .replace(/\r/g, '\n');
-        
-        // Сначала заменяем пробелы перед знаками препинания на &nbsp; во всем тексте
-        // Это сохранит пробелы типа "слово ," или "слово ."
-        formattedText = formattedText.replace(/([ \t]+)([,\.;:!?\)])/g, (match, spaces, punct) => {
-            return '&nbsp;'.repeat(spaces.length) + punct;
-        });
-        
-        // Разбиваем на строки, сохраняя пустые строки
-        const allLines = formattedText.split('\n');
-        
-        // Обрабатываем строки, группируя их в параграфы
-        // Двойной перенос строки (\n\n) = новый параграф (включая пустые)
-        // Одинарный перенос (\n) = <br> внутри параграфа
-        const result = [];
-        let currentParagraph = [];
-        
-        for (let i = 0; i < allLines.length; i++) {
-            const line = allLines[i];
-            const isLineEmpty = line.trim() === '';
-            const nextLine = allLines[i + 1];
-            const isNextLineEmpty = nextLine !== undefined && nextLine.trim() === '';
-            
-            // Если строка пустая - это означает двойной перенос (новая строка после предыдущей)
-            if (isLineEmpty) {
-                // Сохраняем текущий параграф, если он есть
-                if (currentParagraph.length > 0) {
-                    result.push(currentParagraph);
-                    currentParagraph = [];
-                }
-                // Добавляем пустой параграф
-                result.push([]);
-            } else {
-                // Непустая строка - добавляем в текущий параграф
-                currentParagraph.push(line);
-            }
-        }
-        
-        // Добавляем последний параграф, если он есть
-        if (currentParagraph.length > 0) {
-            result.push(currentParagraph);
-        }
-        
-        // Преобразуем параграфы в HTML
-        formattedText = result.map(paragraph => {
-            // Если параграф пустой - возвращаем пустой параграф
-            if (paragraph.length === 0 || paragraph.every(line => !line.trim())) {
-                return '<p><br></p>';
-            }
-            
-            // Обрабатываем строки в параграфе
-            const processedLines = paragraph.map(line => {
-                // Заменяем пробелы в конце строки на &nbsp;
-                return line.replace(/([ \t]+)$/g, (match) => {
-                    return '&nbsp;'.repeat(match.length);
-                });
-            });
-            
-            const paragraphContent = processedLines.join('<br>');
-            const paragraphText = paragraph.join(' ').trim();
-            
-            // Если строка короткая и содержит ключевые слова - это заголовок
-            if (paragraphText.length < 60 && (
-                paragraphText.toLowerCase().includes('привет') || 
-                paragraphText.toLowerCase().includes('знакомы') ||
-                paragraphText.toLowerCase().includes('меня зовут')
-            )) {
-                return `<h4>${paragraphContent}</h4>`;
-            }
-            // Обычный параграф
-            return `<p>${paragraphContent}</p>`;
-        }).join('');
-        
-        notebookText.value = formattedText || defaultText;
+        const clamped = clampNotebookBodyText(editingText.value);
+        editingText.value = clamped;
+        notebookText.value = notebookEditableToHtml(clamped) || defaultText;
     }
-    
+
     saveToStorage(notebookText.value);
     isEditing.value = false;
 };
@@ -281,9 +422,20 @@ function onBlogIndexBgChanged() {
     loadBlogIndexBackground();
 }
 
-onMounted(() => {
+watch(canManageContent, (ok) => {
+    if (!ok && isEditing.value) cancelEdit();
+});
+
+onMounted(async () => {
     loadText();
     loadBlogIndexBackground();
+    try {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('jwt')) {
+            await index.fetchUserMe();
+        }
+    } catch {
+        /* ignore */
+    }
     if (typeof window !== 'undefined') {
         window.addEventListener('blog-index-bg-changed', onBlogIndexBgChanged);
     }
@@ -337,19 +489,19 @@ onUnmounted(() => {
 
 .textKra {
     position: absolute;
-    top: 5%;
-    right: 6%;
-    left: 58%;
+    top: 2.5%;
+    right: 3%;
+    left: 56%;
     bottom: 8%;
     color: rgb(10, 10, 10);
     font-size: clamp(11px, 1.1vw, 15px);
     text-align: left;
     z-index: 10;
-    padding: 20px 15px;
+    padding: 10px 12px 16px;
     overflow: hidden;
     outline: none;
     word-wrap: break-word;
-    line-height: 1.6;
+    line-height: 1.55;
     max-height: 100%;
     box-sizing: border-box;
     cursor: text;
@@ -367,38 +519,169 @@ onUnmounted(() => {
     border-radius: 4px;
 }
 
+.textKra-editor {
+    position: absolute;
+    top: 2.5%;
+    right: 3%;
+    left: 56%;
+    bottom: 8%;
+    z-index: 30;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    box-sizing: border-box;
+    padding: 6px 8px 10px;
+    background: rgba(255, 255, 255, 0.92);
+    border: 2px solid rgba(139, 120, 80, 0.35);
+    border-radius: 4px;
+    pointer-events: auto;
+}
+
+.notebook-edit-meta {
+    display: flex;
+    justify-content: flex-end;
+    flex-shrink: 0;
+}
+
+.notebook-char-count {
+    font-size: 11px;
+    font-variant-numeric: tabular-nums;
+    color: rgba(74, 61, 50, 0.75);
+}
+
+.notebook-char-count--full {
+    color: #b91c1c;
+    font-weight: 600;
+}
+
+.notebook-fmt-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.notebook-fmt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 0.35rem;
+    border: 1px solid rgba(160, 139, 106, 0.7);
+    border-radius: 0.25rem;
+    background: rgba(245, 239, 230, 0.95);
+    color: #4a3d32;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.notebook-fmt-btn:hover {
+    background: #ebe4d8;
+}
+
+.notebook-fmt-select {
+    height: 1.75rem;
+    max-width: 7.5rem;
+    padding: 0 0.35rem;
+    border: 1px solid rgba(160, 139, 106, 0.7);
+    border-radius: 0.25rem;
+    background: rgba(245, 239, 230, 0.95);
+    color: #4a3d32;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.7rem;
+    line-height: 1;
+    cursor: pointer;
+}
+
 .textKra-edit {
+    position: relative;
+    inset: auto;
+    flex: 1;
+    width: 100%;
+    min-height: 0;
+    margin: 0;
+    padding: 10px 12px;
     resize: none;
-    border: 2px solid rgba(139, 120, 80, 0.3);
-    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid rgba(139, 120, 80, 0.25);
+    background: rgba(255, 253, 249, 0.98);
     border-radius: 4px;
     font-family: inherit;
-    overflow-y: auto;
+    overflow: auto;
+    cursor: text;
+    white-space: pre-wrap;
+    word-break: normal;
+    overflow-wrap: break-word;
+    user-select: text;
+    -webkit-user-select: text;
+    pointer-events: auto;
 }
 
 .textKra-edit:focus {
     outline: none;
     border-color: rgba(139, 120, 80, 0.6);
-    box-shadow: 0 0 0 3px rgba(139, 120, 80, 0.1);
-    background: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 0 0 2px rgba(139, 120, 80, 0.12);
+    background: #fffefb;
 }
 
 .textKra h4 {
-    margin: 0 0 0.5em 0;
+    margin: 0 0 0.35em 0;
     font-size: 1.1em;
     font-weight: 600;
+    line-height: 1.35;
+}
+
+.textKra h4 + h4 {
+    margin-top: 0.15em;
 }
 
 .textKra p {
-    margin: 0 0 0.8em 0;
+    margin: 0 0 0.55em 0;
     text-indent: 0;
+}
+
+.textKra p:last-child {
+    margin-bottom: 0;
+}
+
+/* Пустая строка в редакторе → компактный разрыв (пробел между абзацами) */
+.textKra p.notebook-gap {
+    margin: 0.2em 0;
+    min-height: 0.65em;
+    line-height: 0.65em;
+    text-indent: 0;
+}
+
+.textKra strong,
+.textKra b {
+    font-weight: 700;
+}
+
+.textKra em,
+.textKra i {
+    font-style: italic;
+}
+
+.textKra u {
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+}
+
+.textKra a {
+    color: #6b5a3a;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
 }
 
 .edit-controls {
     position: absolute;
     top: 2%;
     right: 2%;
-    z-index: 20;
+    z-index: 40;
     display: flex;
     gap: 8px;
 }
@@ -457,16 +740,26 @@ onUnmounted(() => {
 }
 
 .left-images,
-.right-images,
 .center-content {
     position: absolute;
     z-index: 1;
 }
 
+/* Декор не перехватывает мышь — иначе нельзя выделить текст в блокноте */
+.left-images,
+.right-images,
+.center-image {
+    pointer-events: none;
+}
+
+.center-content {
+    z-index: 2;
+}
+
 .left-images {
     left: 24%;
     top: 46%;
-    transform: translateY(-50%);
+    transform: translate(-130px, -50%);
     width: 19%;
 }
 
@@ -501,14 +794,16 @@ onUnmounted(() => {
     transform: translate(-70%, -15%);
     max-width: 420px;
     white-space: initial;
+    pointer-events: none;
 }
 
 .quote {
+    margin: 0;
     font-size: clamp(1rem, 1vw, 1rem);
     font-style: italic;
     font-weight: 700;
     color: #000000;
-    line-height: 1.6;
+    line-height: 1.65;
     text-shadow: 
         2px 2px 4px rgba(255, 255, 255, 1),
         0 0 10px rgba(255, 255, 255, 0.9),
@@ -517,11 +812,17 @@ onUnmounted(() => {
     -webkit-text-stroke: 0.3px rgba(255, 255, 255, 0.5);
 }
 
+.quote-line {
+    display: block;
+    white-space: nowrap;
+}
+
 .author {
     font-size: clamp(0.8rem, 1.5vw, 1rem);
     font-weight: 600;
     color: #0a0a0a;
     margin-top: 12px;
+    white-space: nowrap;
     text-shadow: 
         1px 1px 3px rgba(255, 255, 255, 1),
         0 0 8px rgba(255, 255, 255, 0.9),
@@ -530,43 +831,102 @@ onUnmounted(() => {
     -webkit-text-stroke: 0.2px rgba(255, 255, 255, 0.5);
 }
 
+/* Волна по буквам: строка за строкой, общий цикл */
+.quote-char {
+    display: inline-block;
+    animation-name: quoteCharWave;
+    animation-duration: var(--wave-duration, 14s);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+    animation-iteration-count: infinite;
+    animation-delay: var(--wave-delay, 0s);
+    will-change: transform;
+}
+
+.quote-char--space {
+    width: 0.28em;
+}
+
+/* Мягкий длинный подъём; очередь строк — через delay */
+@keyframes quoteCharWave {
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+    1.8% {
+        transform: translateY(-0.22em);
+    }
+    3.6% {
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .quote-char {
+        animation: none;
+    }
+}
+
+/* Правый декор: у нижнего правого угла блокнота, чуть ниже края */
 .right-images {
-    right: 20%;
-    bottom: -7%;
-    width: 8%;
-}
-
-.right-images img {
-    width: 100%;
-    height: auto;
-}
-
-.image-right-middle,
-.image-right-top,
-.image-right-bottom,
-.imageRightBlock {
     position: absolute;
+    right: 1%;
+    top: calc(100% + 6px);
+    left: auto;
+    bottom: auto;
+    width: clamp(80px, 7.5vw, 115px);
+    height: clamp(95px, 12vw, 140px);
+    z-index: 4;
+    pointer-events: none;
+    translate: 50px 0px;
 }
 
-.image-right-middle {
-    bottom: 10px;
-    right: 60px;
-}
-
-.image-right-top {
-    bottom: 20px;
-    right: -10px;
+.right-images > img {
+    position: absolute;
+    width: auto;
+    height: auto;
+    max-width: none;
+    filter: drop-shadow(0 8px 14px rgba(40, 28, 12, 0.22));
+    transform-origin: center center;
 }
 
 .image-right-bottom {
-    bottom: 120px;
-    right: 40px;
-    scale: 0.5;
+    width: 58%;
+    left: 2%;
+    bottom: 6%;
+    z-index: 1;
+    transform: rotate(-18deg);
+    animation: rightDecorDrift 7s ease-in-out infinite;
+}
+
+.image-right-middle {
+    width: 70%;
+    right: -4%;
+    bottom: 14%;
+    z-index: 2;
+    transform: rotate(32deg);
+    animation: rightDecorDrift 8s ease-in-out infinite 0.35s;
+}
+
+.image-right-top {
+    width: 76%;
+    right: 10%;
+    bottom: 34%;
+    z-index: 3;
+    transform: rotate(-22deg);
+    animation: rightDecorDrift 6.5s ease-in-out infinite 0.7s;
+}
+
+@keyframes rightDecorDrift {
+    0%,
+    100% {
+        translate: 0 0;
+    }
+    50% {
+        translate: 0 -6px;
+    }
 }
 
 .imageRightBlock {
-    bottom: 120px;
-    scale: 2.4;
     display: none;
 }
 
@@ -629,25 +989,27 @@ onUnmounted(() => {
     }
 }
 
+/* ~1500px: левые картинки на 150px вправо (не для более узких) */
+@media (max-width: 1500px) and (min-width: 1321px) {
+    .left-images {
+        transform: translate(10px, -50%);
+    }
+}
+
 @media (max-width: 1320px) {
+    .left-images {
+        transform: translateY(-50%);
+    }
+
     .quote-container {
         bottom: -43%;
     }
 
-    .image-right-middle {
-        bottom: -40px;
-        right: 40px;
-    }
-
-    .image-right-top {
-        bottom: -30px;
-        right: -10px;
-    }
-
-    .image-right-bottom {
-        bottom: 60px;
-        right: 30px;
-        scale: 0.8;
+    .right-images {
+        right: 0;
+        top: calc(100% + 4px);
+        width: clamp(75px, 7vw, 100px);
+        height: clamp(90px, 11vw, 120px);
     }
 
     .textKra {
@@ -674,22 +1036,11 @@ onUnmounted(() => {
         left: 50%;
     }
 
-    .image-right-middle {
-        bottom: -40px;
-        right: 85px;
-        scale: 1.2;
-    }
-
-    .image-right-top {
-        bottom: -30px;
-        right: 35px;
-        scale: 1.2;
-    }
-
-    .image-right-bottom {
-        bottom: 50px;
-        right: 80px;
-        scale: 0.9;
+    .right-images {
+        right: -1%;
+        top: calc(100% + 2px);
+        width: clamp(70px, 7.5vw, 95px);
+        height: clamp(85px, 10vw, 115px);
     }
 }
 
@@ -735,37 +1086,27 @@ onUnmounted(() => {
         font-size: clamp(0.7rem, 1.2vw, 0.8rem);
     }
 
-    .image-right-middle {
-        bottom: -30px;
-        right: -70px;
-        scale: 1.4;
-    }
-
-    .image-right-top {
-        bottom: -15px;
-        right: -130px;
-        scale: 1.4;
-    }
-
-    .image-right-bottom {
-        bottom: 90px;
-        right: -140px;
-        scale: 1.2;
+    .right-images {
+        right: -4%;
+        top: calc(100% + 8px);
+        width: 70px;
+        height: 88px;
     }
 
     .imageRightBlock {
-        bottom: 28rem;
-        z-index: 1;
-        left: -20px;
-        scale: 3.5;
-        display: block;
+        display: none;
     }
 
     .textKra {
         font-size: clamp(10px, 1vw, 14px);
         padding: 15px 10px;
-        right: 6%;
-        left: 60%;
+        right: 3%;
+        left: 56%;
+    }
+
+    .textKra-editor {
+        right: 3%;
+        left: 56%;
     }
 }
 
@@ -782,22 +1123,11 @@ onUnmounted(() => {
         display: none;
     }
 
-    .image-right-middle {
-        bottom: -30px;
-        right: -40px;
-        scale: 1.4;
-    }
-
-    .image-right-top {
-        bottom: -15px;
-        right: -90px;
-        scale: 1.4;
-    }
-
-    .image-right-bottom {
-        bottom: 90px;
-        right: -100px;
-        scale: 1.2;
+    .right-images {
+        width: 64px;
+        height: 80px;
+        right: -2%;
+        top: calc(100% + 6px);
     }
 
     .textKra {
@@ -871,6 +1201,13 @@ onUnmounted(() => {
         transform: rotate(-20deg);
     }
 
+    .right-images {
+        right: -6%;
+        top: calc(100% + 10px);
+        width: min(26vw, 95px);
+        height: min(22vw, 85px);
+    }
+
     .grafKara,
     .topKara,
     .nizKara,
@@ -878,38 +1215,53 @@ onUnmounted(() => {
     .phoneToc {
         display: block;
         position: absolute;
-        z-index: 6;
+        filter: drop-shadow(0 6px 10px rgba(40, 28, 12, 0.2));
+        animation: rightDecorDrift 7s ease-in-out infinite;
     }
 
     .grafKara {
-        bottom: 4rem;
-        left: -16rem;
-        scale: 2.6;
-        z-index: 5;
+        width: 70%;
+        left: 8%;
+        bottom: 4%;
+        z-index: 1;
+        opacity: 0.9;
+        animation-delay: 0.2s;
     }
 
     .topKara {
-        bottom: 2rem;
-        left: -16rem;
-        scale: 1;
+        width: 48%;
+        left: 0;
+        bottom: 18%;
+        z-index: 2;
+        transform: rotate(-20deg);
+        animation-delay: 0.5s;
     }
 
     .nizKara {
-        bottom: 4rem;
-        left: -20rem;
-        scale: 0.6;
+        width: 36%;
+        right: 6%;
+        bottom: 8%;
+        z-index: 2;
+        transform: rotate(12deg);
+        animation-delay: 0.8s;
     }
 
     .tocKara {
-        bottom: 8rem;
-        left: -13rem;
-        scale: 0.6;
+        width: 34%;
+        right: 18%;
+        bottom: 42%;
+        z-index: 2;
+        transform: rotate(-8deg);
+        animation-delay: 1s;
     }
 
     .phoneToc {
-        bottom: 7rem;
-        left: -17rem;
-        scale: 1;
+        width: 42%;
+        right: 2%;
+        bottom: 28%;
+        z-index: 3;
+        transform: rotate(18deg);
+        animation-delay: 0.35s;
     }
 
     .textKra {
@@ -945,32 +1297,11 @@ onUnmounted(() => {
         text-align: right;
     }
 
-    .grafKara {
-        bottom: 5rem;
-        left: -17rem;
-        scale: 2.6;
-        z-index: 5;
-    }
-
-    .topKara {
-        bottom: 2rem;
-        left: -18rem;
-        scale: 1.2;
-    }
-
-    .nizKara {
-        bottom: 5rem;
-        left: -21rem;
-    }
-
-    .tocKara {
-        bottom: 7rem;
-        left: -14rem;
-    }
-
-    .phoneToc {
-        bottom: 7rem;
-        left: -18rem;
+    .right-images {
+        width: min(28vw, 90px);
+        height: min(24vw, 80px);
+        right: -4%;
+        top: calc(100% + 8px);
     }
 
     .textKra {
@@ -1019,6 +1350,10 @@ onUnmounted(() => {
     .nizKara,
     .tocKara,
     .phoneToc {
+        display: none;
+    }
+
+    .right-images {
         display: none;
     }
 

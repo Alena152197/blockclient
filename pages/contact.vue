@@ -8,12 +8,6 @@
             <div class="contact-page-bg-overlay" :style="customContactBgOverlayStyle" />
         </div>
         <div class="relative z-10 flex min-h-0 flex-1 flex-col items-center justify-center gap-4 px-2 py-6">
-            <h2
-                v-if="spreadTitle"
-                class="max-w-[min(100vw,890px)] px-2 text-center font-serif text-xl font-semibold tracking-wide text-[#3d3428] md:text-2xl"
-            >
-                {{ spreadTitle }}
-            </h2>
             <!-- Контейнер разворота: нитки позиционируются от его границ (иначе «уезжают» вверх относительно книги) -->
             <div class="book-spread-wrap relative inline-flex max-w-[100vw] flex-row flex-nowrap items-stretch justify-center">
                 <div class="pointer-events-none absolute inset-0 -z-[1] hidden lg:flex" aria-hidden="true">
@@ -43,20 +37,44 @@
                     class="book-spine absolute bottom-0 right-[-4px] top-0 z-[10] w-2 rounded-r-sm bg-gradient-to-b from-[#8b7850] via-[#6b5a3a] via-[#5a4a2a] via-[#6b5a3a] to-[#8b7850] shadow-[inset_-2px_0_8px_rgba(0,0,0,0.4),inset_2px_0_8px_rgba(0,0,0,0.4),0_0_15px_rgba(0,0,0,0.3)]"
                 />
                 <div
-                    class="book-text-content absolute left-0 top-0 z-[5] box-border h-full w-full overflow-hidden bg-[rgba(255,252,248,0.85)] p-6 md:p-7 sm:p-5 max-[480px]:p-4 md:pl-[28px] md:pr-[30px] md:pt-[28px] md:pb-[28px] sm:pl-[26px] sm:pr-[28px] sm:pt-[26px] sm:pb-[26px] lg:p-8"
+                    class="book-text-content absolute left-0 top-0 z-[5] box-border flex h-full w-full flex-col overflow-hidden bg-[rgba(255,252,248,0.85)] p-6 md:p-7 sm:p-5 max-[480px]:p-4 md:pl-[28px] md:pr-[30px] md:pt-[28px] md:pb-[28px] sm:pl-[26px] sm:pr-[28px] sm:pt-[26px] sm:pb-[26px] lg:p-8"
                 >
-                    <div v-if="spread.imageUrl" class="book-photo-frame h-full min-h-0 w-full">
-                        <img :src="spread.imageUrl" alt="" class="h-full w-full rounded-sm object-cover shadow-inner" />
+                    <div class="book-photo-frame min-h-0 w-full flex-1">
+                        <img
+                            :src="displayPhotoUrl"
+                            alt=""
+                            class="h-full w-full rounded-sm object-cover shadow-inner"
+                            :class="{ 'opacity-90': !hasCustomPhoto }"
+                        />
                     </div>
                     <div
-                        v-else
-                        class="flex h-full min-h-[120px] flex-col items-center justify-center gap-2 px-3 text-center text-[13px] italic leading-snug text-[#6b5a4a]/75 md:text-[14px]"
+                        v-if="canEditAbout"
+                        class="mt-3 flex shrink-0 flex-wrap items-center justify-center gap-2"
                     >
-                        <span>Здесь фото разворота.</span>
-                        <span class="text-[11px] not-italic text-[#8b7355]/80">
-                            В Strapi — поле картинки у записи «О себе», либо в начале текста строка
-                            <code class="rounded bg-black/5 px-1 font-mono text-[10px]">![](/uploads/…)</code>
-                        </span>
+                        <input
+                            ref="photoInputRef"
+                            type="file"
+                            accept="image/*"
+                            class="hidden"
+                            @change="onPhotoFile"
+                        />
+                        <button
+                            type="button"
+                            class="rounded border border-[#a08b6a] bg-[#f5efe6]/95 px-2.5 py-1 text-xs font-medium text-[#4a3d32] shadow-sm hover:bg-[#ebe4d8] disabled:opacity-50"
+                            :disabled="photoBusy || textSaving"
+                            @click="photoInputRef?.click()"
+                        >
+                            {{ photoBusy ? 'Загрузка…' : hasCustomPhoto ? 'Сменить фото' : 'Своё фото' }}
+                        </button>
+                        <button
+                            v-if="hasCustomPhoto"
+                            type="button"
+                            class="rounded border border-red-200 bg-white/90 px-2.5 py-1 text-xs text-red-800 hover:bg-red-50 disabled:opacity-50"
+                            :disabled="photoBusy || textSaving"
+                            @click="removePhoto"
+                        >
+                            Убрать
+                        </button>
                     </div>
                 </div>
             </div>
@@ -87,34 +105,181 @@
                     class="book-spine absolute bottom-0 left-[-4px] top-0 z-[10] w-2 rounded-l-sm bg-gradient-to-b from-[#8b7850] via-[#6b5a3a] via-[#5a4a2a] via-[#6b5a3a] to-[#8b7850] shadow-[inset_-2px_0_8px_rgba(0,0,0,0.4),inset_2px_0_8px_rgba(0,0,0,0.4),0_0_15px_rgba(0,0,0,0.3)]"
                 />
                 <div
-                    class="book-text-content absolute left-0 top-0 z-[5] box-border h-full w-full overflow-y-auto overflow-x-hidden bg-[rgba(255,252,248,0.7)] p-32 md:p-[28px_30px] sm:p-[26px_28px] max-[480px]:p-[24px_26px]"
+                    class="book-text-content absolute left-0 top-0 z-[5] box-border flex h-full w-full flex-col overflow-hidden bg-[rgba(255,252,248,0.7)] px-6 pb-6 pt-3 sm:px-7 sm:pb-7 sm:pt-3.5 md:px-[30px] md:pb-[28px] md:pt-4 max-[480px]:px-[26px] max-[480px]:pb-[24px] max-[480px]:pt-2.5 lg:px-8 lg:pb-8 lg:pt-4"
                 >
-                    <div
-                        class="book-text block h-full min-h-0 w-full max-w-full break-words rounded-sm font-serif text-[17px] leading-[1.7] tracking-[0.3px] text-justify text-[#1f1f1f] [word-spacing:0.1em] transition-colors duration-300 md:text-[15px] md:leading-[1.65] sm:text-[14px] sm:leading-[1.5] sm:tracking-[0.2px] max-[480px]:text-[13px] max-[480px]:leading-[1.4]"
-                        style="text-shadow: 0.3px 0.3px 0.5px rgba(255, 255, 255, 0.9), 0.1px 0.1px 0.2px rgba(0, 0, 0, 0.05)"
-                        v-html="textHtml"
-                    />
+                    <template v-if="isEditingText">
+                        <input
+                            ref="titleEditRef"
+                            v-model="draftTitle"
+                            type="text"
+                            class="book-page-title mb-1.5 w-full shrink-0 rounded-sm border border-[#c4b59a]/60 bg-[#fffdf9]/95 px-2 py-1 text-center font-serif text-[1.15rem] font-semibold leading-snug tracking-wide text-[#3d3428] outline-none focus:border-[#8b7850] md:mb-2 md:text-[1.35rem] sm:text-[1.05rem] max-[480px]:mb-1 max-[480px]:text-[0.95rem]"
+                            :disabled="textSaving"
+                            placeholder="Заголовок разворота"
+                            aria-label="Заголовок разворота"
+                            @keydown.stop="onTitleKeydown"
+                        />
+                        <div
+                            class="book-fmt-toolbar mb-2 flex shrink-0 flex-wrap items-center justify-center gap-1"
+                            role="toolbar"
+                            aria-label="Форматирование текста"
+                        >
+                            <button
+                                type="button"
+                                class="book-fmt-btn font-bold"
+                                title="Жирный"
+                                :disabled="textSaving"
+                                @mousedown.prevent
+                                @click="applyFormat('bold')"
+                            >
+                                Ж
+                            </button>
+                            <button
+                                type="button"
+                                class="book-fmt-btn italic"
+                                title="Курсив"
+                                :disabled="textSaving"
+                                @mousedown.prevent
+                                @click="applyFormat('italic')"
+                            >
+                                К
+                            </button>
+                            <button
+                                type="button"
+                                class="book-fmt-btn underline"
+                                title="Подчёркнутый"
+                                :disabled="textSaving"
+                                @mousedown.prevent
+                                @click="applyFormat('underline')"
+                            >
+                                Ч
+                            </button>
+                            <select
+                                v-model="draftFontSize"
+                                class="book-fmt-select"
+                                title="Размер текста"
+                                :disabled="textSaving"
+                                aria-label="Размер текста"
+                                @mousedown.stop
+                                @change="applyFormat('size')"
+                            >
+                                <option
+                                    v-for="opt in BOOK_FONT_SIZE_OPTIONS"
+                                    :key="opt.value"
+                                    :value="opt.value"
+                                >
+                                    {{ opt.label }}
+                                </option>
+                            </select>
+                            <label
+                                class="book-fmt-btn relative inline-flex cursor-pointer items-center justify-center"
+                                title="Цвет текста"
+                            >
+                                <span aria-hidden="true">А</span>
+                                <span
+                                    class="absolute bottom-0.5 left-1 right-1 h-0.5 rounded-sm"
+                                    :style="{ background: draftTextColor }"
+                                />
+                                <input
+                                    v-model="draftTextColor"
+                                    type="color"
+                                    class="absolute inset-0 cursor-pointer opacity-0"
+                                    :disabled="textSaving"
+                                    @mousedown.prevent
+                                    @change="applyFormat('color')"
+                                />
+                            </label>
+                            <button
+                                type="button"
+                                class="book-fmt-btn"
+                                title="Ссылка"
+                                :disabled="textSaving"
+                                @mousedown.prevent
+                                @click="applyFormat('link')"
+                            >
+                                URL
+                            </button>
+                        </div>
+                        <textarea
+                            ref="textEditRef"
+                            v-model="draftText"
+                            class="book-text-edit min-h-0 w-full flex-1 resize-none whitespace-pre-wrap rounded-sm border border-[#c4b59a]/60 bg-[#fffdf9]/95 p-2 font-serif text-[16px] leading-[1.65] text-[#1f1f1f] outline-none focus:border-[#8b7850] md:text-[15px] sm:text-[14px] max-[480px]:text-[13px]"
+                            :disabled="textSaving"
+                            :maxlength="BOOK_SPREAD_BODY_MAX_CHARS"
+                            aria-label="Текст разворота"
+                            @keydown.stop="onTextareaKeydown"
+                            @keyup.stop
+                            @keypress.stop
+                            @input="onDraftTextInput"
+                        />
+                        <div class="mt-2 flex shrink-0 flex-wrap items-center gap-2">
+                            <button
+                                type="button"
+                                class="rounded border border-[#6b5a3a] bg-[#4a3d32] px-3 py-1.5 text-xs font-medium text-[#f5efe6] hover:bg-[#5a4a3a] disabled:opacity-50"
+                                :disabled="textSaving"
+                                @click="saveText"
+                            >
+                                {{ textSaving ? 'Сохранение…' : 'Сохранить' }}
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded border border-[#a08b6a] bg-[#f5efe6] px-3 py-1.5 text-xs font-medium text-[#4a3d32] hover:bg-[#ebe4d8] disabled:opacity-50"
+                                :disabled="textSaving"
+                                @click="cancelTextEdit"
+                            >
+                                Отменить
+                            </button>
+                            <span
+                                class="ml-auto text-[11px] tabular-nums"
+                                :class="draftTextLen >= BOOK_SPREAD_BODY_MAX_CHARS ? 'font-medium text-red-700' : 'text-[#6b5a4a]/80'"
+                                :title="'Лимит листа: ' + BOOK_SPREAD_BODY_MAX_CHARS + ' символов'"
+                            >
+                                {{ draftTextLen }} / {{ BOOK_SPREAD_BODY_MAX_CHARS }}
+                            </span>
+                            <span v-if="editError" class="basis-full text-xs text-red-700">{{ editError }}</span>
+                        </div>
+                    </template>
+                    <template v-else>
+                        <h2
+                            class="book-page-title mb-2 shrink-0 px-1 pt-0.5 text-center font-serif text-[1.15rem] font-semibold leading-snug tracking-wide text-[#3d3428] md:mb-2.5 md:text-[1.35rem] sm:text-[1.05rem] max-[480px]:mb-1.5 max-[480px]:text-[0.95rem]"
+                            :class="canEditAbout ? 'cursor-text rounded-sm hover:bg-[rgba(255,252,248,0.5)]' : ''"
+                            :title="canEditAbout ? 'Нажмите, чтобы редактировать заголовок' : undefined"
+                            @click="canEditAbout ? startTextEdit('title') : undefined"
+                        >
+                            <span v-if="spreadTitle">{{ spreadTitle }}</span>
+                            <span
+                                v-else-if="canEditAbout"
+                                class="font-normal italic text-[#6b5a4a]/60"
+                            >
+                                Заголовок…
+                            </span>
+                        </h2>
+                        <div
+                            class="book-text block min-h-0 w-full max-w-full flex-1 overflow-y-auto break-words rounded-sm font-serif text-[17px] leading-[1.7] text-left text-[#1f1f1f] transition-colors duration-300 md:text-[15px] md:leading-[1.65] sm:text-[14px] sm:leading-[1.5] max-[480px]:text-[13px] max-[480px]:leading-[1.4]"
+                            :class="canEditAbout ? 'cursor-text ring-0 hover:bg-[rgba(255,252,248,0.35)]' : ''"
+                            style="text-shadow: 0.3px 0.3px 0.5px rgba(255, 255, 255, 0.9), 0.1px 0.1px 0.2px rgba(0, 0, 0, 0.05)"
+                            :title="canEditAbout ? 'Нажмите, чтобы редактировать' : undefined"
+                            role="article"
+                            @click="canEditAbout ? startTextEdit('body') : undefined"
+                        >
+                            <div v-if="textHtml" v-html="textHtml" />
+                            <p v-else-if="canEditAbout" class="m-0 italic text-[#6b5a4a]/70">
+                                Нажмите, чтобы написать…
+                            </p>
+                        </div>
+                    </template>
                 </div>
             </div>
             </div>
 
-            <div v-if="canEditAbout" class="flex justify-center px-2">
-                <button
-                    type="button"
-                    class="rounded-md border border-[#a08b6a] bg-[#f5efe6] px-4 py-2 text-sm font-medium text-[#4a3d32] shadow-sm hover:bg-[#ebe4d8]"
-                    @click="bookEditorOpen = true"
-                >
-                    Редактировать этот разворот
-                </button>
-            </div>
+            <p v-if="editError && !isEditingText" class="max-w-md px-2 text-center text-sm text-red-700">
+                {{ editError }}
+            </p>
 
-            <ContactBookEditor v-model="bookEditorOpen" :entry="currentEntry" @saved="fetchSpread" />
-
-            <div class="relative flex flex-wrap items-center justify-center gap-4 pb-1 pt-1">
+            <div class="relative flex flex-wrap items-center justify-center gap-3 pb-1 pt-1">
                 <button
                     type="button"
                     class="size-12 hover:text-red-600 active:text-black disabled:opacity-40"
-                    :disabled="currentPage <= 1"
+                    :disabled="currentPage <= 1 || isEditingText"
                     aria-label="Предыдущий разворот"
                     @click="prevPage"
                 >
@@ -128,7 +293,7 @@
                 <button
                     type="button"
                     class="size-12 hover:text-red-600 active:text-black disabled:opacity-40"
-                    :disabled="currentPage >= totalPages"
+                    :disabled="currentPage >= totalPages || isEditingText"
                     aria-label="Следующий разворот"
                     @click="nextPage"
                 >
@@ -138,13 +303,22 @@
                         />
                     </svg>
                 </button>
+                <button
+                    v-if="canManageContent"
+                    type="button"
+                    class="ml-1 rounded-md border border-[#a08b6a] bg-[#f5efe6] px-3 py-2 text-sm font-medium text-[#4a3d32] shadow-sm hover:bg-[#ebe4d8] disabled:opacity-50"
+                    :disabled="creatingSpread || isEditingText"
+                    @click="addSpread"
+                >
+                    {{ creatingSpread ? 'Создание…' : 'Добавить разворот' }}
+                </button>
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue';
 import { useSearchStore } from '~/stores/search';
 import { canManageBlogContent } from '~/utils/strapiUserRole';
 import MarkdownIt from 'markdown-it';
@@ -153,9 +327,33 @@ import {
     buildCustomBgLayerStyle,
     buildCustomBgOverlayStyle
 } from '~/utils/blogIndexBg';
-import { spreadFromAboutEntry } from '~/utils/contactBookSpread';
+import {
+    spreadFromAboutEntry,
+    getAboutEntryForEditor,
+    decodeBlankLinesFromMarkdown
+} from '~/utils/contactBookSpread';
+import {
+    BOOK_SPREAD_BODY_MAX_CHARS,
+    BOOK_FONT_SIZE_OPTIONS,
+    clampBookBodyText,
+    wrapTextareaSelection,
+    wrapBold,
+    wrapItalic,
+    wrapUnderline,
+    wrapColor,
+    wrapFontSize,
+    wrapLink
+} from '~/utils/contactBookFormat';
 import { STRAPI_BASE } from '~/utils/strapiBase';
 import { BOOK_THREAD_TOP_PERCENT } from '~/utils/contactBookThreads';
+import {
+    DEFAULT_CONTACT_BOOK_PHOTO,
+    buildAboutContent,
+    createAboutEntry,
+    leadImageRelativeFromContent,
+    updateAboutEntry,
+    uploadImageToStrapi
+} from '~/utils/contactBookApi';
 
 const contactBgState = ref(null);
 
@@ -171,9 +369,17 @@ function onContactPageBgChanged() {
 }
 
 const search = useSearchStore();
-const bookEditorOpen = ref(false);
+const runtimeConfig = useRuntimeConfig();
+const adminAllow = computed(() => ({
+    emails: runtimeConfig.public.contentAdminEmails || '',
+    usernames: runtimeConfig.public.contentAdminUsernames || '',
+}));
+/** Админ: роль Admin в Strapi ИЛИ email в NUXT_PUBLIC_CONTENT_ADMIN_EMAILS */
+const canManageContent = computed(() =>
+    canManageBlogContent(search.userMe, adminAllow.value)
+);
 const canEditAbout = computed(
-    () => canManageBlogContent(search.userMe) && currentEntry.value != null
+    () => canManageContent.value && currentEntry.value != null
 );
 
 const pageFlipRight = ref(false);
@@ -182,10 +388,31 @@ const currentEntry = ref(null);
 const currentPage = ref(1);
 const pageSize = 1;
 const totalPages = ref(1);
-const markdown = new MarkdownIt();
+/** breaks + html: цвет/<u>/разрывы абзацев */
+const markdown = new MarkdownIt({ breaks: true, html: true });
 const leftClass = ref('');
 
+const isEditingText = ref(false);
+const draftText = ref('');
+const draftTitle = ref('');
+const draftTextColor = ref('#8b4513');
+const draftFontSize = ref('1em');
+const draftTextLen = computed(() => (draftText.value || '').length);
+const textSaving = ref(false);
+const photoBusy = ref(false);
+const creatingSpread = ref(false);
+const editError = ref('');
+const photoInputRef = ref(null);
+const textEditRef = ref(null);
+const titleEditRef = ref(null);
+
 const spread = computed(() => spreadFromAboutEntry(currentEntry.value));
+
+const hasCustomPhoto = computed(() => Boolean(spread.value?.imageUrl));
+
+const displayPhotoUrl = computed(
+    () => spread.value?.imageUrl || DEFAULT_CONTACT_BOOK_PHOTO
+);
 
 const spreadTitle = computed(() => {
     const t = spread.value?.title;
@@ -226,6 +453,193 @@ const fetchSpread = async () => {
     }
 };
 
+async function focusTextEdit(target = 'body') {
+    await nextTick();
+    if (target === 'title') {
+        const titleInput = titleEditRef.value;
+        titleInput?.focus?.({ preventScroll: true });
+        titleInput?.select?.();
+        return;
+    }
+    const el = textEditRef.value;
+    if (!el) return;
+    el.focus({ preventScroll: true });
+    try {
+        const len = el.value?.length ?? 0;
+        el.setSelectionRange(len, len);
+    } catch {
+        /* ignore */
+    }
+}
+
+/**
+ * @param {'body' | 'title'} [target]
+ */
+async function startTextEdit(target = 'body') {
+    if (!canEditAbout.value || isEditingText.value) return;
+    editError.value = '';
+    draftTitle.value = spread.value?.title || '';
+    // Не clamp при открытии — иначе длинный сохранённый текст срезается и пропадает после Save
+    draftText.value = decodeBlankLinesFromMarkdown(spread.value?.textMarkdown || '');
+    isEditingText.value = true;
+    await focusTextEdit(target);
+}
+
+function onDraftTextInput() {
+    // Режем только новый набор сверх лимита
+    if ((draftText.value || '').length > BOOK_SPREAD_BODY_MAX_CHARS) {
+        draftText.value = clampBookBodyText(draftText.value);
+    }
+}
+
+function cancelTextEdit() {
+    isEditingText.value = false;
+    draftText.value = '';
+    draftTitle.value = '';
+    editError.value = '';
+}
+
+function onTitleKeydown(e) {
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelTextEdit();
+    }
+}
+
+function applyFormat(kind) {
+    const el = textEditRef.value;
+    if (!el || textSaving.value) return;
+    const setValue = (next) => {
+        const clamped = clampBookBodyText(next);
+        if (clamped.length < next.length) {
+            editError.value = `Текст листа — максимум ${BOOK_SPREAD_BODY_MAX_CHARS} символов.`;
+        }
+        draftText.value = clamped;
+    };
+    if (kind === 'bold') {
+        wrapTextareaSelection(el, wrapBold, setValue);
+        return;
+    }
+    if (kind === 'italic') {
+        wrapTextareaSelection(el, wrapItalic, setValue);
+        return;
+    }
+    if (kind === 'underline') {
+        wrapTextareaSelection(el, wrapUnderline, setValue);
+        return;
+    }
+    if (kind === 'color') {
+        wrapTextareaSelection(el, (sel) => wrapColor(sel, draftTextColor.value), setValue);
+        return;
+    }
+    if (kind === 'size') {
+        wrapTextareaSelection(el, (sel) => wrapFontSize(sel, draftFontSize.value), setValue);
+        return;
+    }
+    if (kind === 'link') {
+        const url = window.prompt('Адрес ссылки (https://…)', 'https://');
+        if (!url || !String(url).trim()) return;
+        wrapTextareaSelection(el, (sel) => wrapLink(sel, url), setValue);
+    }
+}
+
+async function saveText() {
+    if (!currentEntry.value) return;
+    textSaving.value = true;
+    editError.value = '';
+    try {
+        let body = draftText.value || '';
+        if (body.length > BOOK_SPREAD_BODY_MAX_CHARS) {
+            body = clampBookBodyText(body);
+            draftText.value = body;
+            editError.value = `Текст обрезан до ${BOOK_SPREAD_BODY_MAX_CHARS} символов (лимит листа).`;
+        }
+        const { content: fullContent } = getAboutEntryForEditor(currentEntry.value);
+        const lead = leadImageRelativeFromContent(fullContent);
+        const nextContent = buildAboutContent(body, lead);
+        await updateAboutEntry(currentEntry.value, {
+            content: nextContent,
+            title: draftTitle.value.trim()
+        });
+        isEditingText.value = false;
+        draftText.value = '';
+        draftTitle.value = '';
+        await fetchSpread();
+    } catch (e) {
+        editError.value = e?.message || 'Не удалось сохранить.';
+    } finally {
+        textSaving.value = false;
+    }
+}
+
+async function onPhotoFile(event) {
+    const input = event.target;
+    const file = input?.files?.[0];
+    if (!file || !currentEntry.value) return;
+
+    photoBusy.value = true;
+    editError.value = '';
+    try {
+        const relativeUrl = await uploadImageToStrapi(file);
+        const { title } = getAboutEntryForEditor(currentEntry.value);
+        const nextContent = buildAboutContent(spread.value.textMarkdown || '', relativeUrl);
+        await updateAboutEntry(currentEntry.value, { content: nextContent, title });
+        await fetchSpread();
+    } catch (e) {
+        editError.value = e?.message || 'Ошибка загрузки фото.';
+    } finally {
+        photoBusy.value = false;
+        if (input) input.value = '';
+    }
+}
+
+async function removePhoto() {
+    if (!currentEntry.value || !hasCustomPhoto.value) return;
+    photoBusy.value = true;
+    editError.value = '';
+    try {
+        const { title } = getAboutEntryForEditor(currentEntry.value);
+        const nextContent = buildAboutContent(spread.value.textMarkdown || '', null);
+        await updateAboutEntry(currentEntry.value, { content: nextContent, title });
+        await fetchSpread();
+    } catch (e) {
+        editError.value = e?.message || 'Не удалось убрать фото.';
+    } finally {
+        photoBusy.value = false;
+    }
+}
+
+async function addSpread() {
+    if (!canManageContent.value) return;
+    creatingSpread.value = true;
+    editError.value = '';
+    try {
+        const sample = currentEntry.value
+            ? getAboutEntryForEditor(currentEntry.value)
+            : { bodyField: 'content' };
+        await createAboutEntry({ bodyField: sample.bodyField || 'content' });
+        // Перейти на последний разворот
+        const countUrl = `${STRAPI_BASE}/api/abouts?pagination[page]=1&pagination[pageSize]=1&sort=createdAt:asc`;
+        const res = await fetch(countUrl);
+        const data = await res.json().catch(() => ({}));
+        const pageCount = data.meta?.pagination?.pageCount;
+        const total = data.meta?.pagination?.total;
+        if (typeof pageCount === 'number') {
+            currentPage.value = Math.max(1, pageCount);
+        } else if (typeof total === 'number') {
+            currentPage.value = Math.max(1, total);
+        } else {
+            currentPage.value = totalPages.value + 1;
+        }
+        cancelTextEdit();
+        await fetchSpread();
+    } catch (e) {
+        editError.value = e?.message || 'Не удалось создать разворот.';
+    } finally {
+        creatingSpread.value = false;
+    }
+}
+
 const flip = (direction) => {
     if (direction === 'next') {
         pageFlipRight.value = true;
@@ -245,20 +659,48 @@ const flip = (direction) => {
 };
 
 const nextPage = async () => {
-    if (currentPage.value >= totalPages.value) return;
+    if (currentPage.value >= totalPages.value || isEditingText.value) return;
     currentPage.value += 1;
     await fetchSpread();
     flip('next');
 };
 
 const prevPage = async () => {
-    if (currentPage.value <= 1) return;
+    if (currentPage.value <= 1 || isEditingText.value) return;
     currentPage.value -= 1;
     await fetchSpread();
     flip('prev');
 };
 
+/** Только Esc; пробел/Enter не трогаем (иначе не печатаются). */
+function onTextareaKeydown(e) {
+    if (e.key === 'Escape') {
+        e.preventDefault();
+        cancelTextEdit();
+        return;
+    }
+    // Явно не preventDefault на пробел/Enter — и гасим всплытие (уже .stop)
+    if (e.key === ' ' || e.code === 'Space' || e.key === 'Enter') {
+        e.stopPropagation();
+    }
+}
+
+/** Листание стрелками — только когда НЕ редактируем текст. */
 function onKeydown(e) {
+    if (isEditingText.value) return;
+    const t = e.target;
+    const tag = t && /** @type {HTMLElement} */ (t).tagName;
+    if (
+        tag === 'TEXTAREA' ||
+        tag === 'INPUT' ||
+        tag === 'SELECT' ||
+        (t && /** @type {HTMLElement} */ (t).isContentEditable)
+    ) {
+        return;
+    }
+    // Пробел / Enter никогда не перехватываем (кнопки, скролл, ввод)
+    if (e.key === ' ' || e.code === 'Space' || e.key === 'Enter') return;
+
     if (e.key === 'ArrowRight' || e.key === 'PageDown') {
         e.preventDefault();
         nextPage();
@@ -269,11 +711,25 @@ function onKeydown(e) {
     }
 }
 
+function bindPageKeys() {
+    window.addEventListener('keydown', onKeydown);
+}
+function unbindPageKeys() {
+    window.removeEventListener('keydown', onKeydown);
+}
+
+// Пока открыт редактор — глобальный keydown выключен (фокус ставит startTextEdit)
+watch(isEditingText, (editing) => {
+    if (!import.meta.client) return;
+    if (editing) unbindPageKeys();
+    else bindPageKeys();
+});
+
 onMounted(async () => {
     await fetchSpread();
-    if (!process.client) return;
+    if (!import.meta.client) return;
     try {
-        if (localStorage.getItem('jwt') && !search.userMe?.id) {
+        if (localStorage.getItem('jwt')) {
             await search.fetchUserMe();
         }
     } catch {
@@ -281,13 +737,13 @@ onMounted(async () => {
     }
     loadContactBackground();
     window.addEventListener('contact-page-bg-changed', onContactPageBgChanged);
-    window.addEventListener('keydown', onKeydown);
+    if (!isEditingText.value) bindPageKeys();
 });
 
 onUnmounted(() => {
     if (process.client) {
         window.removeEventListener('contact-page-bg-changed', onContactPageBgChanged);
-        window.removeEventListener('keydown', onKeydown);
+        unbindPageKeys();
     }
 });
 </script>
@@ -457,9 +913,50 @@ onUnmounted(() => {
         );
 }
 
+.book-fmt-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.75rem;
+    height: 1.75rem;
+    padding: 0 0.35rem;
+    border: 1px solid rgba(160, 139, 106, 0.7);
+    border-radius: 0.25rem;
+    background: rgba(245, 239, 230, 0.95);
+    color: #4a3d32;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.75rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.book-fmt-btn:hover:not(:disabled) {
+    background: #ebe4d8;
+}
+.book-fmt-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+.book-fmt-select {
+    height: 1.75rem;
+    max-width: 7.5rem;
+    padding: 0 0.35rem;
+    border: 1px solid rgba(160, 139, 106, 0.7);
+    border-radius: 0.25rem;
+    background: rgba(245, 239, 230, 0.95);
+    color: #4a3d32;
+    font-family: Georgia, 'Times New Roman', serif;
+    font-size: 0.7rem;
+    line-height: 1;
+    cursor: pointer;
+}
+.book-fmt-select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
 /* Стили для абзацев - базовые стили, адаптивность через Tailwind классы */
 .book-text p {
-    margin: 0 0 0.7em 0;
+    margin: 0 0 0.85em 0;
     text-indent: 1.5em;
     position: relative;
     overflow: visible;
@@ -467,6 +964,34 @@ onUnmounted(() => {
     hyphens: auto;
 }
 
+.book-text u {
+    text-decoration: underline;
+    text-underline-offset: 0.12em;
+}
+
+.book-text a {
+    color: #6b5a3a;
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+}
+
+.book-text strong,
+.book-text b {
+    font-weight: 700;
+}
+
+.book-text em,
+.book-text i {
+    font-style: italic;
+}
+
+/* Пустой абзац (`&nbsp;` после сохранения) — видимый «пробел» между блоками */
+.book-text p:has(> br:only-child),
+.book-text p:empty {
+    text-indent: 0;
+    min-height: 1em;
+    margin-bottom: 0.85em;
+}
 
 .book-text p:first-child {
     text-indent: 0;
