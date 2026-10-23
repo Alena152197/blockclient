@@ -14,24 +14,32 @@ jobs:
         uses: actions/checkout@v4
 
       - name: 📦 Установить Node.js 22
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: '22'
+          cache: 'npm'
 
       - name: 📦 Установить зависимости
-        run: npm install
+        run: npm ci
 
       - name: 🗑 Очистить кэш
         run: rm -rf .nuxt dist .output || true
 
       - name: 🔨 Собрать проект
         run: npm run build
+        env:
+          # публичные значения вшиваются в клиент при сборке
+          NUXT_PUBLIC_STRAPI_URL: ${{ secrets.NUXT_PUBLIC_STRAPI_URL }}
+          NUXT_PUBLIC_CONTENT_ADMIN_EMAILS: ${{ secrets.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS }}
+          NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES: ${{ secrets.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES }}
+          # серверный токен (если нужен при сборке / runtime в артефакте не храним — на VPS свой .env)
+          STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
 
-      - name: 🔍 Проверить содержимое
-        run: ls -la
+      - name: 🔍 Проверить сборку
+        run: test -f .output/server/index.mjs && ls -la .output/server/index.mjs
 
       - name: 📁 Передать проект на сервер
-        uses: appleboy/scp-action@master
+        uses: appleboy/scp-action@v0.1.7
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
@@ -39,16 +47,24 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "."
           target: "/var/www/blockclient"
+          overwrite: true
           tar_dereference: true
+          # не затираем секреты и данные на сервере
+          rm: false
 
-      - name: 🔁 Перезапустить PM2
-        uses: appleboy/ssh-action@master
+      - name: 🔁 Установить зависимости и перезапустить PM2
+        uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
+            set -e
             cd /var/www/blockclient
-            ~/.nvm/versions/node/v22.0.0/bin/npm install --production
-            ~/.nvm/versions/node/v22.0.0/bin/pm2 restart all || echo "PM2 не запущен или нет процессов"
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 22 || nvm use default || true
+            npm install --omit=dev
+            pm2 restart client-prod || pm2 restart all || pm2 start ecosystem.config.cjs --only client-prod
+            pm2 status
