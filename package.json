@@ -17,7 +17,7 @@
     "generate": "NODE_OPTIONS='--import ./localstorage-ssr-polyfill.mjs' nuxt generate",
     "preview": "NODE_OPTIONS='--import ./localstorage-ssr-polyfill.mjs' nuxt preview",
     "postinstall": "nuxt prepare",
-    "start": "NODE_OPTIONS='--import ./localstorage-ssr-polyfill.mjs' nuxt start"
+    "start": "NODE_OPTIONS='--import ./localstorage-ssr-polyfill.mjs' node .output/server/index.mjs"
   },
   "dependencies": {
     "@pinia/nuxt": "^0.11.0",
