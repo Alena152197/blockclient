@@ -33,7 +33,7 @@
                         <button
                             id="avatarButton"
                             type="button"
-                            class="block cursor-pointer rounded-full border-2 border-white/40 bg-gray-300 p-0 shadow-sm ring-offset-2 transition hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-amber-200"
+                            class="block cursor-pointer rounded-full bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 p-[2px] shadow-md transition hover:from-purple-500 hover:to-blue-500 focus:outline-none focus:ring-2 focus:ring-purple-300"
                             aria-label="Меню пользователя"
                             :aria-expanded="userMenuOpen"
                             aria-haspopup="true"
@@ -42,7 +42,7 @@
                         >
                             <img
                                 class="pointer-events-none h-10 w-10 rounded-full object-cover"
-                                :src="search.userMe?.avatar?.url ? backendUrl + search.userMe.avatar.url : '/img/default-avatar.png'"
+                                :src="navAvatarSrc"
                                 alt=""
                                 width="40"
                                 height="40"
@@ -53,22 +53,44 @@
                         <div
                             id="userDropdown"
                             v-show="userMenuOpen"
-                            class="absolute right-0 top-full z-50 mt-2 w-44 divide-y divide-gray-100 rounded-lg bg-white shadow-lg ring-1 ring-black/5"
+                            class="user-menu-card absolute right-0 top-full z-50 mt-2 w-64 overflow-hidden rounded-3xl bg-gray-900 text-white shadow-2xl ring-1 ring-white/10"
                         >
-                            <div class="px-4 py-3 text-sm text-gray-900" v-if="search.userMe?.id">
-                                <div>{{ search.userMe.username }}</div>
-                                <div class="font-medium truncate">{{ search.userMe.email }}</div>
-                            </div>
-                            <div class="px-4 py-3 text-sm text-gray-900" v-else>
-                                <div>Гость</div>
-                                <div class="font-medium truncate">guest@example.com</div>
+                            <div class="pointer-events-none absolute -top-8 -right-8 h-24 w-24 rounded-full bg-pink-500 opacity-20 blur-2xl mix-blend-multiply" />
+                            <div class="pointer-events-none absolute -bottom-8 -left-8 h-24 w-24 rounded-full bg-blue-500 opacity-20 blur-2xl mix-blend-multiply" />
+
+                            <div class="relative z-10 px-5 pt-5 pb-3">
+                                <div class="mb-3 flex justify-center">
+                                    <div class="rounded-full bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 p-[2px]">
+                                        <img
+                                            class="h-14 w-14 rounded-full object-cover"
+                                            :src="navAvatarSrc"
+                                            alt=""
+                                            width="56"
+                                            height="56"
+                                            decoding="async"
+                                        />
+                                    </div>
+                                </div>
+                                <template v-if="search.userMe?.id">
+                                    <p class="text-center text-base font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400">
+                                        {{ search.userMe.username }}
+                                    </p>
+                                    <p class="mt-0.5 truncate text-center text-xs text-gray-400">{{ search.userMe.email }}</p>
+                                </template>
+                                <template v-else>
+                                    <p class="text-center text-base font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400">
+                                        Гость
+                                    </p>
+                                    <p class="mt-0.5 truncate text-center text-xs text-gray-400">guest@example.com</p>
+                                </template>
                             </div>
 
-                            <ul class="py-2 text-sm text-gray-700" aria-labelledby="avatarButton">
+                            <ul class="relative z-10 space-y-1 border-t border-gray-700/80 px-3 py-3 text-sm" aria-labelledby="avatarButton">
                                 <li>
                                     <NuxtLink
                                         to="/profile"
-                                        class="block px-4 py-2 hover:bg-gray-100"
+                                        class="block rounded-xl px-3 py-2.5 text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                                        :class="{ 'bg-gray-800 font-semibold text-purple-300': isActive('profile') }"
                                         @click="userMenuOpen = false"
                                     >
                                         Профиль
@@ -77,8 +99,8 @@
                                 <li v-if="showConsole">
                                     <NuxtLink
                                         to="/console"
-                                        class="block px-4 py-2 hover:bg-gray-100"
-                                        :class="{ 'font-semibold text-blue-700': isActive('console') }"
+                                        class="block rounded-xl px-3 py-2.5 text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                                        :class="{ 'bg-gray-800 font-semibold text-purple-300': isActive('console') }"
                                         @click="userMenuOpen = false"
                                     >
                                         Консоль
@@ -87,20 +109,62 @@
                                 <li v-if="showSettings">
                                     <NuxtLink
                                         to="/settings"
-                                        class="block px-4 py-2 hover:bg-gray-100"
-                                        :class="{ 'font-semibold text-blue-700': isActive('settings') }"
+                                        class="block rounded-xl px-3 py-2.5 text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                                        :class="{ 'bg-gray-800 font-semibold text-purple-300': isActive('settings') }"
                                         @click="userMenuOpen = false"
                                     >
                                         Настройки
                                     </NuxtLink>
                                 </li>
+                                <template v-if="isRegularUser">
+                                    <li>
+                                        <NuxtLink
+                                            v-if="!isSubscribed"
+                                            to="/subscribe"
+                                            class="block rounded-xl px-3 py-2.5 text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                                            :class="{ 'bg-gray-800 font-semibold text-purple-300': isActive('subscribe') }"
+                                            @click="userMenuOpen = false"
+                                        >
+                                            Подписаться
+                                        </NuxtLink>
+                                        <NuxtLink
+                                            v-else
+                                            to="/unsubscribe"
+                                            class="block rounded-xl px-3 py-2.5 text-emerald-300/90 transition hover:bg-gray-800 hover:text-emerald-200"
+                                            :class="{ 'bg-gray-800 font-semibold text-emerald-300': isActive('unsubscribe') }"
+                                            @click="userMenuOpen = false"
+                                        >
+                                            Подписан
+                                        </NuxtLink>
+                                    </li>
+                                    <li>
+                                        <NuxtLink
+                                            to="/support"
+                                            class="block rounded-xl px-3 py-2.5 text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                                            :class="{ 'bg-gray-800 font-semibold text-purple-300': isActive('support') }"
+                                            @click="userMenuOpen = false"
+                                        >
+                                            Поддержать
+                                        </NuxtLink>
+                                    </li>
+                                    <li>
+                                        <NuxtLink
+                                            to="/suggestions"
+                                            class="block rounded-xl px-3 py-2.5 text-gray-200 transition hover:bg-gray-800 hover:text-white"
+                                            :class="{ 'bg-gray-800 font-semibold text-purple-300': isActive('suggestions') }"
+                                            @click="userMenuOpen = false"
+                                        >
+                                            Предложения по улучшению
+                                        </NuxtLink>
+                                    </li>
+                                </template>
                             </ul>
-                            <div class="py-1">
+
+                            <div class="relative z-10 border-t border-gray-700/80 px-3 py-3">
                                 <NuxtLink
                                     v-if="!search.userMe?.id"
                                     to="/admin"
-                                    class="block cursor-pointer px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                    :class="{ 'font-semibold text-blue-700': isActive('admin') }"
+                                    class="block w-full rounded-xl bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 px-3 py-2.5 text-center text-sm font-bold text-white shadow-lg transition hover:brightness-110"
                                     @click="userMenuOpen = false"
                                 >
                                     Войти
@@ -108,8 +172,7 @@
                                 <NuxtLink
                                     v-else
                                     to="/admin"
-                                    class="block w-full cursor-pointer px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100"
-                                    :class="{ 'font-semibold text-blue-700': isActive('admin') }"
+                                    class="block w-full rounded-xl border border-gray-600 bg-gray-800 px-3 py-2.5 text-center text-sm font-semibold text-gray-200 transition hover:border-purple-500 hover:bg-gray-700 hover:text-white"
                                     @click="onLogoutClick"
                                 >
                                     Выход
@@ -172,14 +235,14 @@
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
                                 :class="{ 'md:text-[#a79d1c] font-semibold': isActive('contact') }"
                                 @click="navOpen = false">
-                                МОЯ ИСТОРИЯ</NuxtLink>
+                                ИСТОРИЯ</NuxtLink>
                         </li>
                         <li>
                             <NuxtLink to="/blog"
                                 class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
                                 :class="{ 'md:text-[#a79d1c] font-semibold': isActive('blog') || isActive('post') || isActive('category') }"
                                 @click="navOpen = false">
-                                МОЯ ИНТЕРЕСЫ</NuxtLink>
+                                ИНТЕРЕСЫ</NuxtLink>
                         </li>
                     </ul>
                 </div>
@@ -207,6 +270,44 @@ const router = useRouter()
 const backendUrl = STRAPI_BASE
 const showConsole = computed(() => canManageBlogContent(search.userMe, adminAllow.value))
 const showSettings = computed(() => canAccessBlogSettings(search.userMe, adminAllow.value))
+/** Вошёл, но не админ контента — пункты подписки / поддержки / идей */
+const isRegularUser = computed(
+    () => Boolean(search.userMe?.id) && !showConsole.value && !showSettings.value
+)
+
+const navAvatarSrc = computed(() => {
+    const url = search.userMe?.avatar?.url
+    if (!url) return '/img/default-avatar.png'
+    if (String(url).startsWith('http')) return url
+    return `${backendUrl}${url}`
+})
+
+const isSubscribed = ref(false)
+
+async function refreshSubscribeStatus() {
+    if (!search.userMe?.email) {
+        isSubscribed.value = false
+        return
+    }
+    try {
+        const token = localStorage.getItem('jwt')
+        const res = await $fetch('/api/subscribe/status', {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            query: { email: search.userMe.email }
+        })
+        isSubscribed.value = Boolean(res?.subscribed)
+    } catch {
+        isSubscribed.value = false
+    }
+}
+
+function onSubscribeChanged(e) {
+    if (e?.detail?.subscribed != null) {
+        isSubscribed.value = Boolean(e.detail.subscribed)
+    } else {
+        refreshSubscribeStatus()
+    }
+}
 
 const userMenuOpen = ref(false)
 const userMenuRoot = ref(null)
@@ -241,12 +342,22 @@ watch(
 onMounted(() => {
     document.addEventListener('click', closeUserMenuOnOutside, true)
     document.addEventListener('keydown', onEscape)
+    window.addEventListener('blog-subscribe-changed', onSubscribeChanged)
+    refreshSubscribeStatus()
 })
 
 onUnmounted(() => {
     document.removeEventListener('click', closeUserMenuOnOutside, true)
     document.removeEventListener('keydown', onEscape)
+    window.removeEventListener('blog-subscribe-changed', onSubscribeChanged)
 })
+
+watch(
+    () => search.userMe?.email,
+    () => {
+        refreshSubscribeStatus()
+    }
+)
 
 async function goToSearch() {
     if (route.path === '/search' || searchNavLock) return

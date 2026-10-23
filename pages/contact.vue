@@ -39,16 +39,38 @@
                 <div
                     class="book-text-content absolute left-0 top-0 z-[5] box-border flex h-full w-full flex-col overflow-hidden bg-[rgba(255,252,248,0.85)] p-6 md:p-7 sm:p-5 max-[480px]:p-4 md:pl-[28px] md:pr-[30px] md:pt-[28px] md:pb-[28px] sm:pl-[26px] sm:pr-[28px] sm:pt-[26px] sm:pb-[26px] lg:p-8"
                 >
-                    <div class="book-photo-frame min-h-0 w-full flex-1">
+                    <div class="book-photo-frame relative min-h-0 w-full flex-1 overflow-hidden">
                         <img
                             :src="displayPhotoUrl"
                             alt=""
-                            class="h-full w-full rounded-sm object-cover shadow-inner"
-                            :class="{ 'opacity-90': !hasCustomPhoto }"
+                            class="h-full w-full rounded-sm object-cover shadow-inner transition-[filter] duration-300"
+                            :class="{
+                                'opacity-90': !hasCustomPhoto && !isSpreadLocked,
+                                'book-page-blurred': isSpreadLocked
+                            }"
                         />
+                        <div
+                            v-if="isSpreadLocked"
+                            class="book-lock-overlay absolute inset-0 z-[6] flex flex-col items-center justify-center gap-2 rounded-sm bg-[rgba(40,32,24,0.35)] px-4 text-center"
+                        >
+                            <svg
+                                class="h-12 w-12 text-white drop-shadow-md sm:h-10 sm:w-10"
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24"
+                                fill="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    fill-rule="evenodd"
+                                    d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z"
+                                    clip-rule="evenodd"
+                                />
+                            </svg>
+                            <p class="text-xs font-medium text-white/95 sm:text-[11px]">По подписке</p>
+                        </div>
                     </div>
                     <div
-                        v-if="canEditAbout"
+                        v-if="canEditAbout && !isSpreadLocked"
                         class="mt-3 flex shrink-0 flex-wrap items-center justify-center gap-2"
                     >
                         <input
@@ -238,6 +260,55 @@
                             <span v-if="editError" class="basis-full text-xs text-red-700">{{ editError }}</span>
                         </div>
                     </template>
+                    <template v-else-if="isSpreadLocked">
+                        <div
+                            class="relative flex min-h-0 flex-1 flex-col overflow-hidden"
+                            aria-label="Разворот закрыт для неподписанных"
+                        >
+                            <div class="book-page-blurred pointer-events-none select-none px-1 pt-0.5" aria-hidden="true">
+                                <div
+                                    class="mb-3 h-6 w-2/3 mx-auto rounded bg-[#c4b59a]/50"
+                                />
+                                <div class="space-y-2.5 px-1">
+                                    <div class="h-3 w-full rounded bg-[#b8a990]/45" />
+                                    <div class="h-3 w-[92%] rounded bg-[#b8a990]/40" />
+                                    <div class="h-3 w-full rounded bg-[#b8a990]/45" />
+                                    <div class="h-3 w-[78%] rounded bg-[#b8a990]/35" />
+                                    <div class="h-3 w-full rounded bg-[#b8a990]/45" />
+                                    <div class="h-3 w-[88%] rounded bg-[#b8a990]/40" />
+                                    <div class="h-3 w-[60%] rounded bg-[#b8a990]/35" />
+                                    <div class="h-3 w-full rounded bg-[#b8a990]/45" />
+                                    <div class="h-3 w-[70%] rounded bg-[#b8a990]/40" />
+                                </div>
+                            </div>
+                            <div
+                                class="book-lock-overlay absolute inset-0 z-[6] flex flex-col items-center justify-center gap-3 bg-[rgba(40,32,24,0.28)] px-5 text-center"
+                            >
+                                <svg
+                                    class="h-14 w-14 text-[#3d3428] drop-shadow-sm sm:h-12 sm:w-12"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3c0-2.9-2.35-5.25-5.25-5.25zm3.75 8.25v-3a3.75 3.75 0 10-7.5 0v3h7.5z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                <p class="max-w-[14rem] font-serif text-sm leading-snug text-[#3d3428]">
+                                    Дальше — по подписке.
+                                </p>
+                                <NuxtLink
+                                    to="/subscribe"
+                                    class="rounded-md border border-[#a08b6a] bg-[#f5efe6] px-3 py-1.5 text-sm font-semibold text-[#4a3d32] shadow-sm hover:bg-[#ebe4d8]"
+                                >
+                                    Подписаться
+                                </NuxtLink>
+                            </div>
+                        </div>
+                    </template>
                     <template v-else>
                         <h2
                             class="book-page-title mb-2 shrink-0 px-1 pt-0.5 text-center font-serif text-[1.15rem] font-semibold leading-snug tracking-wide text-[#3d3428] md:mb-2.5 md:text-[1.35rem] sm:text-[1.05rem] max-[480px]:mb-1.5 max-[480px]:text-[0.95rem]"
@@ -378,9 +449,52 @@ const adminAllow = computed(() => ({
 const canManageContent = computed(() =>
     canManageBlogContent(search.userMe, adminAllow.value)
 );
-const canEditAbout = computed(
-    () => canManageContent.value && currentEntry.value != null
+
+/** Бесплатно без подписки — первые N разворотов (счётчик 1…N). */
+const freeSpreadLimit = 4;
+const isSubscribed = ref(false);
+
+const canReadFullBook = computed(
+    () => canManageContent.value || isSubscribed.value
 );
+
+const isSpreadLocked = computed(
+    () => !canReadFullBook.value && currentPage.value > freeSpreadLimit
+);
+
+const canEditAbout = computed(
+    () => canManageContent.value && currentEntry.value != null && !isSpreadLocked.value
+);
+
+async function refreshSubscribeStatus() {
+    if (!import.meta.client) {
+        isSubscribed.value = false;
+        return;
+    }
+    const email = search.userMe?.email;
+    if (!email) {
+        isSubscribed.value = false;
+        return;
+    }
+    try {
+        const token = localStorage.getItem('jwt');
+        const res = await $fetch('/api/subscribe/status', {
+            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            query: { email }
+        });
+        isSubscribed.value = Boolean(res?.subscribed);
+    } catch {
+        isSubscribed.value = false;
+    }
+}
+
+function onSubscribeChanged(e) {
+    if (e?.detail?.subscribed != null) {
+        isSubscribed.value = Boolean(e.detail.subscribed);
+    } else {
+        refreshSubscribeStatus();
+    }
+}
 
 const pageFlipRight = ref(false);
 const pageFlipLeft = ref(false);
@@ -408,18 +522,24 @@ const titleEditRef = ref(null);
 
 const spread = computed(() => spreadFromAboutEntry(currentEntry.value));
 
-const hasCustomPhoto = computed(() => Boolean(spread.value?.imageUrl));
-
-const displayPhotoUrl = computed(
-    () => spread.value?.imageUrl || DEFAULT_CONTACT_BOOK_PHOTO
+const hasCustomPhoto = computed(
+    () => !isSpreadLocked.value && Boolean(spread.value?.imageUrl)
 );
 
+const displayPhotoUrl = computed(() => {
+    // Замок: не отдаём URL реального фото в DOM
+    if (isSpreadLocked.value) return DEFAULT_CONTACT_BOOK_PHOTO;
+    return spread.value?.imageUrl || DEFAULT_CONTACT_BOOK_PHOTO;
+});
+
 const spreadTitle = computed(() => {
+    if (isSpreadLocked.value) return '';
     const t = spread.value?.title;
     return typeof t === 'string' && t.trim() ? t.trim() : '';
 });
 
 const textHtml = computed(() => {
+    if (isSpreadLocked.value) return '';
     const md = spread.value.textMarkdown;
     if (!md || !String(md).trim()) return '';
     return markdown.render(md);
@@ -735,20 +855,33 @@ onMounted(async () => {
     } catch {
         /* ignore */
     }
+    await refreshSubscribeStatus();
     loadContactBackground();
     window.addEventListener('contact-page-bg-changed', onContactPageBgChanged);
+    window.addEventListener('blog-subscribe-changed', onSubscribeChanged);
     if (!isEditingText.value) bindPageKeys();
 });
 
 onUnmounted(() => {
     if (process.client) {
         window.removeEventListener('contact-page-bg-changed', onContactPageBgChanged);
+        window.removeEventListener('blog-subscribe-changed', onSubscribeChanged);
         unbindPageKeys();
     }
 });
 </script>
 
 <style scoped>
+.book-page-blurred {
+    filter: blur(7px);
+    transform: scale(1.02);
+    user-select: none;
+}
+
+.book-lock-overlay {
+    backdrop-filter: blur(1px);
+}
+
 .contact-page-root {
     position: relative;
 }

@@ -1,160 +1,180 @@
 <template>
-    <div v-if="!isLoggedIn"
-        class="flex flex-col items-center justify-center -mt-40 h-screen max-w-md mx-auto">
+    <div
+        class="mx-auto flex h-screen max-w-md -mt-40 flex-col items-center justify-center"
+    >
         <!-- Вход -->
-        <div v-if="index.authToggle" class="bg-white p-6 rounded-lg shadow-md w-full">
-            <form @submit.prevent="login(userForma)" class="registration-form" id="loginForm">
-                <h2 class="text-center text-2xl font-semibold mb-6">Вход</h2>
-                <input v-model="userForma.email" type="email" id="email" placeholder="Email" required
-                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input v-model="userForma.password" type="password" id="password" placeholder="Пароль" required
-                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
-                <button type="submit"
-                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200 cursor-pointer">Войти</button>
-                <div v-if="loginError" class="error-message text-red-500 text-center mt-2">{{ loginError }}</div>
-                <!-- Сообщение об успехе -->
-                <div v-if="loginSuccessMessage" class="success-message text-green-500 text-center mt-2">{{
-                    loginSuccessMessage }}</div>
+        <div v-if="index.authToggle" class="w-full rounded-lg bg-white p-6 shadow-md">
+            <form id="loginForm" class="registration-form" @submit.prevent="login(userForma)">
+                <h2 class="mb-6 text-center text-2xl font-semibold">Вход</h2>
+                <input
+                    id="email"
+                    v-model="userForma.email"
+                    type="email"
+                    placeholder="Email"
+                    required
+                    class="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                    id="password"
+                    v-model="userForma.password"
+                    type="password"
+                    placeholder="Пароль"
+                    required
+                    class="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <button
+                    type="submit"
+                    class="w-full cursor-pointer rounded bg-green-500 p-2 text-white transition duration-200 hover:bg-green-600"
+                >
+                    Войти
+                </button>
+                <div v-if="loginError" class="error-message mt-2 text-center text-red-500">{{ loginError }}</div>
+                <div v-if="loginSuccessMessage" class="success-message mt-2 text-center text-green-500">
+                    {{ loginSuccessMessage }}
+                </div>
             </form>
-            <p>Нет аккаунта? <button @click="index.authToggle = false" class="cursor-pointer">Создать аккаунт</button>
+            <p>
+                Нет аккаунта?
+                <button type="button" class="cursor-pointer" @click="index.authToggle = false">Создать аккаунт</button>
             </p>
         </div>
 
         <!-- Регистрация -->
-        <div v-else class="bg-white p-6 rounded-lg shadow-md w-full">
-            <form @submit.prevent="registr" class="registration-form" id="registrationForm">
-                <h2 class="text-center text-2xl font-semibold mb-6">Регистрация</h2>
-                <!-- Имя пользователя -->
+        <div v-else class="w-full rounded-lg bg-white p-6 shadow-md">
+            <form id="registrationForm" class="registration-form" @submit.prevent="registr">
+                <h2 class="mb-6 text-center text-2xl font-semibold">Регистрация</h2>
                 <div class="mb-4">
-                    <input v-model="userForma.username" type="text" id="username" placeholder="Имя пользователя"
+                    <input
+                        id="username"
+                        v-model="userForma.username"
+                        type="text"
+                        placeholder="Имя пользователя"
                         required
-                        class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
+                        class="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                    />
                 </div>
-                <input v-model="userForma.email" type="email" id="email" placeholder="Email" required
-                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input v-model="userForma.password" type="password" id="password" placeholder="Пароль" required
-                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
-                <input type="password" id="confirmPassword" placeholder="Подтвердите пароль" required
-                    class="w-full p-2 mb-4 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-green-500">
-                <button type="submit"
-                    class="w-full p-2 bg-green-500 text-white rounded hover:bg-green-600 transition duration-200 cursor-pointer">Зарегистрироваться</button>
-                <div v-if="registrationError" class="error-message text-red-500 text-center mt-2">{{ registrationError
-                }}</div>
-            </form>
-            <p>Есть аккаунт? <button @click="index.authToggle = true" class="cursor-pointer">Войти</button></p>
-        </div>
-    </div>
-
-    <div v-else class="mx-auto mt-10 max-w-sm overflow-hidden rounded-lg bg-white p-6 shadow-md">
-        <div class="space-y-4 text-center">
-            <h2 class="text-2xl font-semibold text-gray-800">Вы авторизованы</h2>
-            <p class="text-sm text-gray-600">
-                {{ index.userMe.username || index.userMe.email }}
-                <span v-if="isContentAdmin" class="mt-1 block font-medium text-green-700">Администратор</span>
-                <span v-else class="mt-1 block text-amber-700">Обычный пользователь (правки книги недоступны)</span>
-            </p>
-            <div class="flex flex-col gap-2">
-                <NuxtLink
-                    to="/contact"
-                    class="rounded bg-amber-700 px-4 py-2 text-sm font-medium text-white hover:bg-amber-800"
-                >
-                    Открыть книгу (контакты)
-                </NuxtLink>
-                <NuxtLink
-                    v-if="isContentAdmin"
-                    to="/console"
-                    class="rounded border border-gray-300 px-4 py-2 text-sm text-gray-800 hover:bg-gray-50"
-                >
-                    Консоль
-                </NuxtLink>
+                <input
+                    id="email-reg"
+                    v-model="userForma.email"
+                    type="email"
+                    placeholder="Email"
+                    required
+                    class="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                    id="password-reg"
+                    v-model="userForma.password"
+                    type="password"
+                    placeholder="Пароль"
+                    required
+                    class="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
+                <input
+                    id="confirmPassword"
+                    type="password"
+                    placeholder="Подтвердите пароль"
+                    required
+                    class="mb-4 w-full rounded border border-gray-300 p-2 focus:outline-none focus:ring-2 focus:ring-green-500"
+                />
                 <button
-                    type="button"
-                    class="rounded border border-red-200 px-4 py-2 text-sm text-red-800 hover:bg-red-50"
-                    @click="logout"
+                    type="submit"
+                    class="w-full cursor-pointer rounded bg-green-500 p-2 text-white transition duration-200 hover:bg-green-600"
                 >
-                    Выйти
+                    Зарегистрироваться
                 </button>
-            </div>
+                <div v-if="registrationError" class="error-message mt-2 text-center text-red-500">
+                    {{ registrationError }}
+                </div>
+            </form>
+            <p>
+                Есть аккаунт?
+                <button type="button" class="cursor-pointer" @click="index.authToggle = true">Войти</button>
+            </p>
         </div>
     </div>
-
-
 </template>
 
 <script setup>
-import { ref, computed } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { STRAPI_BASE } from '~/utils/strapiBase'
-import { canManageBlogContent } from '~/utils/strapiUserRole'
-const index = useSearchStore();
-const runtimeConfig = useRuntimeConfig();
-const adminAllow = computed(() => ({
-    emails: runtimeConfig.public.contentAdminEmails || '',
-    usernames: runtimeConfig.public.contentAdminUsernames || '',
-}));
-const isLoggedIn = computed(() => Boolean(index.userMe?.id || index.userMe?.documentId));
-const isContentAdmin = computed(() => canManageBlogContent(index.userMe, adminAllow.value));
+
+const index = useSearchStore()
 const userForma = ref({
     username: '',
     email: '',
     password: ''
-});
-const newID = ref(0);
-const router = useRouter();
+})
+const newID = ref(0)
+const router = useRouter()
 
-function logout() {
-    index.logout();
-    router.push('/');
+const isLoggedIn = computed(() => Boolean(index.userMe?.id || index.userMe?.documentId))
+
+function leaveIfLoggedIn() {
+    if (isLoggedIn.value) {
+        router.replace('/')
+    }
 }
 
-// Переменные для хранения сообщений об ошибках и успехе
-const loginError = ref('');
-const registrationError = ref('');
-const loginSuccessMessage = ref(''); // Новое состояние для сообщения об успехе
+watch(isLoggedIn, leaveIfLoggedIn)
+
+onMounted(async () => {
+    try {
+        if (typeof localStorage !== 'undefined' && localStorage.getItem('jwt') && !index.userMe?.id) {
+            await index.fetchUserMe()
+        }
+    } catch {
+        /* ignore */
+    }
+    leaveIfLoggedIn()
+})
+
+const loginError = ref('')
+const registrationError = ref('')
+const loginSuccessMessage = ref('')
 
 const fetchUsers = async () => {
     try {
-        const response = await $fetch(`${STRAPI_BASE}/api/users?fields=username&sort=username:desc`);
-        const lastUser = response[0];
+        const response = await $fetch(`${STRAPI_BASE}/api/users?fields=username&sort=username:desc`)
+        const lastUser = response[0]
 
         if (lastUser && lastUser.username) {
-            const match = lastUser.username.match(/\d+/);
+            const match = lastUser.username.match(/\d+/)
             if (match) {
-                newID.value = match[0];
+                newID.value = match[0]
             }
         }
     } catch (error) {
-        console.warn(`Не вышло получить последний id пользователя: ${error}`);
+        console.warn(`Не вышло получить последний id пользователя: ${error}`)
     }
-};
+}
 
 const registr = async () => {
-    registrationError.value = ''; // Сброс сообщения об ошибке
+    registrationError.value = ''
     try {
-        // Проверка минимальной длины имени пользователя
         if (userForma.value.username.length < 3) {
-            registrationError.value = 'Имя пользователя должно содержать не менее 3 символов.';
-            return;
+            registrationError.value = 'Имя пользователя должно содержать не менее 3 символов.'
+            return
         }
 
-        await fetchUsers();
+        await fetchUsers()
         if (newID) {
             const data = await $fetch(`${STRAPI_BASE}/api/auth/local/register`, {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Content-Type': 'application/json'
                 },
                 body: {
-                    "username": userForma.value.username, // Используем введенное имя пользователя
-                    "email": userForma.value.email,
-                    "password": userForma.value.password
-                },
-            });
+                    username: userForma.value.username,
+                    email: userForma.value.email,
+                    password: userForma.value.password
+                }
+            })
 
             if (!data?.jwt) {
                 throw new Error('Регистрация: нет токена')
             }
-            localStorage.setItem('jwt', data.jwt);
+            localStorage.setItem('jwt', data.jwt)
             try {
                 if (data.user) {
                     localStorage.setItem(
@@ -165,48 +185,59 @@ const registr = async () => {
                             username: data.user.username,
                             email: data.user.email,
                             avatar: data.user.avatar,
-                            role: data.user.role,
+                            role: data.user.role
                         })
                     )
                 }
             } catch {
                 /* ignore */
             }
-            await index.fetchUserMe(data.user || null);
-
-            router.push('/'); // Перенаправление на главную страницу после успешной регистрации
+            try {
+                const ban = await $fetch('/api/blocked/status', {
+                    headers: { Authorization: `Bearer ${data.jwt}` }
+                })
+                if (ban?.blocked) {
+                    index.logout()
+                    registrationError.value = 'Этот email заблокирован. Регистрация недоступна.'
+                    return
+                }
+            } catch {
+                /* ignore */
+            }
+            await index.fetchUserMe(data.user || null)
+            router.replace('/')
         }
-
     } catch (error) {
-        registrationError.value = 'Ошибка при регистрации: ' + error.message; // Установка сообщения об ошибке
-        console.error('Ошибка при регистрации:', error);
+        registrationError.value = 'Ошибка при регистрации: ' + error.message
+        console.error('Ошибка при регистрации:', error)
     } finally {
         userForma.value = {
             username: '',
             email: '',
             password: ''
-        };
+        }
     }
 }
 
-const login = async (userForma) => {
-    loginError.value = ''; // Сброс сообщения об ошибке
+const login = async (form) => {
+    loginError.value = ''
+    loginSuccessMessage.value = ''
     try {
         const data = await $fetch(`${STRAPI_BASE}/api/auth/local`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/json'
             },
             body: {
-                "identifier": userForma.email,
-                "password": userForma.password
-            },
-        });
+                identifier: form.email,
+                password: form.password
+            }
+        })
 
         if (!data?.jwt) {
             throw new Error('Нет токена в ответе')
         }
-        localStorage.setItem('jwt', data.jwt);
+        localStorage.setItem('jwt', data.jwt)
         try {
             if (data.user) {
                 localStorage.setItem(
@@ -217,27 +248,32 @@ const login = async (userForma) => {
                         username: data.user.username,
                         email: data.user.email,
                         avatar: data.user.avatar,
-                        role: data.user.role,
+                        role: data.user.role
                     })
                 )
             }
         } catch {
             /* ignore */
         }
-        await index.fetchUserMe(data.user || null);
 
-        // Показываем сообщение об успешном входе
-        loginSuccessMessage.value = 'Вход выполнен успешно!';
+        try {
+            const ban = await $fetch('/api/blocked/status', {
+                headers: { Authorization: `Bearer ${data.jwt}` }
+            })
+            if (ban?.blocked) {
+                index.logout()
+                loginError.value = 'Ваш доступ к сайту ограничен администратором.'
+                return
+            }
+        } catch {
+            /* middleware поймает */
+        }
 
-        // Задержка перед перенаправлением
-        setTimeout(() => {
-            router.push('/'); // Перенаправление на главную страницу
-        }, 2000); // Ждем 3 секунды
-
+        await index.fetchUserMe(data.user || null)
+        router.replace('/')
     } catch (error) {
-        loginError.value = 'Ошибка при входе, неверно введённые данные'; // Установка сообщения об ошибке
-        console.error('Ошибка при входе', error);
+        loginError.value = 'Ошибка при входе, неверно введённые данные'
+        console.error('Ошибка при входе', error)
     }
 }
-
 </script>

@@ -74,15 +74,21 @@
                         <p class="mb-4 font-normal text-gray-700 line-clamp-3 text-sm">
                             <span v-html="highlightText(stripCoverFromDesc(post.desc), search.searchQuery)"></span>
                         </p>
-                        <NuxtLink
-                            :to="'/post/' + post.documentId"
-                            class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-colors"
-                        >
-                            Подробнее
-                            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
-                            </svg>
-                        </NuxtLink>
+                        <div class="flex flex-wrap items-center gap-2">
+                            <NuxtLink
+                                :to="'/post/' + post.documentId"
+                                class="inline-flex items-center px-4 py-2 text-sm font-medium text-center text-white bg-blue-700 rounded-lg hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 transition-colors"
+                            >
+                                Подробнее
+                                <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+                                </svg>
+                            </NuxtLink>
+                            <PostShareButton
+                                :post-id="post.documentId || post.id"
+                                :title="post.title"
+                            />
+                        </div>
                     </div>
                 </article>
             </div>

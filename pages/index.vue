@@ -289,18 +289,20 @@ function waveCharStyle(lineIdx, charIdx) {
 
 const STORAGE_KEY = 'notebook-text';
 
-const defaultText = `<h4>Всем привет! <br>
-Будем знакомы, Меня зовут Алена.</h4>
+const defaultText = `<p>Всем привет!<br>
+Будем знакомы, Меня зовут Алена.</p>
 <p>В этом блоге я хочу рассказать
 про свой жизненный путь, с чего всё
 началось, поиски себя и своего места
 в жизни, и всё ли так просто, как кажется
-на первый взгляд. <br><br>
-Надеюсь, моя история будет для кого-то
+на первый взгляд.</p>
+<p class="notebook-gap">&nbsp;</p>
+<p>Надеюсь, моя история будет для кого-то
 полезной, как преодолеть трудности ,
 как не потерять себя и найти силы на
-что-то новое. <br><br>
-Жизнь, мягко говоря, непредсказуема.
+что-то новое.</p>
+<p class="notebook-gap">&nbsp;</p>
+<p>Жизнь, мягко говоря, непредсказуема.
 В один момент все идет хорошо, а потом
 вдруг что-то происходит, и вся жизнь
 переворачивается с ног на голову,
@@ -310,12 +312,23 @@ const notebookText = ref(defaultText);
 const isEditing = ref(false);
 const editingText = ref('');
 
+/** Старые сохранения с <h4> для приветствия → обычные <p>, чтобы вес шрифта совпадал у всех */
+function normalizeNotebookHtml(html) {
+    return String(html || '')
+        .replace(/<h4([^>]*)>/gi, '<p$1>')
+        .replace(/<\/h4>/gi, '</p>');
+}
+
 // Загрузка текста из localStorage
 const loadText = () => {
     if (typeof window !== 'undefined') {
         const saved = localStorage.getItem(STORAGE_KEY);
         if (saved) {
-            notebookText.value = saved;
+            const normalized = normalizeNotebookHtml(saved);
+            notebookText.value = normalized;
+            if (normalized !== saved) {
+                saveToStorage(normalized);
+            }
         }
     }
 };
@@ -628,11 +641,12 @@ onUnmounted(() => {
     background: #fffefb;
 }
 
+/* h4 мог остаться в старом localStorage — вес как у обычного текста */
 .textKra h4 {
-    margin: 0 0 0.35em 0;
-    font-size: 1.1em;
-    font-weight: 600;
-    line-height: 1.35;
+    margin: 0 0 0.55em 0;
+    font-size: 1em;
+    font-weight: 400;
+    line-height: inherit;
 }
 
 .textKra h4 + h4 {

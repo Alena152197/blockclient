@@ -56,7 +56,13 @@
 
         <!-- Заголовок → обложка → дата → текст -->
         <template v-if="post">
-            <h1 class="mb-6 text-2xl font-bold text-gray-900">{{ post.title || 'Без названия' }}</h1>
+            <div class="mb-6 flex flex-wrap items-start justify-between gap-3">
+                <h1 class="text-2xl font-bold text-gray-900">{{ post.title || 'Без названия' }}</h1>
+                <PostShareButton
+                    :post-id="post.documentId || post.id || id"
+                    :title="post.title"
+                />
+            </div>
 
             <figure
                 v-if="heroImageUrl"
@@ -206,8 +212,8 @@
                                     </span>
                                 </div>
                                 <button
-                                    v-if="canManageBlogContent(search.userMe, adminAllow)"
-                                    @click="deleteComment(comment.id)"
+                                    v-if="canDeleteComment(comment)"
+                                    @click="deleteComment(comment)"
                                     :disabled="isDeleting === comment.id"
                                     class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded hover:bg-red-50"
                                     title="Удалить комментарий"
@@ -679,19 +685,28 @@ async function registerPostViewOnce() {
     await nextTick();
     const p = post.value;
     if (!p) return;
-    /** Автор и контент-админ не попадают в журнал посещений */
+    /** Контент-админ не попадает в журнал посещений */
     if (canEditPost.value) return;
     const documentId = p.documentId != null ? String(p.documentId).trim() : String(p.id ?? '').trim();
     if (!documentId) return;
-    const key = `post_view_${documentId}`;
+    // Ключ с user id: смена аккаунта в той же вкладке снова засчитывает просмотр
+    const who = search.userMe?.id != null ? `u${search.userMe.id}` : 'anon';
+    const key = `post_view_${documentId}_${who}`;
     try {
         if (sessionStorage.getItem(key)) return;
         sessionStorage.setItem(key, '1');
         const token = localStorage.getItem('jwt');
         const headers = token ? { Authorization: `Bearer ${token}` } : {};
+        const { detectClientCountry } = await import('~/utils/clientCountry');
+        const geo = await detectClientCountry();
         await $fetch('/api/post-view', {
             method: 'POST',
-            body: { documentId, visitorId: getOrCreateVisitorId() },
+            body: {
+                documentId,
+                visitorId: getOrCreateVisitorId(),
+                countryCode: geo.code || undefined,
+                country: geo.name || undefined
+            },
             headers
         });
     } catch {
@@ -985,34 +1000,66 @@ const getAuthorProfileLink = (comment) => {
     return '/';
 };
 
-// Проверка, принадлежит ли комментарий текущему пользователю
+/** Принадлежит ли комментарий текущему пользователю */
 const isMyComment = (comment) => {
+    const me = search.userMe;
+    if (!me?.id && !me?.username && !me?.email) return false;
+
+    let author = comment?.author;
+    if (author?.data !== undefined) {
+        author = Array.isArray(author.data) ? author.data[0] : author.data;
+    }
+    if (author?.attributes && typeof author.attributes === 'object') {
+        author = { id: author.id, documentId: author.documentId, ...author.attributes };
+    }
+
+    if (typeof author === 'string' || typeof author === 'number') {
+        return (
+            String(author) === String(me.id) ||
+            String(author) === String(me.documentId) ||
+            String(author).toLowerCase() === String(me.username || '').toLowerCase() ||
+            String(author).toLowerCase() === String(me.email || '').toLowerCase()
+        );
+    }
+    if (!author || typeof author !== 'object') return false;
+
+    return (
+        (author.id != null && String(author.id) === String(me.id)) ||
+        (author.documentId && me.documentId && String(author.documentId) === String(me.documentId)) ||
+        (author.username &&
+            me.username &&
+            String(author.username).toLowerCase() === String(me.username).toLowerCase()) ||
+        (author.email && me.email && String(author.email).toLowerCase() === String(me.email).toLowerCase())
+    );
+};
+
+/** Удалить: свой комментарий или любой, если админ */
+const canDeleteComment = (comment) => {
     if (!search.userMe?.id && !search.userMe?.username) return false;
-    
-    const commentAuthor = typeof comment.author === 'string' 
-        ? comment.author 
-        : comment.author?.username || comment.author?.id;
-    
-    // Сравниваем по username или id
-    return commentAuthor === search.userMe.username || 
-           commentAuthor === search.userMe.id ||
-           comment.author?.id === search.userMe.id;
+    if (canManageBlogContent(search.userMe, adminAllow.value)) return true;
+    return isMyComment(comment);
 };
 
 // Удаление комментария
-const deleteComment = async (commentId) => {
+const deleteComment = async (commentOrId) => {
+    const comment =
+        commentOrId && typeof commentOrId === 'object'
+            ? commentOrId
+            : comments.value.find((c) => c.id === commentOrId || c.documentId === commentOrId);
+    const commentId = comment?.documentId || comment?.id || commentOrId;
     if (!commentId) return;
-    if (!canManageBlogContent(search.userMe, adminAllow.value)) {
-        commentError.value = 'Удалять комментарии может только администратор.';
+
+    if (!canDeleteComment(comment || { id: commentId })) {
+        commentError.value = 'Удалить можно только свой комментарий.';
+        setTimeout(() => { commentError.value = ''; }, 4000);
         return;
     }
 
-    // Подтверждение удаления
     if (!confirm('Вы уверены, что хотите удалить этот комментарий?')) {
         return;
     }
     
-    isDeleting.value = commentId;
+    isDeleting.value = comment?.id || commentId;
     commentError.value = '';
     
     try {
@@ -1036,10 +1083,10 @@ const deleteComment = async (commentId) => {
             throw new Error(errorMessage);
         }
         
-        // Удаляем комментарий из локального массива
-        comments.value = comments.value.filter(c => c.id !== commentId);
+        comments.value = comments.value.filter(
+            (c) => c.id !== commentId && c.documentId !== commentId && c.id !== comment?.id
+        );
         
-        // Также удаляем из localStorage, если он там есть
         const postId = post.value?.id;
         if (postId) {
             try {
@@ -1047,7 +1094,9 @@ const deleteComment = async (commentId) => {
                 const saved = localStorage.getItem(storageKey);
                 if (saved) {
                     let savedComments = JSON.parse(saved);
-                    savedComments = savedComments.filter(c => c.id !== commentId);
+                    savedComments = savedComments.filter(
+                        (c) => c.id !== commentId && c.documentId !== commentId
+                    );
                     localStorage.setItem(storageKey, JSON.stringify(savedComments));
                 }
             } catch (e) {

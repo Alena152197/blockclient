@@ -3,8 +3,8 @@ import { resolveStrapiBase } from '../../utils/strapiBase'
 import { assertContentEditor, strapiWriteAuthHeader } from '../../utils/contentAdminGate'
 
 /**
- * Удаление поста: только allowlist-админ (JWT + email/username),
- * запись в Strapi через STRAPI_API_TOKEN (у роли Authenticated часто нет delete).
+ * DELETE /api/posts/:id — только content-admin.
+ * Пишет в Strapi через API Token (у роли Authenticated часто нет delete → 403).
  */
 export default defineEventHandler(async (event) => {
   const id = getRouterParam(event, 'id')

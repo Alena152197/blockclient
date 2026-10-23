@@ -1,10 +1,8 @@
 <template>
   <div class="min-h-screen bg-black flex items-center justify-center p-6">
-    <!-- Контейнер профиля -->
     <div
       class="relative w-full max-w-md bg-gray-900 rounded-3xl overflow-hidden shadow-2xl transform transition-all duration-500 hover:scale-[1.02]">
 
-      <!-- Абстрактные формы для фона -->
       <div
         class="absolute -top-10 -right-10 w-40 h-40 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob">
       </div>
@@ -12,36 +10,53 @@
         class="absolute -bottom-10 -left-10 w-40 h-40 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-blob animation-delay-2000">
       </div>
 
-      <!-- Основной контент -->
       <div class="relative z-10 p-8 text-white">
-
-        <!-- Аватар с эффектами -->
-        <div class="flex justify-center mb-6">
+        <div class="flex justify-center mb-2">
           <div class="group relative">
             <div
               class="w-32 h-32 rounded-full overflow-hidden border-4 border-transparent bg-gradient-to-tr from-pink-500 via-purple-500 to-indigo-500 p-[3px] group-hover:from-purple-500 group-hover:to-blue-500 transition-all duration-500 animate-pulse-slow">
-              <img :src="profileImage || 'https://placehold.co/550x550'" alt="Фото профиля" @click="openModal"
-                class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-700 cursor-pointer" />
+              <img
+                :src="displayAvatar"
+                alt="Фото профиля"
+                @click="openModal"
+                class="w-full h-full object-cover rounded-full group-hover:scale-110 transition-transform duration-700 cursor-pointer"
+              />
             </div>
             <label
-              class="absolute bottom-0 right-0 bg-white text-gray-900 rounded-full p-2 cursor-pointer shadow-lg transform translate-y-1 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M13.586 3.586a2 2 0 112.828 2.828l-13 13-5.586-5.586a2 2 0 112.828-2.828L13.586 3.586z" />
+              class="absolute bottom-0 right-0 bg-white text-gray-900 rounded-full p-2.5 cursor-pointer shadow-lg transition-all duration-300 hover:scale-105"
+              :class="{ 'opacity-60 pointer-events-none': uploading }"
+              title="Сменить фото"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                <path
+                  fill-rule="evenodd"
+                  d="M4 5a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V7a2 2 0 00-2-2h-1.586a1 1 0 01-.707-.293l-1.121-1.121A2 2 0 0011.172 3H8.828a2 2 0 00-1.414.586L6.293 4.707A1 1 0 015.586 5H4zm6 9a3 3 0 100-6 3 3 0 000 6z"
+                  clip-rule="evenodd"
+                />
               </svg>
-              <input type="file" accept="image/*" @change="uploadProfileImage" class="hidden" />
+              <input
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                class="hidden"
+                :disabled="uploading"
+                @change="uploadProfileImage"
+              />
             </label>
           </div>
         </div>
+        <p class="mb-6 text-center text-xs text-gray-400">
+          {{ uploading ? 'Загружаю фото…' : 'Нажмите на камеру, чтобы сменить фото' }}
+        </p>
+        <p v-if="avatarMessage" class="mb-4 text-center text-sm" :class="avatarOk ? 'text-emerald-400' : 'text-red-400'">
+          {{ avatarMessage }}
+        </p>
 
-        <!-- Заголовок -->
         <h2
           class="text-3xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 mb-8 tracking-tight">
           Редактировать профиль
         </h2>
 
-        <!-- Форма -->
         <div class="space-y-6">
-          <!-- Имя пользователя -->
           <div class="relative">
             <input v-model="search.userMe.username" id="username" type="text" required
               class="peer w-full px-5 py-3 text-white placeholder-transparent bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300" />
@@ -51,7 +66,6 @@
             </label>
           </div>
 
-          <!-- Email -->
           <div class="relative">
             <input v-model="search.userMe.email" id="email" type="email" required
               class="peer w-full px-5 py-3 text-white placeholder-transparent bg-gray-800 border border-gray-700 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 transition-all duration-300" />
@@ -61,29 +75,30 @@
             </label>
           </div>
 
-          <!-- Кнопка сохранить -->
-          <button @click="updateUserProfile"
-            class="w-full py-3 mt-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
-            Сохранить изменения
+          <button
+            type="button"
+            :disabled="saving"
+            @click="updateUserProfile"
+            class="w-full py-3 mt-2 bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-600 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 disabled:opacity-60"
+          >
+            {{ saving ? 'Сохраняю…' : 'Сохранить изменения' }}
           </button>
+          <p v-if="formMessage" class="text-center text-sm text-emerald-400">
+            {{ formMessage }}
+          </p>
         </div>
       </div>
     </div>
 
-    <!-- Модальное окно -->
     <div v-if="isModalOpen" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50 p-4">
       <div class="relative max-w-xl w-full">
-        <!-- Кнопка закрытия -->
         <button @click="closeModal"
           class="absolute top-2 right-2 text-white bg-black bg-opacity-50 rounded-full p-2 hover:bg-opacity-70 z-10">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
           </svg>
         </button>
-
-        <!-- Изображение в оригинальном размере -->
-        <img :src="profileImage || 'https://placehold.co/650x650'" alt="Полноразмерное фото"
-          class="w-full h-auto rounded-lg shadow-2xl" />
+        <img :src="displayAvatar" alt="Полноразмерное фото" class="w-full h-auto rounded-lg shadow-2xl" />
       </div>
     </div>
   </div>
@@ -94,25 +109,30 @@ import { ref, onMounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSearchStore } from '@/stores/search'
 import { STRAPI_BASE } from '~/utils/strapiBase'
+import { compressImageForUpload } from '~/utils/contactBookApi'
 
 const router = useRouter()
 const search = useSearchStore()
 const profileImage = ref(null)
-const isModalOpen = ref(false) // Для модального окна
+const isModalOpen = ref(false)
+const uploading = ref(false)
+const avatarMessage = ref('')
+const avatarOk = ref(false)
+const saving = ref(false)
+const formMessage = ref('')
 
 const baseUrl = STRAPI_BASE
+const DEFAULT_AVATAR = '/img/default-avatar.png'
 
-// Данные пользователя
-const username = computed(() => search.userMe?.username || 'Гость')
-const userEmail = computed(() => search.userMe?.email)
 const userId = computed(() => search.userMe?.id)
+const displayAvatar = computed(() => profileImage.value || DEFAULT_AVATAR)
 
-// Инициализация аватара
 const initProfileImage = () => {
-  if (search.userMe?.avatar?.url) {
-    profileImage.value = `${baseUrl}${search.userMe.avatar.url}`
-    localStorage.setItem(`userAvatar_${userId.value}`, profileImage.value)
-  } else {
+  const url = search.userMe?.avatar?.url
+  if (url) {
+    profileImage.value = url.startsWith('http') ? url : `${baseUrl}${url}`
+    if (userId.value) localStorage.setItem(`userAvatar_${userId.value}`, profileImage.value)
+  } else if (userId.value) {
     const saved = localStorage.getItem(`userAvatar_${userId.value}`)
     if (saved) profileImage.value = saved
   }
@@ -134,7 +154,6 @@ onMounted(() => {
   }
 })
 
-// Открыть / закрыть модальное окно
 const openModal = () => {
   isModalOpen.value = true
 }
@@ -142,22 +161,30 @@ const closeModal = () => {
   isModalOpen.value = false
 }
 
-// Загрузка аватара
 const uploadProfileImage = async (event) => {
-  const file = event.target.files[0]
+  const input = event.target
+  const file = input?.files?.[0]
   if (!file || !userId.value) return
 
   if (!file.type.startsWith('image/')) {
-    alert('Можно загружать только изображения')
+    avatarOk.value = false
+    avatarMessage.value = 'Можно загружать только изображения'
     return
   }
 
-  const formData = new FormData()
-  formData.append('files', file)
-
+  uploading.value = true
+  avatarMessage.value = ''
   try {
-    // Используем локальный API route для обхода CORS
-    const res = await fetch('/api/upload', {
+    // Всегда сжимаем (maxBytes: 1) — иначе nginx у Strapi часто отвечает 413
+    const prepared = await compressImageForUpload(file, {
+      maxSide: 800,
+      quality: 0.8,
+      maxBytes: 1
+    })
+    const formData = new FormData()
+    formData.append('files', prepared)
+
+    const res = await fetch('/api/profile/avatar', {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${localStorage.getItem('jwt')}`
@@ -165,43 +192,44 @@ const uploadProfileImage = async (event) => {
       body: formData
     })
 
+    const rawText = await res.text()
+    let data = {}
+    try {
+      data = rawText ? JSON.parse(rawText) : {}
+    } catch {
+      data = {}
+    }
     if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ message: 'Ошибка загрузки файла' }))
-      throw new Error(errorData.message || 'Ошибка загрузки файла')
+      if (res.status === 413 || /413|Request Entity Too Large/i.test(rawText)) {
+        throw new Error(
+          'Файл слишком большой для сервера. Попробуйте другое фото или попросите увеличить client_max_body_size в nginx у Strapi.'
+        )
+      }
+      throw new Error(data.message || data.statusMessage || 'Ошибка загрузки файла')
     }
 
-    const resData = await res.json()
-    const data = Array.isArray(resData) ? resData : [resData]
-    const avatarId = data[0].id
-
-    // Привязываем аватар к пользователю
-    const updateRes = await fetch(`${baseUrl}/api/users/${userId.value}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem('jwt')}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ avatar: avatarId })
-    })
-
-    if (!updateRes.ok) {
-      alert('Не удалось связать аватар')
-      return
+    if (data.url) {
+      profileImage.value = data.url.startsWith('http') ? data.url : `${baseUrl}${data.url}`
+      localStorage.setItem(`userAvatar_${userId.value}`, profileImage.value)
     }
 
     await search.fetchUserMe()
     initProfileImage()
-    alert('Аватар успешно загружен!')
-
+    avatarOk.value = true
+    avatarMessage.value = data.message || 'Фото профиля обновлено'
   } catch (err) {
-    console.error('Ошибка сети:', err)
-    const errorMessage = err?.data?.message || err?.message || 'Ошибка при загрузке фото'
-    alert(errorMessage)
+    console.error('Ошибка загрузки аватара:', err)
+    avatarOk.value = false
+    avatarMessage.value = err?.message || 'Ошибка при загрузке фото'
+  } finally {
+    uploading.value = false
+    if (input) input.value = ''
   }
 }
 
-// Обновление данных пользователя
 const updateUserProfile = async () => {
+  saving.value = true
+  formMessage.value = ''
   try {
     const res = await fetch(`${baseUrl}/api/users/${userId.value}`, {
       method: 'PUT',
@@ -216,18 +244,17 @@ const updateUserProfile = async () => {
     })
 
     if (!res.ok) {
-      const error = await res.json()
-      alert('Не удалось сохранить изменения')
+      const error = await res.json().catch(() => ({}))
       console.error(error)
       return
     }
 
-    alert('Данные успешно обновлены!')
     await search.fetchUserMe()
-
+    formMessage.value = 'Данные успешно обновлены!'
   } catch (err) {
     console.error('Ошибка сети:', err)
-    alert('Ошибка при сохранении данных')
+  } finally {
+    saving.value = false
   }
 }
 </script>

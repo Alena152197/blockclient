@@ -80,17 +80,23 @@
                     >
                         {{ stripCoverFromDesc(post.desc) }}
                     </p>
-                    <NuxtLink
-                        :to="'/post/' + post.documentId"
-                        class="mt-auto inline-flex shrink-0 items-center self-start px-3 py-2 text-sm font-medium text-center text-white bg-[#a79d1c]/50 rounded-lg hover:bg-[#a79d1c] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                    >
-                        Подробнее
-                        <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M1 5h12m0 0L9 1m4 4L9 9" />
-                        </svg>
-                    </NuxtLink>
+                    <div class="mt-auto flex flex-wrap items-center gap-2">
+                        <NuxtLink
+                            :to="'/post/' + post.documentId"
+                            class="inline-flex shrink-0 items-center self-start px-3 py-2 text-sm font-medium text-center text-white bg-[#a79d1c]/50 rounded-lg hover:bg-[#a79d1c] focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                        >
+                            Подробнее
+                            <svg class="rtl:rotate-180 w-3.5 h-3.5 ms-2" aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M1 5h12m0 0L9 1m4 4L9 9" />
+                            </svg>
+                        </NuxtLink>
+                        <PostShareButton
+                            :post-id="post.documentId || post.id"
+                            :title="post.title"
+                        />
+                    </div>
                 </div>
             </article>
             </div>
@@ -195,30 +201,7 @@ const loadMore = () => {
     postsPageSize.value += 4;
 };
 
-/** Заголовки для Nuxt /api/posts (allowlist + STRAPI_API_TOKEN на сервере) */
-function nuxtPostEditorHeaders() {
-    const token = localStorage.getItem('jwt');
-    if (!token) throw new Error('Нужна авторизация.');
-    const headers = { Authorization: `Bearer ${token}` };
-    const me = search.userMe;
-    const email = me?.email || '';
-    const username = me?.username || '';
-    if (email) headers['x-editor-email'] = encodeURIComponent(email);
-    if (username) headers['x-editor-username'] = encodeURIComponent(username);
-    if (!email && !username) {
-        try {
-            const raw = localStorage.getItem('strapi_auth_user');
-            const u = raw ? JSON.parse(raw) : null;
-            if (u?.email) headers['x-editor-email'] = encodeURIComponent(u.email);
-            if (u?.username) headers['x-editor-username'] = encodeURIComponent(u.username);
-        } catch {
-            /* ignore */
-        }
-    }
-    return headers;
-}
-
-// Удаление поста (через Nuxt-прокси — у JWT роли часто нет delete в Strapi)
+// Удаление поста
 const deletePost = async (postId, postDocumentId) => {
     if (!postId && !postDocumentId) return;
     if (!canManageBlogContent(search.userMe, adminAllow.value)) {
@@ -227,35 +210,39 @@ const deletePost = async (postId, postDocumentId) => {
         return;
     }
 
+    // Подтверждение удаления
     if (!confirm('Вы уверены, что хотите удалить этот пост? Это действие нельзя отменить.')) {
         return;
     }
-
+    
     isDeleting.value = postId;
     deleteError.value = '';
     deleteSuccess.value = '';
-
+    
     try {
+        const token = localStorage.getItem('jwt');
+        
+        // Используем documentId если есть, иначе id
         const idToDelete = postDocumentId || postId;
-        const response = await fetch(`/api/posts/${encodeURIComponent(idToDelete)}`, {
+        
+        const response = await fetch(`${base_url}/api/posts/${idToDelete}`, {
             method: 'DELETE',
-            headers: nuxtPostEditorHeaders()
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
         });
-
+        
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            const errorMessage =
-                errorData?.message ||
-                errorData?.statusMessage ||
-                errorData?.error?.message ||
-                'Не удалось удалить пост';
+            const errorMessage = errorData?.error?.message || 'Не удалось удалить пост';
             throw new Error(errorMessage);
         }
-
+        
         posts.value = posts.value.filter(p => p.id !== postId && p.documentId !== postDocumentId);
 
         deleteSuccess.value = 'Пост успешно удален';
         setTimeout(() => { deleteSuccess.value = ''; }, 3000);
+        
     } catch (error) {
         console.error('Ошибка при удалении поста:', error);
         deleteError.value = error.message || 'Не удалось удалить пост';

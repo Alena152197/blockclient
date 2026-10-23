@@ -7,12 +7,13 @@ function strapiBase(): string {
 
 function meUrlTries(): string[] {
   const base = strapiBase()
+  // Сначала лёгкие URL: страница статистики дергает verify много раз подряд.
   return [
-    `${base}/api/users/me?populate[avatar]=true&populate[role]=true`,
     `${base}/api/users/me?populate[role]=true`,
     `${base}/api/users/me?populate=role`,
+    `${base}/api/users/me`,
     `${base}/api/users/me?populate=*`,
-    `${base}/api/users/me`
+    `${base}/api/users/me?populate[avatar]=true&populate[role]=true`
   ]
 }
 
@@ -69,11 +70,13 @@ function roleIsActionable(r: { name?: string; type?: string } | null): boolean {
   return Boolean(String(r.name || '').trim() || String(r.type || '').trim())
 }
 
-/** Проверка JWT через Strapi; при успехе возвращает объект пользователя с плоским `role` */
-export async function verifyBearerUser(authHeader: string | undefined) {
-  if (!authHeader || !/^Bearer\s+\S+/i.test(authHeader)) {
-    return null
-  }
+type VerifiedUser = Record<string, unknown>
+
+const VERIFY_TTL_MS = 60_000
+const verifyCache = new Map<string, { at: number; user: VerifiedUser }>()
+const verifyInflight = new Map<string, Promise<VerifiedUser | null>>()
+
+async function verifyBearerUserUncached(authHeader: string): Promise<VerifiedUser | null> {
   try {
     let lastOk: Record<string, unknown> | null = null
 
@@ -101,4 +104,34 @@ export async function verifyBearerUser(authHeader: string | undefined) {
   } catch {
     return null
   }
+}
+
+/** Проверка JWT через Strapi; при успехе возвращает объект пользователя с плоским `role` */
+export async function verifyBearerUser(authHeader: string | undefined) {
+  if (!authHeader || !/^Bearer\s+\S+/i.test(authHeader)) {
+    return null
+  }
+
+  const key = authHeader.trim()
+  const cached = verifyCache.get(key)
+  if (cached && Date.now() - cached.at < VERIFY_TTL_MS) {
+    return cached.user
+  }
+
+  const pending = verifyInflight.get(key)
+  if (pending) return pending
+
+  const task = verifyBearerUserUncached(key)
+    .then((user) => {
+      if (user) {
+        verifyCache.set(key, { at: Date.now(), user })
+      }
+      return user
+    })
+    .finally(() => {
+      verifyInflight.delete(key)
+    })
+
+  verifyInflight.set(key, task)
+  return task
 }

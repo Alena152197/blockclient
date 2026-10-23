@@ -222,19 +222,8 @@ export function notebookEditableToHtml(plain) {
         }
         const processedLines = paragraph.map((line) => line)
         const paragraphContent = processedLines.join('<br>')
-        const paragraphText = paragraph
-          .join(' ')
-          .replace(/<[^>]+>/g, '')
-          .replace(/&nbsp;/gi, ' ')
-          .trim()
-        if (
-          paragraphText.length < 60 &&
-          (paragraphText.toLowerCase().includes('привет') ||
-            paragraphText.toLowerCase().includes('знакомы') ||
-            paragraphText.toLowerCase().includes('меня зовут'))
-        ) {
-          return `<h4>${paragraphContent}</h4>`
-        }
+        // Всегда <p>: раньше «привет / знакомы» превращались в <h4> и выглядели жирнее
+        // в одном браузере (после сохранения), чем в другом (дефолт / другой аккаунт).
         return `<p>${paragraphContent}</p>`
       })
       .join('') || ''

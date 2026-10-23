@@ -2,6 +2,7 @@ import { defineEventHandler, readBody, createError, getHeader } from 'h3'
 import { verifyBearerUser } from '../utils/strapiVerifyUser'
 import { incrementPostView } from '../utils/postViewsFile'
 import { appendPostViewEvent } from '../utils/blogActivityLog'
+import { resolveVisitorCountry } from '../utils/geoCountry'
 
 function isValidDocumentId(id: unknown): id is string {
   if (typeof id !== 'string') return false
@@ -43,7 +44,12 @@ export default defineEventHandler(async (event) => {
     visitorKey = `anon:${(visitorId as string).trim()}`
   }
 
+  const clientHint =
+    (body as { countryCode?: unknown; country?: unknown }).countryCode ||
+    (body as { country?: unknown }).country
+
   const count = await incrementPostView(documentId)
-  await appendPostViewEvent(documentId, visitorKey)
-  return { documentId, count }
+  const country = await resolveVisitorCountry(event, clientHint)
+  await appendPostViewEvent(documentId, visitorKey, country)
+  return { documentId, count, country: country || undefined }
 })

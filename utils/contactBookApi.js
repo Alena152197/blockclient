@@ -164,9 +164,17 @@ export async function compressImageForUpload(file, opts = {}) {
     ctx.drawImage(bitmap, 0, 0, width, height)
     bitmap.close?.()
 
-    const blob = await new Promise((resolve) => {
-      canvas.toBlob((b) => resolve(b), 'image/jpeg', quality)
+    let q = quality
+    let blob = await new Promise((resolve) => {
+      canvas.toBlob((b) => resolve(b), 'image/jpeg', q)
     })
+    // Если всё ещё крупно (лимит nginx ~1 МБ) — сильнее жмём
+    while (blob && blob.size > 900 * 1024 && q > 0.45) {
+      q = Math.round((q - 0.12) * 100) / 100
+      blob = await new Promise((resolve) => {
+        canvas.toBlob((b) => resolve(b), 'image/jpeg', q)
+      })
+    }
     if (!blob) return file instanceof File ? file : new File([file], 'photo.jpg', { type })
 
     const base =
