@@ -195,7 +195,30 @@ const loadMore = () => {
     postsPageSize.value += 4;
 };
 
-// Удаление поста
+/** Заголовки для Nuxt /api/posts (allowlist + STRAPI_API_TOKEN на сервере) */
+function nuxtPostEditorHeaders() {
+    const token = localStorage.getItem('jwt');
+    if (!token) throw new Error('Нужна авторизация.');
+    const headers = { Authorization: `Bearer ${token}` };
+    const me = search.userMe;
+    const email = me?.email || '';
+    const username = me?.username || '';
+    if (email) headers['x-editor-email'] = encodeURIComponent(email);
+    if (username) headers['x-editor-username'] = encodeURIComponent(username);
+    if (!email && !username) {
+        try {
+            const raw = localStorage.getItem('strapi_auth_user');
+            const u = raw ? JSON.parse(raw) : null;
+            if (u?.email) headers['x-editor-email'] = encodeURIComponent(u.email);
+            if (u?.username) headers['x-editor-username'] = encodeURIComponent(u.username);
+        } catch {
+            /* ignore */
+        }
+    }
+    return headers;
+}
+
+// Удаление поста (через Nuxt-прокси — у JWT роли часто нет delete в Strapi)
 const deletePost = async (postId, postDocumentId) => {
     if (!postId && !postDocumentId) return;
     if (!canManageBlogContent(search.userMe, adminAllow.value)) {
@@ -204,39 +227,35 @@ const deletePost = async (postId, postDocumentId) => {
         return;
     }
 
-    // Подтверждение удаления
     if (!confirm('Вы уверены, что хотите удалить этот пост? Это действие нельзя отменить.')) {
         return;
     }
-    
+
     isDeleting.value = postId;
     deleteError.value = '';
     deleteSuccess.value = '';
-    
+
     try {
-        const token = localStorage.getItem('jwt');
-        
-        // Используем documentId если есть, иначе id
         const idToDelete = postDocumentId || postId;
-        
-        const response = await fetch(`${base_url}/api/posts/${idToDelete}`, {
+        const response = await fetch(`/api/posts/${encodeURIComponent(idToDelete)}`, {
             method: 'DELETE',
-            headers: {
-                'Authorization': `Bearer ${token}`
-            }
+            headers: nuxtPostEditorHeaders()
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            const errorMessage = errorData?.error?.message || 'Не удалось удалить пост';
+            const errorMessage =
+                errorData?.message ||
+                errorData?.statusMessage ||
+                errorData?.error?.message ||
+                'Не удалось удалить пост';
             throw new Error(errorMessage);
         }
-        
+
         posts.value = posts.value.filter(p => p.id !== postId && p.documentId !== postDocumentId);
 
         deleteSuccess.value = 'Пост успешно удален';
         setTimeout(() => { deleteSuccess.value = ''; }, 3000);
-        
     } catch (error) {
         console.error('Ошибка при удалении поста:', error);
         deleteError.value = error.message || 'Не удалось удалить пост';
