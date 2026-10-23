@@ -1,6 +1,6 @@
 <template>
     <main class="max-w-screen-sm min-w-96 md:min-w-[48rem] lg:min-w-[46rem] mx-auto py-2">
-        <!-- Хлебные крошки + редактирование (кнопка всегда сверху, если вы автор) -->
+        <!-- Хлебные крошки + редактирование (только администратор) -->
         <div class="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <nav class="flex min-w-0 flex-1" aria-label="Breadcrumb">
             <ol class="inline-flex flex-wrap items-center space-x-1 md:space-x-2 rtl:space-x-reverse text-sm font-medium">
@@ -206,7 +206,7 @@
                                     </span>
                                 </div>
                                 <button
-                                    v-if="canManageBlogContent(search.userMe)"
+                                    v-if="canManageBlogContent(search.userMe, adminAllow)"
                                     @click="deleteComment(comment.id)"
                                     :disabled="isDeleting === comment.id"
                                     class="opacity-0 group-hover:opacity-100 text-red-500 hover:text-red-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed p-1 rounded hover:bg-red-50"
@@ -242,6 +242,11 @@ import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const markdown = new MarkdownIt();
 const mark = ref('');
+const runtimeConfig = useRuntimeConfig();
+const adminAllow = computed(() => ({
+    emails: runtimeConfig.public.contentAdminEmails || '',
+    usernames: runtimeConfig.public.contentAdminUsernames || '',
+}));
 
 function escapeHtml(s) {
     if (typeof s !== 'string') return '';
@@ -328,11 +333,12 @@ function normalizePostAuthor(p) {
     return null;
 }
 
+/** Редактирование статьи — только администратор контента (не автор и не любой Authenticated) */
 const canEditPost = computed(() => {
     if (!post.value) return false;
     const me = search.userMe;
     if (!me?.id && !me?.documentId) return false;
-    return canManageBlogContent(me);
+    return canManageBlogContent(me, adminAllow.value);
 });
 
 const newComment = ref({ text: '' });
@@ -635,8 +641,7 @@ const loadPostWithComments = async () => {
             }
         }
 
-        // Повторно запрашиваем пост с JWT: у публичного findOne поле author может быть скрыто,
-        // без него не показывается кнопка «Редактировать» у автора.
+        // Повторно запрашиваем пост с JWT (populate отношений, если публичный findOne урезан).
         if (import.meta.client) {
             const token = localStorage.getItem('jwt');
             if (token) {
@@ -997,7 +1002,7 @@ const isMyComment = (comment) => {
 // Удаление комментария
 const deleteComment = async (commentId) => {
     if (!commentId) return;
-    if (!canManageBlogContent(search.userMe)) {
+    if (!canManageBlogContent(search.userMe, adminAllow.value)) {
         commentError.value = 'Удалять комментарии может только администратор.';
         return;
     }

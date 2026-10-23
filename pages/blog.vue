@@ -131,7 +131,13 @@ import { canManageBlogContent } from '~/utils/strapiUserRole';
 import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const search = useSearchStore();
-const canDeletePosts = computed(() => canManageBlogContent(search.userMe));
+const runtimeConfig = useRuntimeConfig();
+const adminAllow = computed(() => ({
+    emails: runtimeConfig.public.contentAdminEmails || '',
+    usernames: runtimeConfig.public.contentAdminUsernames || '',
+}));
+/** Удаление постов — только администратор контента */
+const canDeletePosts = computed(() => canManageBlogContent(search.userMe, adminAllow.value));
 
 const interestsBgState = ref(null);
 
@@ -192,7 +198,7 @@ const loadMore = () => {
 // Удаление поста
 const deletePost = async (postId, postDocumentId) => {
     if (!postId && !postDocumentId) return;
-    if (!canManageBlogContent(search.userMe)) {
+    if (!canManageBlogContent(search.userMe, adminAllow.value)) {
         deleteError.value = 'Удалять посты может только администратор.';
         setTimeout(() => { deleteError.value = ''; }, 4000);
         return;
