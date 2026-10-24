@@ -29,6 +29,8 @@ export default defineNuxtConfig({
     strapiUrl: process.env.STRAPI_URL || process.env.NUXT_PUBLIC_STRAPI_URL || '',
     /** Full-access API Token для записи About/upload (только сервер) */
     strapiApiToken: process.env.STRAPI_API_TOKEN || process.env.STRAPI_TOKEN || '',
+    /** Секрет POST /api/deploy (лучше задать NUXT_DEPLOY_SECRET в .env на VPS) */
+    deploySecret: process.env.DEPLOY_SECRET || process.env.NUXT_DEPLOY_SECRET || '',
     public: {
       /** Клиентский URL Strapi — NUXT_PUBLIC_STRAPI_URL */
       strapiUrl:

@@ -11,102 +11,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 🔐 Проверить SSH-секреты
+      - name: 🔐 Проверить секрет деплоя
         env:
-          HOST: ${{ secrets.HOST }}
-          USERNAME: ${{ secrets.USERNAME }}
-          PORT: ${{ secrets.PORT }}
-          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
         run: |
           missing=
-          [ -n "$HOST" ] || missing="$missing HOST"
-          [ -n "$USERNAME" ] || missing="$missing USERNAME"
-          if [ -z "$SSH_PRIVATE_KEY" ] && [ -z "$SSH_PASSWORD" ]; then
-            missing="$missing SSH_PRIVATE_KEY|SSH_PASSWORD"
-          fi
+          [ -n "$DEPLOY_HOOK_URL" ] || missing="$missing DEPLOY_HOOK_URL"
+          [ -n "$DEPLOY_SECRET" ] || missing="$missing DEPLOY_SECRET"
           if [ -n "$missing" ]; then
             echo "::error::Не заданы секреты:$missing"
+            echo "DEPLOY_HOOK_URL пример: https://fenix1521.ru/api/deploy"
             exit 1
           fi
-          # Jino: fenix1521.ru — HTTP-прокси, SSH — hostname VPS (*.vps.myjino.ru)
-          echo "HOST=$HOST"
-          echo "PORT=${PORT:-22}"
-          echo "USERNAME=$USERNAME"
-          if [ -n "$SSH_PRIVATE_KEY" ]; then
-            echo "auth=SSH_PRIVATE_KEY"
-            echo "USE_KEY=1" >> "$GITHUB_ENV"
-          else
-            echo "auth=SSH_PASSWORD"
-            echo "USE_KEY=0" >> "$GITHUB_ENV"
-          fi
+          echo "hook=$DEPLOY_HOOK_URL"
 
-      - name: 🔌 Проверить TCP до SSH
+      # Jino: внешний SSH (:22) часто НЕ контейнер VPS. Деплой через HTTPS → POST /api/deploy.
+      - name: 🚀 Вызвать deploy hook на VPS
         env:
-          HOST: ${{ secrets.HOST }}
-          PORT: ${{ secrets.PORT }}
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+          DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
         run: |
-          PORT="${PORT:-22}"
-          echo "nc $HOST $PORT ..."
-          if nc -z -w 8 "$HOST" "$PORT"; then
-            echo "TCP open"
-          else
-            echo "::error::Порт $PORT на $HOST закрыт из GitHub Actions. Для Nuxt-VPS: HOST=4cce9171d57c.vps.myjino.ru, PORT=22 (не 49481 из панели)."
+          set -e
+          code=$(curl -sS -o /tmp/deploy-res.json -w "%{http_code}" \
+            -X POST "$DEPLOY_HOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "X-Deploy-Secret: $DEPLOY_SECRET" \
+            --connect-timeout 20 \
+            --max-time 60)
+          echo "HTTP $code"
+          cat /tmp/deploy-res.json || true
+          echo
+          if [ "$code" != "200" ]; then
+            echo "::error::Deploy hook failed with HTTP $code"
             exit 1
           fi
-
-      # Сборка на GitHub не нужна: код тянем на VPS и собираем там
-
-      - name: 🚀 Deploy по SSH-ключу
-        if: env.USE_KEY == '1'
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT || 22 }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
-          protocol: tcp4
-          timeout: 45s
-          command_timeout: 20m
-          script: |
-            set -e
-            cd /var/www/blockclient
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 22 || nvm use default || true
-            node -v
-            git fetch origin main
-            git reset --hard origin/main
-            npm ci
-            npm run build
-            test -f .output/server/index.mjs
-            pm2 restart client-prod || pm2 start ecosystem.config.cjs --only client-prod
-            pm2 save || true
-            pm2 status
-
-      - name: 🚀 Deploy по паролю
-        if: env.USE_KEY != '1'
-        uses: appleboy/ssh-action@v1.2.0
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT || 22 }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          protocol: tcp4
-          timeout: 45s
-          command_timeout: 20m
-          script: |
-            set -e
-            cd /var/www/blockclient
-            export NVM_DIR="$HOME/.nvm"
-            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-            nvm use 22 || nvm use default || true
-            node -v
-            git fetch origin main
-            git reset --hard origin/main
-            npm ci
-            npm run build
-            test -f .output/server/index.mjs
-            pm2 restart client-prod || pm2 start ecosystem.config.cjs --only client-prod
-            pm2 save || true
-            pm2 status
+          echo "Deploy started on VPS (см. /var/www/blockclient/.deploy.log)"
