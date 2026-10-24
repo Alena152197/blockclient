@@ -23,74 +23,35 @@ jobs:
           [ -n "$PORT" ] || missing="$missing PORT"
           [ -n "$SSH_PASSWORD" ] || missing="$missing SSH_PASSWORD"
           if [ -n "$missing" ]; then
-            echo "::error::В GitHub → Settings → Secrets and variables → Actions не заданы:$missing"
-            echo "Для Jino Nuxt-VPS: HOST=4cce9171d57c.vps.myjino.ru, PORT из панели, USERNAME=root, SSH_PASSWORD=пароль root."
+            echo "::error::Не заданы секреты:$missing"
             exit 1
           fi
-          echo "HOST length: ${#HOST}"
-          echo "USERNAME length: ${#USERNAME}"
-          echo "PORT: $PORT"
-          echo "SSH_PASSWORD set: yes"
+          echo "HOST ok, PORT=$PORT, password set"
 
-      - name: 📦 Получить код
-        uses: actions/checkout@v5
+      # Сборка на GitHub не нужна: код тянем на VPS и собираем там
+      # (SCP через прокси Jino у вас стабильно падает)
 
-      - name: 📦 Установить Node.js 22
-        uses: actions/setup-node@v5
-        with:
-          node-version: '22'
-          cache: 'npm'
-
-      - name: 📦 Установить зависимости
-        run: npm ci
-
-      - name: 🗑 Очистить кэш
-        run: rm -rf .nuxt dist .output || true
-
-      - name: 🔨 Собрать проект
-        run: npm run build
-        env:
-          NUXT_PUBLIC_STRAPI_URL: ${{ secrets.NUXT_PUBLIC_STRAPI_URL }}
-          NUXT_PUBLIC_CONTENT_ADMIN_EMAILS: ${{ secrets.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS }}
-          NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES: ${{ secrets.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES }}
-          STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
-
-      - name: 🔍 Проверить сборку
-        run: test -f .output/server/index.mjs && ls -la .output/server/index.mjs
-
-      - name: 🧹 Убрать лишнее перед SCP
-        run: |
-          rm -rf node_modules .git .data .nuxt .posts-backup.json .posts-tmp.json
-          # .env на сервере свой — не затираем: просто не кладём локальный
-          rm -f .env
-
-      - name: 📁 Передать проект на сервер
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          password: ${{ secrets.SSH_PASSWORD }}
-          source: "."
-          target: "/var/www/blockclient"
-          overwrite: true
-          tar_dereference: true
-          rm: false
-          debug: true
-
-      - name: 🔁 Установить зависимости и перезапустить PM2
+      - name: 🚀 git pull + build + pm2 на Nuxt-VPS
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           password: ${{ secrets.SSH_PASSWORD }}
+          command_timeout: 20m
           script: |
             set -e
             cd /var/www/blockclient
             export NVM_DIR="$HOME/.nvm"
             [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
             nvm use 22 || nvm use default || true
-            npm install --omit=dev
-            pm2 restart client-prod || pm2 restart all || pm2 start ecosystem.config.cjs --only client-prod
+            node -v
+            git fetch origin main
+            git reset --hard origin/main
+            # .env на сервере не трогаем
+            npm ci
+            npm run build
+            test -f .output/server/index.mjs
+            pm2 restart client-prod || pm2 start ecosystem.config.cjs --only client-prod
+            pm2 save || true
             pm2 status
