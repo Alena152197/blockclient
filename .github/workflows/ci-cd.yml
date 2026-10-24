@@ -58,6 +58,12 @@ jobs:
       - name: 🔍 Проверить сборку
         run: test -f .output/server/index.mjs && ls -la .output/server/index.mjs
 
+      - name: 🧹 Убрать лишнее перед SCP
+        run: |
+          rm -rf node_modules .git .data .nuxt .posts-backup.json .posts-tmp.json
+          # .env на сервере свой — не затираем: просто не кладём локальный
+          rm -f .env
+
       - name: 📁 Передать проект на сервер
         uses: appleboy/scp-action@v0.1.7
         with:
@@ -70,7 +76,7 @@ jobs:
           overwrite: true
           tar_dereference: true
           rm: false
-          exclude: "node_modules,.git,.data,.nuxt,.output/public/_nuxt/*.map,.env,.posts-backup.json,.posts-tmp.json"
+          debug: true
 
       - name: 🔁 Установить зависимости и перезапустить PM2
         uses: appleboy/ssh-action@v1.2.0
