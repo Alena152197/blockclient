@@ -58,11 +58,7 @@ jobs:
             body=$(curl -sS --connect-timeout 10 --max-time 20 "$STATUS_URL" || echo '{}')
             echo "[$i] $body" | head -c 400
             echo
-            st=$(echo "$body" | python3 -c 'import sys,json; 
-try:
-  print(json.load(sys.stdin).get("status",""))
-except Exception:
-  print("")')
+            st=$(printf '%s' "$body" | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('status') or '')" 2>/dev/null || true)
             if [ "$st" = "ok" ]; then
               ok=1
               break
