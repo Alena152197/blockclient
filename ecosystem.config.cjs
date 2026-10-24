@@ -4,7 +4,7 @@ const path = require('path')
 const root = __dirname
 const polyfill = path.join(root, 'localstorage-ssr-polyfill.mjs')
 
-/** Подхватить .env в process PM2 (NUXT_*/DEPLOY_SECRET и т.д.) */
+/** Load .env into PM2 env (NUXT_ vars, DEPLOY_SECRET, etc.) */
 function loadEnvFile() {
   const out = {}
   try {
