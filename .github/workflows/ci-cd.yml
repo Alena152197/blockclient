@@ -21,13 +21,11 @@ jobs:
           [ -n "$DEPLOY_SECRET" ] || missing="$missing DEPLOY_SECRET"
           if [ -n "$missing" ]; then
             echo "::error::Не заданы секреты:$missing"
-            echo "DEPLOY_HOOK_URL пример: https://fenix1521.ru/api/deploy"
             exit 1
           fi
           echo "hook=$DEPLOY_HOOK_URL"
 
-      # Jino: внешний SSH (:22) часто НЕ контейнер VPS. Деплой через HTTPS → POST /api/deploy.
-      - name: 🚀 Вызвать deploy hook на VPS
+      - name: 🚀 Старт deploy на VPS
         env:
           DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
           DEPLOY_SECRET: ${{ secrets.DEPLOY_SECRET }}
@@ -46,4 +44,39 @@ jobs:
             echo "::error::Deploy hook failed with HTTP $code"
             exit 1
           fi
-          echo "Deploy started on VPS (см. /var/www/blockclient/.deploy.log)"
+
+      - name: ⏳ Дождаться окончания сборки на VPS
+        env:
+          DEPLOY_HOOK_URL: ${{ secrets.DEPLOY_HOOK_URL }}
+        run: |
+          set -e
+          # …/api/deploy → …/api/deploy/status
+          STATUS_URL="${DEPLOY_HOOK_URL%/}/status"
+          echo "poll $STATUS_URL"
+          ok=0
+          for i in $(seq 1 40); do
+            body=$(curl -sS --connect-timeout 10 --max-time 20 "$STATUS_URL" || echo '{}')
+            echo "[$i] $body" | head -c 400
+            echo
+            st=$(echo "$body" | python3 -c 'import sys,json; 
+try:
+  print(json.load(sys.stdin).get("status",""))
+except Exception:
+  print("")')
+            if [ "$st" = "ok" ]; then
+              ok=1
+              break
+            fi
+            if [ "$st" = "fail" ]; then
+              echo "::error::Deploy failed on VPS — см. logTail / .deploy.log"
+              echo "$body"
+              exit 1
+            fi
+            sleep 15
+          done
+          if [ "$ok" != "1" ]; then
+            echo "::error::Timeout waiting for deploy (no ok in .deploy.status)"
+            curl -sS "$STATUS_URL" || true
+            exit 1
+          fi
+          echo "Deploy finished OK"

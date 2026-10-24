@@ -3,8 +3,7 @@ import { existsSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 /**
- * HTTPS-деплой для Jino: внешний SSH в контейнер часто не проброшен,
- * а 80/443 уже работают. Секрет: DEPLOY_SECRET (или NUXT_DEPLOY_SECRET).
+ * HTTPS-деплой для Jino. Секрет: DEPLOY_SECRET / NUXT_DEPLOY_SECRET.
  */
 export default defineEventHandler(async (event) => {
   const expected =
@@ -29,18 +28,29 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
   }
 
-  const root = process.cwd()
+  // PM2 cwd = корень проекта, но на всякий случай явный путь
+  const root =
+    process.env.DEPLOY_ROOT ||
+    (existsSync(resolve(process.cwd(), 'scripts/deploy-prod.sh'))
+      ? process.cwd()
+      : '/var/www/blockclient')
   const script = resolve(root, 'scripts/deploy-prod.sh')
   if (!existsSync(script)) {
-    throw createError({ statusCode: 500, statusMessage: 'deploy script missing' })
+    throw createError({
+      statusCode: 500,
+      statusMessage: `deploy script missing at ${script}`,
+    })
   }
 
-  // Фоном: иначе GitHub Actions / прокси отвалятся на длинной сборке
-  const child = spawn('bash', [script], {
+  const child = spawn('/bin/bash', [script], {
     cwd: root,
     detached: true,
     stdio: 'ignore',
-    env: process.env,
+    env: {
+      ...process.env,
+      HOME: process.env.HOME || '/root',
+      DEPLOY_ROOT: root,
+    },
   })
   child.unref()
 
@@ -48,6 +58,8 @@ export default defineEventHandler(async (event) => {
     ok: true,
     started: true,
     pid: child.pid ?? null,
+    root,
     log: '.deploy.log',
+    status: '.deploy.status',
   }
 })
