@@ -2,7 +2,7 @@
     <main class="mx-auto w-full max-w-lg px-4 py-10">
         <h1 class="mb-3 text-3xl font-extrabold tracking-tight text-[#4a4a4a]">Предложения по улучшению</h1>
         <p class="mb-8 text-sm leading-relaxed text-gray-600">
-            Напишите, что улучшить на сайте или о чём хотелось бы прочитать. Ваше обращение появится ниже; ответ администратора — ещё ниже.
+            Напишите, что улучшить на сайте или о чём хотелось бы прочитать.
         </p>
 
         <form class="space-y-4" @submit.prevent="onSubmit">
@@ -76,16 +76,16 @@
             </ul>
         </section>
 
-        <!-- Ответы администратора -->
+        <!-- Ответы -->
         <section class="mt-10 border-t border-gray-200 pt-8">
-            <h2 class="mb-4 text-xl font-bold text-[#4a4a4a]">Ответы администратора</h2>
+            <h2 class="mb-4 text-xl font-bold text-[#4a4a4a]">Ответы</h2>
 
             <p v-if="!search.userMe?.id" class="text-sm text-gray-500">
                 После входа здесь появятся ответы на ваши обращения.
             </p>
             <p v-else-if="mineLoading" class="text-sm text-gray-500">Загружаю…</p>
             <p v-else-if="repliedItems.length === 0" class="text-sm text-gray-500">
-                Пока нет ответов. Как только администратор ответит — сообщение появится здесь.
+                Пока нет ответов. Как только ответим — сообщение появится здесь.
             </p>
             <ul v-else class="space-y-4">
                 <li
@@ -97,7 +97,7 @@
                     <p class="mb-3 whitespace-pre-wrap text-sm text-gray-600">{{ item.text }}</p>
                     <div class="rounded-lg border border-violet-200 bg-white px-3 py-3">
                         <p class="mb-1 text-xs font-semibold uppercase tracking-wide text-violet-800">
-                            Ответ администратора
+                            Ответ
                             <span v-if="item.repliedAt" class="font-normal normal-case text-gray-500">
                                 · {{ formatWhen(item.repliedAt) }}
                             </span>
