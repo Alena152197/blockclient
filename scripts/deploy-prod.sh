@@ -15,6 +15,8 @@ if ! flock -n 9; then
 fi
 
 echo "running $(date -Is)" >"$STATUS"
+# если процесс убьют посередине — не оставляем вечный running
+trap 'ec=$?; if [ "$ec" -ne 0 ]; then echo "fail $(date -Is)" >"$STATUS"; fi' EXIT
 
 {
   echo "======== $(date -Is) deploy start ========"
@@ -43,16 +45,16 @@ echo "running $(date -Is)" >"$STATUS"
   npm run build
   test -f .output/server/index.mjs
 
-  # Перечитать ecosystem (.env) — delete+start надёжнее restart после смены env
-  pm2 delete client-prod 2>/dev/null || true
-  pm2 start ecosystem.config.cjs --only client-prod
+  # Не delete: иначе при сбое start сайт лежит, а status=running
+  if pm2 describe client-prod >/dev/null 2>&1; then
+    pm2 restart client-prod --update-env
+  else
+    pm2 start ecosystem.config.cjs --only client-prod
+  fi
   pm2 save || true
   pm2 status
 
   echo "======== $(date -Is) deploy ok ========"
   echo "ok $(date -Is) $(git rev-parse --short HEAD)" >"$STATUS"
-} >>"$LOG" 2>&1 || {
-  echo "fail $(date -Is)" >"$STATUS"
-  echo "======== $(date -Is) deploy FAILED ========" >>"$LOG"
-  exit 1
-}
+} >>"$LOG" 2>&1
+
