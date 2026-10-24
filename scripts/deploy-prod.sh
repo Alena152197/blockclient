@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Деплой на Nuxt-VPS (вызов с GitHub Actions через POST /api/deploy).
-set -euo pipefail
+set -eu
 
 ROOT="${DEPLOY_ROOT:-$(cd "$(dirname "$0")/.." && pwd)}"
 LOG="$ROOT/.deploy.log"
