@@ -10,6 +10,28 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: 🔐 Проверить SSH-секреты
+        env:
+          HOST: ${{ secrets.HOST }}
+          USERNAME: ${{ secrets.USERNAME }}
+          PORT: ${{ secrets.PORT }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+        run: |
+          missing=
+          [ -n "$HOST" ] || missing="$missing HOST"
+          [ -n "$USERNAME" ] || missing="$missing USERNAME"
+          [ -n "$PORT" ] || missing="$missing PORT"
+          [ -n "$SSH_PRIVATE_KEY" ] || missing="$missing SSH_PRIVATE_KEY"
+          if [ -n "$missing" ]; then
+            echo "::error::В GitHub → Settings → Secrets and variables → Actions не заданы:$missing"
+            echo "Для Jino VPS обычно PORT=49240 (не 22)."
+            exit 1
+          fi
+          echo "HOST length: ${#HOST}"
+          echo "USERNAME length: ${#USERNAME}"
+          echo "PORT: $PORT"
+          echo "SSH_PRIVATE_KEY length: ${#SSH_PRIVATE_KEY}"
+
       - name: 📦 Получить код
         uses: actions/checkout@v5
 
@@ -51,6 +73,8 @@ jobs:
           tar_dereference: true
           # не затираем секреты и данные на сервере
           rm: false
+          # не тащим мусор — меньше шанс таймаута/обрыва
+          exclude: "node_modules,.git,.data,.nuxt,.output/public/_nuxt/*.map,.env,.posts-backup.json,.posts-tmp.json"
 
       - name: 🔁 Установить зависимости и перезапустить PM2
         uses: appleboy/ssh-action@v1.2.0
