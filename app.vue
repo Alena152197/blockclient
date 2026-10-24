@@ -29,11 +29,14 @@ const nuxtPageLayoutClass = computed(() =>
 )
 
 const base = STRAPI_BASE
-const api = await $fetch(`${base}/api/config?populate=*`)
-const config = api.data
+// useAsyncData: один payload на SSR и клиенте (сырой $fetch на клиенте снова ходит в Strapi → mismatch)
+const { data: configRes } = await useAsyncData('strapi-config', () =>
+  $fetch(`${base}/api/config?populate=*`).catch(() => null)
+)
+const config = configRes.value?.data || {}
 const index = useSearchStore()
 // Сразу в setup (и на SSR, и на клиенте) — иначе главная с v-if="config.primeryBlock" гидратится с пустым store
-index.config = config || {}
+index.config = config
 
 /** Свой заголовок вкладки из настроек (localStorage), обновляется событием blog-display-title-changed */
 const displayTitleOverride = ref('')
@@ -58,7 +61,11 @@ useHead({
     { name: 'keywords', content: config.keywords },
   ],
   link: [
-    { rel: 'icon', type: 'image/x-icon', href: base+config.favicon.url }
+    {
+      rel: 'icon',
+      type: 'image/x-icon',
+      href: config.favicon?.url ? base + config.favicon.url : '/favicon.ico',
+    },
   ],
   // настройка боди на главной
   bodyAttrs: {

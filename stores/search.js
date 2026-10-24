@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
 import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const defaultProfileNote = `В этом блоге я хочу рассказать
@@ -79,7 +78,7 @@ function writeCachedAuthUser(user) {
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
-    searchQuery: ref(''),
+    searchQuery: '',
     authToggle: true,
     userMe: {}, // Всегда плоский объект: id, username, email, avatar и т.д.
     config: {},

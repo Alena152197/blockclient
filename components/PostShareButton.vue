@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import { computed, ref, onMounted, onUnmounted } from 'vue'
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
     /** documentId или id поста */
@@ -59,13 +59,17 @@ const props = defineProps({
 const rootRef = ref(null)
 const menuOpen = ref(false)
 const copied = ref(false)
+/** Пусто до mount — SSR и первый paint клиента совпадают (:disabled), origin только в браузере */
+const shareUrl = ref('')
 let copiedTimer = null
 
-const shareUrl = computed(() => {
-    if (!import.meta.client || props.postId == null || props.postId === '') return ''
-    const origin = window.location.origin
-    return `${origin}/post/${encodeURIComponent(String(props.postId))}`
-})
+function rebuildShareUrl() {
+    if (!import.meta.client || props.postId == null || props.postId === '') {
+        shareUrl.value = ''
+        return
+    }
+    shareUrl.value = `${window.location.origin}/post/${encodeURIComponent(String(props.postId))}`
+}
 
 const shareText = computed(() => {
     const t = String(props.title || '').trim()
@@ -154,7 +158,10 @@ function onDocClick(e) {
     }
 }
 
+watch(() => props.postId, rebuildShareUrl)
+
 onMounted(() => {
+    rebuildShareUrl()
     if (import.meta.client) {
         document.addEventListener('click', onDocClick)
     }

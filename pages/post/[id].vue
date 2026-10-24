@@ -586,40 +586,36 @@ const loadComments = async () => {
 
 // Загрузка данных статьи (только пост, без комментариев и localStorage)
 const loadPostData = async () => {
+    // Пробуем разные варианты populate
+    let api;
     try {
-        // Загружаем пост с комментариями через populate
-        // Пробуем разные варианты populate для комментариев с аватарами авторов
-        let api;
+        api = await $fetch(`${base_url}/api/posts/${id}?populate=*`);
+    } catch (e) {
         try {
-            // Упрощенный вариант - загружаем пост без глубокого populate
-            api = await $fetch(`${base_url}/api/posts/${id}?populate=*`);
-        } catch (e) {
-            try {
-                api = await $fetch(`${base_url}/api/posts/${id}?populate[comments]=*`);
-            } catch (e2) {
-                try {
-                    api = await $fetch(`${base_url}/api/posts/${id}`);
-                } catch (e3) {
-                    throw e3;
-                }
-            }
+            api = await $fetch(`${base_url}/api/posts/${id}?populate[comments]=*`);
+        } catch (e2) {
+            api = await $fetch(`${base_url}/api/posts/${id}`);
         }
-        const postData = api.data;
-        
-        // Загружаем пост (доступ открыт для всех)
-        post.value = postData;
-        if (post.value?.body) {
-            const body = post.value.body;
-            mark.value = renderPostBody(body);
-        }
-        
-        // Инициализируем пустой массив комментариев
-        comments.value = [];
-} catch (error) {
-        post.value = null;
-        comments.value = [];
     }
+    return api?.data ?? null;
 };
+
+function applyPostData(postData) {
+    post.value = postData;
+    if (post.value?.body) {
+        mark.value = renderPostBody(post.value.body);
+    } else {
+        mark.value = '';
+    }
+    comments.value = [];
+}
+
+// Один payload на SSR и клиенте — иначе повторный $fetch даёт hydration mismatch
+const { data: postPayload } = await useAsyncData(
+    `post-${id}`,
+    () => loadPostData().catch(() => null)
+);
+applyPostData(postPayload.value);
 
 // Загрузка комментариев и пользователя (только на клиенте)
 const loadPostWithComments = async () => {
@@ -642,9 +638,6 @@ const loadPostWithComments = async () => {
         // Ошибка при загрузке комментариев
     }
 };
-
-// Загружаем пост на сервере (для SEO)
-await loadPostData();
 
 async function registerPostViewOnce() {
     if (!import.meta.client) return;
