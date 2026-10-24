@@ -52,6 +52,10 @@ export default defineNuxtConfig({
     plugins: [
       tailwindcss(),
     ],
+    build: {
+      // меньше шума в логе сборки от @tailwindcss/vite без sourcemap
+      sourcemap: false,
+    },
     server: {
       allowedHosts: ['fenix1521.ru', 'localhost'],
     },

@@ -388,10 +388,8 @@ const loadComments = async () => {
                 else if (typeof comment.author === 'object' && comment.author?.id && !comment.author?.avatar) {
                     try {
                         if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-                            const token = localStorage.getItem('jwt');
-                            const userResponse = await fetch(`${base_url}/api/users/${comment.author.id}?populate=avatar`, {
-                                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                            });
+                            // Публичное чтение — без JWT (с токеном Authenticated часто 403)
+                            const userResponse = await fetch(`${base_url}/api/users/${comment.author.id}?populate=avatar`);
                             if (userResponse.ok) {
                                 const userData = await userResponse.json();
                                 comment.author = {
@@ -410,12 +408,9 @@ const loadComments = async () => {
                     try {
                         // Проверяем, что мы на клиенте
                         if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-                            const token = localStorage.getItem('jwt');
                             const username = comment.author;
-                            // Ищем пользователя по username
-                            const userResponse = await fetch(`${base_url}/api/users?filters[username][$eq]=${encodeURIComponent(username)}&populate=avatar`, {
-                                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                            });
+                            // Ищем пользователя по username (без JWT)
+                            const userResponse = await fetch(`${base_url}/api/users?filters[username][$eq]=${encodeURIComponent(username)}&populate=avatar`);
                             if (userResponse.ok) {
                                 const userData = await userResponse.json();
                                 if (userData.data && userData.data.length > 0) {
@@ -448,11 +443,8 @@ const loadComments = async () => {
                 return;
             }
             
-            const token = localStorage.getItem('jwt');
-            // Упрощенный вариант - используем populate=* для загрузки всех связей
-            const allCommentsResponse = await fetch(`${base_url}/api/comments?populate=*`, {
-                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-            });
+            // Публичный find без JWT — иначе залогиненный пользователь ловит 403
+            const allCommentsResponse = await fetch(`${base_url}/api/comments?populate=*`);
             
             if (allCommentsResponse.ok) {
                 const allCommentsData = await allCommentsResponse.json();
@@ -515,11 +507,8 @@ const loadComments = async () => {
                                 // Если автор - это объект с id, но без полной информации, загружаем его отдельно
                                 if (typeof newComment.author === 'object' && newComment.author?.id && !newComment.author?.avatar) {
                                     try {
-                                        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-                                            const token = localStorage.getItem('jwt');
-                                            const userResponse = await fetch(`${base_url}/api/users/${newComment.author.id}?populate=avatar`, {
-                                                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                                            });
+                                        if (typeof window !== 'undefined') {
+                                            const userResponse = await fetch(`${base_url}/api/users/${newComment.author.id}?populate=avatar`);
                                             if (userResponse.ok) {
                                                 const userData = await userResponse.json();
                                                 newComment.author = {
@@ -536,13 +525,9 @@ const loadComments = async () => {
                                 // Если автор - это строка (username), ищем пользователя по username
                                 else if (typeof newComment.author === 'string') {
                                     try {
-                                        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-                                            const token = localStorage.getItem('jwt');
+                                        if (typeof window !== 'undefined') {
                                             const username = newComment.author;
-                                            // Ищем пользователя по username
-                                            const userResponse = await fetch(`${base_url}/api/users?filters[username][$eq]=${encodeURIComponent(username)}&populate=avatar`, {
-                                                headers: token ? { 'Authorization': `Bearer ${token}` } : {}
-                                            });
+                                            const userResponse = await fetch(`${base_url}/api/users?filters[username][$eq]=${encodeURIComponent(username)}&populate=avatar`);
                                             if (userResponse.ok) {
                                                 const userData = await userResponse.json();
                                                 if (userData.data && userData.data.length > 0) {
@@ -647,30 +632,11 @@ const loadPostWithComments = async () => {
             }
         }
 
-        // Повторно запрашиваем пост с JWT (populate отношений, если публичный findOne урезан).
-        if (import.meta.client) {
-            const token = localStorage.getItem('jwt');
-            if (token) {
-                const authHeaders = { Authorization: `Bearer ${token}` };
-                // Strapi 5: несколько populate[field]=* в одном запросе часто даёт 400 — достаточно populate=*
-                try {
-                    const api = await $fetch(
-                        `${base_url}/api/posts/${encodeURIComponent(id)}?populate=*`,
-                        { headers: authHeaders }
-                    );
-                    if (api?.data) {
-                        post.value = api.data;
-                        if (post.value?.body) {
-                            mark.value = renderPostBody(post.value.body);
-                        }
-                    }
-                } catch (e) {
-                    console.warn('Не удалось обновить пост с авторизацией:', e);
-                }
-            }
-        }
-        
-        // Всегда загружаем комментарии отдельным запросом, так как они могут не загрузиться через populate
+        // Пост уже с SSR (публичный find). Не перезапрашиваем с JWT:
+        // у роли Authenticated populate=* / связанные сущности часто дают 403,
+        // хотя без токена тот же URL отвечает 200.
+
+        // Комментарии — отдельным публичным запросом (без Authorization)
         await loadComments();
     } catch (error) {
         // Ошибка при загрузке комментариев
@@ -755,18 +721,6 @@ const submitComment = async () => {
             commentError.value = 'Ошибка: ID пользователя не найден';
             isSubmitting.value = false;
             return;
-        }
-        
-        // Сначала попробуем получить информацию о модели Comment через API
-        // или загрузить существующие комментарии, чтобы понять структуру
-        try {
-            const testResponse = await fetch(`${base_url}/api/comments?pagination[limit]=1&populate=*`, {
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
-            });
-        } catch (e) {
-            // Не удалось загрузить пример комментария
         }
         
         // В Strapi v4 для связей Many-to-One используется просто ID
