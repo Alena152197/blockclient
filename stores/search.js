@@ -11,15 +11,6 @@ const defaultProfileNote = `В этом блоге я хочу рассказа�
 а потом вдруг что-то происходит, и вся жизнь переворачивается с ног на голову,
 так случилось и у меня...`
 
-const getInitialProfileNote = () => {
-  try {
-    const stored = localStorage.getItem('profile_note_guest')
-    return stored && stored.trim().length ? stored : defaultProfileNote
-  } catch (e) {
-    return defaultProfileNote
-  }
-}
-
 /** Роль из /users/me: Strapi 4/5, вложенный data, attributes */
 function normalizeStrapiRole(rawRole) {
   let r = rawRole
@@ -92,7 +83,8 @@ export const useSearchStore = defineStore('search', {
     authToggle: true,
     userMe: {}, // Всегда плоский объект: id, username, email, avatar и т.д.
     config: {},
-    profileNote: getInitialProfileNote(),
+    // Не читать localStorage в state() — иначе SSR ≠ клиент (hydration mismatch)
+    profileNote: defaultProfileNote,
   }),
 
   actions: {
@@ -180,7 +172,7 @@ export const useSearchStore = defineStore('search', {
         if (import.meta.dev) {
           console.warn('fetchUserMe:', error)
         }
-        // Не затираем сессию при 403 /users/me — оставляем кэш / pinia persist
+        // Не затираем сессию при 403 /users/me — оставляем кэш из localStorage (после mount)
         const cached = readCachedAuthUser()
         if (cached?.id || cached?.documentId) {
           this.userMe = {
@@ -258,5 +250,8 @@ export const useSearchStore = defineStore('search', {
     },
   },
 
-  persist: true,
+  // Не персистить userMe/config/searchQuery: pinia-plugin восстанавливает их
+  // на клиенте до гидрации → «Hydration completed but contains mismatches».
+  // JWT и strapi_auth_user остаются в localStorage; userMe подгружается в app.vue onMounted.
+  persist: false,
 })

@@ -21,10 +21,6 @@ const { data: blogSettings } = await useAsyncData('blog-settings', () =>
   $fetch('/api/blog-settings').catch(() => ({}))
 )
 
-if (import.meta.client && blogSettings.value && typeof blogSettings.value === 'object') {
-  applyBlogSettingsPayload(blogSettings.value)
-}
-
 /** Страницы, где корень должен занимать всю высоту main (фон без «дыр» над/под контентом) */
 const isFullBleedMainPage = computed(() => route.path === '/blog' || route.path === '/contact')
 
@@ -35,7 +31,9 @@ const nuxtPageLayoutClass = computed(() =>
 const base = STRAPI_BASE
 const api = await $fetch(`${base}/api/config?populate=*`)
 const config = api.data
-const index = useSearchStore();
+const index = useSearchStore()
+// Сразу в setup (и на SSR, и на клиенте) — иначе главная с v-if="config.primeryBlock" гидратится с пустым store
+index.config = config || {}
 
 /** Свой заголовок вкладки из настроек (localStorage), обновляется событием blog-display-title-changed */
 const displayTitleOverride = ref('')
@@ -78,14 +76,20 @@ onMounted(() => {
     document.documentElement.classList.remove('dark')
     try {
       localStorage.removeItem('color-theme')
+      // старый persist:true оставлял userMe/config в pinia — убрать, чтобы не мешало
+      localStorage.removeItem('search')
     } catch {
       /* ignore */
     }
+    if (blogSettings.value && typeof blogSettings.value === 'object') {
+      applyBlogSettingsPayload(blogSettings.value)
+    }
     syncDisplayTitleFromStorage()
     window.addEventListener('blog-display-title-changed', syncDisplayTitleFromStorage)
+    index.loadProfileNote(index.userMe?.id || null)
   }
-  index.fetchUserMe();
-  index.config = config;
+  // Только после mount: JWT в localStorage, SSR остаётся «гостем» как и первый paint клиента
+  index.fetchUserMe()
 })
 
 onUnmounted(() => {
