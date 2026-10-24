@@ -15,22 +15,27 @@ jobs:
           HOST: ${{ secrets.HOST }}
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
+          SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           missing=
           [ -n "$HOST" ] || missing="$missing HOST"
           [ -n "$USERNAME" ] || missing="$missing USERNAME"
           [ -n "$PORT" ] || missing="$missing PORT"
-          [ -n "$SSH_PRIVATE_KEY" ] || missing="$missing SSH_PRIVATE_KEY"
+          # Jino proxy часто принимает пароль, а ключ — нет
+          if [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_PRIVATE_KEY" ]; then
+            missing="$missing SSH_PASSWORD_or_SSH_PRIVATE_KEY"
+          fi
           if [ -n "$missing" ]; then
             echo "::error::В GitHub → Settings → Secrets and variables → Actions не заданы:$missing"
-            echo "Для Jino VPS обычно PORT=49240 (не 22)."
+            echo "Для Jino Nuxt-VPS: HOST=4cce9171d57c.vps.myjino.ru, PORT из панели, USERNAME=root, SSH_PASSWORD=пароль root."
             exit 1
           fi
           echo "HOST length: ${#HOST}"
           echo "USERNAME length: ${#USERNAME}"
           echo "PORT: $PORT"
-          echo "SSH_PRIVATE_KEY length: ${#SSH_PRIVATE_KEY}"
+          echo "SSH_PASSWORD set: $([ -n "$SSH_PASSWORD" ] && echo yes || echo no)"
+          echo "SSH_PRIVATE_KEY set: $([ -n "$SSH_PRIVATE_KEY" ] && echo yes || echo no)"
 
       - name: 📦 Получить код
         uses: actions/checkout@v5
@@ -50,11 +55,9 @@ jobs:
       - name: 🔨 Собрать проект
         run: npm run build
         env:
-          # публичные значения вшиваются в клиент при сборке
           NUXT_PUBLIC_STRAPI_URL: ${{ secrets.NUXT_PUBLIC_STRAPI_URL }}
           NUXT_PUBLIC_CONTENT_ADMIN_EMAILS: ${{ secrets.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS }}
           NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES: ${{ secrets.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES }}
-          # серверный токен (если нужен при сборке / runtime в артефакте не храним — на VPS свой .env)
           STRAPI_API_TOKEN: ${{ secrets.STRAPI_API_TOKEN }}
 
       - name: 🔍 Проверить сборку
@@ -66,14 +69,13 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
+          password: ${{ secrets.SSH_PASSWORD }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "."
           target: "/var/www/blockclient"
           overwrite: true
           tar_dereference: true
-          # не затираем секреты и данные на сервере
           rm: false
-          # не тащим мусор — меньше шанс таймаута/обрыва
           exclude: "node_modules,.git,.data,.nuxt,.output/public/_nuxt/*.map,.env,.posts-backup.json,.posts-tmp.json"
 
       - name: 🔁 Установить зависимости и перезапустить PM2
@@ -82,6 +84,7 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
+          password: ${{ secrets.SSH_PASSWORD }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
