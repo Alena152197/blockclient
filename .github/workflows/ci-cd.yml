@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,28 +17,56 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           missing=
           [ -n "$HOST" ] || missing="$missing HOST"
           [ -n "$USERNAME" ] || missing="$missing USERNAME"
-          [ -n "$PORT" ] || missing="$missing PORT"
-          [ -n "$SSH_PASSWORD" ] || missing="$missing SSH_PASSWORD"
+          if [ -z "$SSH_PRIVATE_KEY" ] && [ -z "$SSH_PASSWORD" ]; then
+            missing="$missing SSH_PRIVATE_KEY|SSH_PASSWORD"
+          fi
           if [ -n "$missing" ]; then
             echo "::error::Не заданы секреты:$missing"
             exit 1
           fi
-          echo "HOST ok, PORT=$PORT, password set"
+          # Jino: fenix1521.ru — HTTP-прокси, SSH — hostname VPS (*.vps.myjino.ru)
+          echo "HOST=$HOST"
+          echo "PORT=${PORT:-22}"
+          echo "USERNAME=$USERNAME"
+          if [ -n "$SSH_PRIVATE_KEY" ]; then
+            echo "auth=SSH_PRIVATE_KEY"
+            echo "USE_KEY=1" >> "$GITHUB_ENV"
+          else
+            echo "auth=SSH_PASSWORD"
+            echo "USE_KEY=0" >> "$GITHUB_ENV"
+          fi
+
+      - name: 🔌 Проверить TCP до SSH
+        env:
+          HOST: ${{ secrets.HOST }}
+          PORT: ${{ secrets.PORT }}
+        run: |
+          PORT="${PORT:-22}"
+          echo "nc $HOST $PORT ..."
+          if nc -z -w 8 "$HOST" "$PORT"; then
+            echo "TCP open"
+          else
+            echo "::error::Порт $PORT на $HOST закрыт из GitHub Actions. Для Nuxt-VPS: HOST=4cce9171d57c.vps.myjino.ru, PORT=22 (не 49481 из панели)."
+            exit 1
+          fi
 
       # Сборка на GitHub не нужна: код тянем на VPS и собираем там
-      # (SCP через прокси Jino у вас стабильно падает)
 
-      - name: 🚀 git pull + build + pm2 на Nuxt-VPS
+      - name: 🚀 Deploy по SSH-ключу
+        if: env.USE_KEY == '1'
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
-          port: ${{ secrets.PORT }}
-          password: ${{ secrets.SSH_PASSWORD }}
+          port: ${{ secrets.PORT || 22 }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          protocol: tcp4
+          timeout: 45s
           command_timeout: 20m
           script: |
             set -e
@@ -48,7 +77,33 @@ jobs:
             node -v
             git fetch origin main
             git reset --hard origin/main
-            # .env на сервере не трогаем
+            npm ci
+            npm run build
+            test -f .output/server/index.mjs
+            pm2 restart client-prod || pm2 start ecosystem.config.cjs --only client-prod
+            pm2 save || true
+            pm2 status
+
+      - name: 🚀 Deploy по паролю
+        if: env.USE_KEY != '1'
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          port: ${{ secrets.PORT || 22 }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          protocol: tcp4
+          timeout: 45s
+          command_timeout: 20m
+          script: |
+            set -e
+            cd /var/www/blockclient
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
+            nvm use 22 || nvm use default || true
+            node -v
+            git fetch origin main
+            git reset --hard origin/main
             npm ci
             npm run build
             test -f .output/server/index.mjs
