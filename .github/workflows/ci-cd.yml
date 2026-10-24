@@ -16,16 +16,12 @@ jobs:
           USERNAME: ${{ secrets.USERNAME }}
           PORT: ${{ secrets.PORT }}
           SSH_PASSWORD: ${{ secrets.SSH_PASSWORD }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
           missing=
           [ -n "$HOST" ] || missing="$missing HOST"
           [ -n "$USERNAME" ] || missing="$missing USERNAME"
           [ -n "$PORT" ] || missing="$missing PORT"
-          # Jino proxy часто принимает пароль, а ключ — нет
-          if [ -z "$SSH_PASSWORD" ] && [ -z "$SSH_PRIVATE_KEY" ]; then
-            missing="$missing SSH_PASSWORD_or_SSH_PRIVATE_KEY"
-          fi
+          [ -n "$SSH_PASSWORD" ] || missing="$missing SSH_PASSWORD"
           if [ -n "$missing" ]; then
             echo "::error::В GitHub → Settings → Secrets and variables → Actions не заданы:$missing"
             echo "Для Jino Nuxt-VPS: HOST=4cce9171d57c.vps.myjino.ru, PORT из панели, USERNAME=root, SSH_PASSWORD=пароль root."
@@ -34,8 +30,7 @@ jobs:
           echo "HOST length: ${#HOST}"
           echo "USERNAME length: ${#USERNAME}"
           echo "PORT: $PORT"
-          echo "SSH_PASSWORD set: $([ -n "$SSH_PASSWORD" ] && echo yes || echo no)"
-          echo "SSH_PRIVATE_KEY set: $([ -n "$SSH_PRIVATE_KEY" ] && echo yes || echo no)"
+          echo "SSH_PASSWORD set: yes"
 
       - name: 📦 Получить код
         uses: actions/checkout@v5
@@ -70,7 +65,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           password: ${{ secrets.SSH_PASSWORD }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: "."
           target: "/var/www/blockclient"
           overwrite: true
@@ -85,7 +79,6 @@ jobs:
           username: ${{ secrets.USERNAME }}
           port: ${{ secrets.PORT }}
           password: ${{ secrets.SSH_PASSWORD }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
             set -e
             cd /var/www/blockclient
