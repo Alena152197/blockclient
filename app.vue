@@ -1,5 +1,7 @@
 <template>
-  <NuxtLoadingIndicator :throttle="0" />
+  <ClientOnly>
+    <NuxtLoadingIndicator :throttle="0" />
+  </ClientOnly>
   <Navbar />
   <!-- flex-auto: заполняет место между шапкой и футером. flex/col + flex-1 на /blog и /contact — чтобы фон на всю высоту main; иначе ломается расклад (напр. настройки + аккордеоны). -->
   <main class="flex-auto bg-[#FFEE00]/70" :class="isFullBleedMainPage ? 'flex min-h-0 flex-col' : ''">
