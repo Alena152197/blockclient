@@ -4,14 +4,34 @@
             <div class="phoneMain-bg-layer" :style="customBgLayerStyle" />
             <div class="phoneMain-bg-overlay" :style="customBgOverlayStyle" />
         </div>
-        <!-- Левая часть -->
-        <div class="left-images">
-            <img src="/img/notebook-sea.png" alt="Картинка 1" class="image-left-top">
-            <img src="/img/notebook-mountains.png" alt="Картинка 2" class="image-left-bottom">
-        </div>
-        <!-- Центральная часть -->
-        <div class="center-content" v-if="index.config.primeryBlock">
-            <img src="/img/notebook-zebra.png" alt="Картинка 3" class="center-image">
+        <!-- Центральная часть: левые фото привязаны к блокноту (~⅓ под ним) -->
+        <div
+            class="center-content"
+            :class="{ 'center-content--page-open': mobileNotebookOpen }"
+            v-if="index.config.primeryBlock"
+            :role="isMobileNotebook ? 'button' : undefined"
+            :tabindex="isMobileNotebook ? 0 : undefined"
+            :aria-expanded="isMobileNotebook ? mobileNotebookOpen : undefined"
+            :aria-label="isMobileNotebook ? (mobileNotebookOpen ? 'Закрыть страницу блокнота' : 'Открыть страницу с текстом') : undefined"
+            @click="onNotebookTap"
+            @keydown.enter.prevent="onNotebookTap"
+            @keydown.space.prevent="onNotebookTap"
+        >
+            <div class="left-images">
+                <img src="/img/notebook-sea.png" alt="Картинка 1" class="image-left-top">
+                <img src="/img/notebook-mountains.png" alt="Картинка 2" class="image-left-bottom">
+            </div>
+            <div class="notebook-clip">
+                <img src="/img/notebook-zebra.png" alt="Картинка 3" class="center-image">
+            </div>
+            <button
+                v-if="isMobileNotebook && mobileNotebookOpen"
+                type="button"
+                class="notebook-back-btn"
+                @click.stop="mobileNotebookOpen = false"
+            >
+                Назад
+            </button>
             <!-- Режим просмотра -->
             <div
                 v-if="!isEditing"
@@ -116,7 +136,7 @@
                 </div>
             </div>
             <!-- Кнопки управления — только администратор контента -->
-            <div v-if="canManageContent" class="edit-controls">
+            <div v-if="canManageContent" class="edit-controls" @click.stop>
                 <button
                     v-if="!isEditing"
                     type="button"
@@ -177,13 +197,6 @@
                 <img src="/img/swirl-large.png" alt="" class="image-right-bottom">
                 <img src="/img/pencil.png" alt="" class="image-right-top">
                 <img src="/img/pencil-top.png" alt="" class="image-right-middle">
-                <img src="/img/notebook-zebra-1024.png" alt="" class="imageRightBlock">
-                <img src="/img/notebook-zebra-768.png" alt="" class="imageRightNone">
-                <img src="/img/swirl-large-phone.png" alt="" class="topKara">
-                <img src="/img/swirl-top.png" alt="" class="nizKara">
-                <img src="/img/swirl-bottom.png" alt="" class="tocKara">
-                <img src="/img/graphite-phone-alt.png" alt="" class="grafKara">
-                <img src="/img/sharpener-phone.png" alt="" class="phoneToc">
             </div>
         </div>
     </div>
@@ -287,30 +300,57 @@ function waveCharStyle(lineIdx, charIdx) {
     };
 }
 
-const STORAGE_KEY = 'notebook-text';
+const STORAGE_KEY = 'notebook-text-fixed-v3';
 
+/* Переносы строк зафиксированы <br> — одинаковые на любом экране */
 const defaultText = `<p>Всем привет!<br>
 Будем знакомы, Меня зовут Алена.</p>
-<p>В этом блоге я хочу рассказать
-про свой жизненный путь, с чего всё
-началось, поиски себя и своего места
-в жизни, и всё ли так просто, как кажется
+<p>В этом блоге я хочу рассказать<br>
+про свой жизненный путь, с чего всё<br>
+началось, поиски себя и своего места<br>
+в жизни, и всё ли так просто, как кажется<br>
 на первый взгляд.</p>
 <p class="notebook-gap">&nbsp;</p>
-<p>Надеюсь, моя история будет для кого-то
-полезной, как преодолеть трудности ,
-как не потерять себя и найти силы на
+<p>Надеюсь, моя история будет для кого-то<br>
+полезной, как преодолеть трудности ,<br>
+как не потерять себя и найти силы на<br>
 что-то новое.</p>
 <p class="notebook-gap">&nbsp;</p>
-<p>Жизнь, мягко говоря, непредсказуема.
-В один момент все идет хорошо, а потом
-вдруг что-то происходит, и вся жизнь
-переворачивается с ног на голову,
+<p>Жизнь, мягко говоря, непредсказуема.<br>
+В один момент все идет хорошо, а потом<br>
+вдруг что-то происходит, и вся жизнь<br>
+переворачивается с ног на голову,<br>
 так случилось и у меня...</p>`;
 
 const notebookText = ref(defaultText);
 const isEditing = ref(false);
 const editingText = ref('');
+
+/** ≤900px: сначала лицевая (левая) страница, по тапу — правая с текстом */
+const mobileNotebookOpen = ref(false);
+const isMobileNotebook = ref(false);
+let mobileNotebookMq = null;
+
+function syncMobileNotebookMq() {
+    if (typeof window === 'undefined') return;
+    isMobileNotebook.value = mobileNotebookMq?.matches ?? false;
+    if (!isMobileNotebook.value) {
+        mobileNotebookOpen.value = false;
+    }
+}
+
+function onNotebookTap(e) {
+    if (!isMobileNotebook.value) return;
+    const t = e?.target;
+    if (t?.closest?.('.edit-controls, .textKra-editor, .notebook-fmt-toolbar, button, a, input, select, textarea')) {
+        return;
+    }
+    /* открыто: тап по тексту не закрывает (можно читать/выделять) */
+    if (mobileNotebookOpen.value && t?.closest?.('.textKra')) {
+        return;
+    }
+    mobileNotebookOpen.value = !mobileNotebookOpen.value;
+}
 
 /** Старые сохранения с <h4> для приветствия → обычные <p>, чтобы вес шрифта совпадал у всех */
 function normalizeNotebookHtml(html) {
@@ -395,6 +435,9 @@ function applyNotebookFormat(kind) {
 // Начать редактирование
 const startEdit = () => {
     if (!canManageContent.value) return;
+    if (isMobileNotebook.value) {
+        mobileNotebookOpen.value = true;
+    }
     // Абзацы → переносы, жирный/цвет/ссылки сохраняем как HTML-теги
     editingText.value = notebookHtmlToEditable(notebookText.value);
     isEditing.value = true;
@@ -451,27 +494,35 @@ onMounted(async () => {
     }
     if (typeof window !== 'undefined') {
         window.addEventListener('blog-index-bg-changed', onBlogIndexBgChanged);
+        mobileNotebookMq = window.matchMedia('(max-width: 900px)');
+        syncMobileNotebookMq();
+        mobileNotebookMq.addEventListener('change', syncMobileNotebookMq);
     }
 });
 
 onUnmounted(() => {
     if (typeof window !== 'undefined') {
         window.removeEventListener('blog-index-bg-changed', onBlogIndexBgChanged);
+        mobileNotebookMq?.removeEventListener('change', syncMobileNotebookMq);
+        mobileNotebookMq = null;
     }
 });
 </script>
 
 <style scoped>
+/* Позиции left/top/width/rotate — правь в media ниже */
 .phoneMain {
+    --chrome: 151px;
     position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    height: calc(100vh - 151px);
-    width: 100vw;
-    max-width: 100vw;
+    width: 100%;
+    height: calc(100dvh - var(--chrome));
+    max-width: 100%;
+    box-sizing: border-box;
     background-image: url("/img/zebra-bg-stripes.png");
-    background-size: 100% 110%;
+    background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
@@ -500,25 +551,34 @@ onUnmounted(() => {
     pointer-events: none;
 }
 
+/*
+ * Текст на правом листе — одни % и размер от ширины блокнота.
+ * Переносы только через <br>, media не трогает.
+ */
 .textKra {
     position: absolute;
-    top: 2.5%;
-    right: 3%;
-    left: 56%;
-    bottom: 8%;
+    top: 3%;
+    right: 4%;
+    left: calc(55% + 10px);
+    bottom: 9%;
     color: rgb(10, 10, 10);
-    font-size: clamp(11px, 1.1vw, 15px);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1.9cqi;
+    font-weight: 400;
     text-align: left;
     z-index: 10;
-    padding: 10px 12px 16px;
+    padding: 1.1cqi 1.15cqi 1.5cqi;
     overflow: hidden;
     outline: none;
-    word-wrap: break-word;
     line-height: 1.55;
     max-height: 100%;
     box-sizing: border-box;
     cursor: text;
     user-select: text;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: normal;
+    hyphens: none;
 }
 
 .textKra:focus {
@@ -534,10 +594,10 @@ onUnmounted(() => {
 
 .textKra-editor {
     position: absolute;
-    top: 2.5%;
-    right: 3%;
-    left: 56%;
-    bottom: 8%;
+    top: 3%;
+    right: 4%;
+    left: calc(55% + 10px);
+    bottom: 9%;
     z-index: 30;
     display: flex;
     flex-direction: column;
@@ -641,7 +701,6 @@ onUnmounted(() => {
     background: #fffefb;
 }
 
-/* h4 мог остаться в старом localStorage — вес как у обычного текста */
 .textKra h4 {
     margin: 0 0 0.55em 0;
     font-size: 1em;
@@ -654,7 +713,7 @@ onUnmounted(() => {
 }
 
 .textKra p {
-    margin: 0 0 0.55em 0;
+    margin: 0 0 0.35em 0;
     text-indent: 0;
 }
 
@@ -662,11 +721,10 @@ onUnmounted(() => {
     margin-bottom: 0;
 }
 
-/* Пустая строка в редакторе → компактный разрыв (пробел между абзацами) */
 .textKra p.notebook-gap {
-    margin: 0.2em 0;
-    min-height: 0.65em;
-    line-height: 0.65em;
+    margin: 0.45em 0;
+    min-height: 0.85em;
+    line-height: 0.85em;
     text-indent: 0;
 }
 
@@ -754,45 +812,68 @@ onUnmounted(() => {
 }
 
 .left-images,
-.center-content {
-    position: absolute;
-    z-index: 1;
-}
-
-/* Декор не перехватывает мышь — иначе нельзя выделить текст в блокноте */
-.left-images,
 .right-images,
 .center-image {
     pointer-events: none;
 }
 
+/* ===== ДЕСКТОП как на скрине ===== */
 .center-content {
+    position: absolute;
     z-index: 2;
-}
-
-.left-images {
-    left: 24%;
-    top: 46%;
-    transform: translate(-130px, -50%);
-    width: 19%;
-}
-
-.left-images img {
-    width: 100%;
-    height: auto;
-    margin-bottom: 10px;
-}
-
-.center-content {
     left: 50%;
     top: 45%;
     transform: translate(-50%, -50%);
     text-align: center;
     width: 50%;
     max-width: 1041px;
+    container-type: inline-size;
+    container-name: notebook;
+}
+
+/*
+ * Левые фото — внутри блокнота.
+ * translateX(-66% + 20px): ~⅔ снаружи, ~⅓ под блокнотом.
+ */
+.left-images {
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 36%;
+    transform: translate(calc(-66% + 20px), -50%);
+    z-index: 0;
+}
+
+.left-images img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 4%;
+    display: block;
+}
+
+/* поворот левых фото — крути здесь */
+.image-left-top {
+    transform: rotate(-6deg);
+}
+
+.image-left-bottom {
+    transform: rotate(-4deg);
+}
+
+.notebook-back-btn {
+    display: none;
+}
+
+.notebook-clip {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    overflow: visible;
 }
 
 .center-image {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 100%;
     max-width: 1041px;
@@ -804,21 +885,24 @@ onUnmounted(() => {
 
 .quote-container {
     position: absolute;
-    left: 62%;
-    transform: translate(-70%, -15%);
+    left: calc(62% - 80px);
+    top: 100%;
+    transform: translate(-70%, -1.35rem);
     max-width: 420px;
+    width: 42%;
     white-space: initial;
     pointer-events: none;
+    text-align: left;
 }
 
 .quote {
     margin: 0;
-    font-size: clamp(1rem, 1vw, 1rem);
+    font-size: clamp(0.72rem, 1.35vw, 1rem);
     font-style: italic;
     font-weight: 700;
     color: #000000;
     line-height: 1.65;
-    text-shadow: 
+    text-shadow:
         2px 2px 4px rgba(255, 255, 255, 1),
         0 0 10px rgba(255, 255, 255, 0.9),
         0 0 20px rgba(255, 255, 255, 0.7),
@@ -832,12 +916,12 @@ onUnmounted(() => {
 }
 
 .author {
-    font-size: clamp(0.8rem, 1.5vw, 1rem);
+    font-size: clamp(0.65rem, 1.15vw, 0.95rem);
     font-weight: 600;
     color: #0a0a0a;
-    margin-top: 12px;
+    margin-top: 0.7vw;
     white-space: nowrap;
-    text-shadow: 
+    text-shadow:
         1px 1px 3px rgba(255, 255, 255, 1),
         0 0 8px rgba(255, 255, 255, 0.9),
         0 0 15px rgba(255, 255, 255, 0.7),
@@ -845,7 +929,6 @@ onUnmounted(() => {
     -webkit-text-stroke: 0.2px rgba(255, 255, 255, 0.5);
 }
 
-/* Волна по буквам: строка за строкой, общий цикл */
 .quote-char {
     display: inline-block;
     animation-name: quoteCharWave;
@@ -860,7 +943,6 @@ onUnmounted(() => {
     width: 0.28em;
 }
 
-/* Мягкий длинный подъём; очередь строк — через delay */
 @keyframes quoteCharWave {
     0%,
     100% {
@@ -880,18 +962,17 @@ onUnmounted(() => {
     }
 }
 
-/* Правый декор: у нижнего правого угла блокнота, чуть ниже края */
+/* карандаши — правый нижний угол блокнота */
 .right-images {
     position: absolute;
     right: 1%;
     top: calc(100% + 6px);
-    left: auto;
-    bottom: auto;
-    width: clamp(80px, 7.5vw, 115px);
-    height: clamp(95px, 12vw, 140px);
+    width: clamp(28px, 2.6vw, 40px);
+    height: clamp(34px, 4.2vw, 48px);
     z-index: 4;
     pointer-events: none;
-    translate: 50px 0px;
+    /* +50% своей высоты вниз */
+    translate: 50px 110%;
 }
 
 .right-images > img {
@@ -903,6 +984,7 @@ onUnmounted(() => {
     transform-origin: center center;
 }
 
+/* повороты карандашей — крути transform: rotate(...) */
 .image-right-bottom {
     width: 58%;
     left: 2%;
@@ -940,502 +1022,102 @@ onUnmounted(() => {
     }
 }
 
-.imageRightBlock {
-    display: none;
-}
+/*
+ * MEDIA — один и тот же открытый блокнот (notebook-zebra)
+ * на всех экранах. Крути left / top / width / rotate сама.
+ */
 
-.imageRightNone {
-    display: none;
-    overflow: hidden;
-}
+@media (max-width: 1400px) {
+    .center-content {
+        width: 55%;
+        top: 46%;
+    }
 
-.grafKara,
-.topKara,
-.nizKara,
-.tocKara,
-.phoneToc {
-    display: none;
-}
-
-@media (max-width: 1600px) {
     .quote-container {
-        bottom: -32%;
-        transform: translate(-50%, -50%);
-    }
-
-    .quote {
-        font-size: clamp(0.9rem, 1vw, 0.9rem);
-    }
-
-    .author {
-        font-size: clamp(0.7rem, 1.5vw, 0.8rem);
-    }
-
-    .textKra {
-        font-size: clamp(11px, 1.1vw, 15px);
-        padding: 18px 12px;
+        left: calc(58% - 80px);
+        width: 40%;
+        transform: translate(-55%, -1.2rem);
     }
 }
 
-@media (max-width: 1500px) {
+@media (max-width: 1200px) {
     .phoneMain {
         background-image: url(/img/zebra-stripes-1536.png);
     }
 
-    .left-images {
-        left: 13%;
-        top: 53%;
-    }
-
     .center-content {
         left: 50%;
-        top: 51%;
-        width: 58%;
+        top: 47%;
+        width: 64%;
+    }
+
+    .left-images {
+        width: 34%;
     }
 
     .quote-container {
-        bottom: -31%;
-    }
-
-    .textKra {
-        font-size: clamp(11px, 1.1vw, 14px);
-        padding: 18px 12px;
-    }
-}
-
-/* ~1500px: левые картинки на 150px вправо (не для более узких) */
-@media (max-width: 1500px) and (min-width: 1321px) {
-    .left-images {
-        transform: translate(10px, -50%);
-    }
-}
-
-@media (max-width: 1320px) {
-    .left-images {
-        transform: translateY(-50%);
-    }
-
-    .quote-container {
-        bottom: -43%;
+        left: calc(55% - 80px);
+        width: 44%;
+        transform: translate(-50%, -1.1rem);
     }
 
     .right-images {
         right: 0;
         top: calc(100% + 4px);
-        width: clamp(75px, 7vw, 100px);
-        height: clamp(90px, 11vw, 120px);
-    }
-
-    .textKra {
-        font-size: clamp(10px, 1vw, 13px);
-        padding: 15px 10px;
-    }
-}
-
-@media (max-width: 1200px) {
-    .center-content {
-        left: 48%;
-        top: 50%;
-        width: 70%;
-    }
-
-    .left-images {
-        left: 3%;
-        top: 59%;
-        scale: 1.2;
-    }
-
-    .quote-container {
-        bottom: -38%;
-        left: 50%;
-    }
-
-    .right-images {
-        right: -1%;
-        top: calc(100% + 2px);
-        width: clamp(70px, 7.5vw, 95px);
-        height: clamp(85px, 10vw, 115px);
+        width: clamp(24px, 2.4vw, 34px);
+        height: clamp(30px, 3.8vw, 42px);
+        translate: 30px 110%;
     }
 }
 
 @media (max-width: 1024px) {
-    .left-images {
-        left: 18%;
-        top: 55%;
-        scale: 1.3;
-    }
-
-    .center-content {
-        left: 50%;
-        top: 43%;
-        width: 40%;
-        z-index: 3;
-    }
-
-    .center-image {
-        content: url("/img/notebook-phone.png");
-        max-width: 315px;
-        aspect-ratio: 315 / 415;
-    }
-
     .phoneMain {
         background-image: url(/img/stripes-1024.png);
         background-size: cover;
     }
 
-    .quote-container {
-        bottom: -14rem;
-        left: 92%;
-        transform: translateX(-50%);
-        width: 300px;
-        text-align: center;
-    }
-
-    .quote {
-        font-size: 14px;
-        color: #b0b3b0;
-    }
-
-    .author {
-        font-size: clamp(0.7rem, 1.2vw, 0.8rem);
-    }
-
-    .right-images {
-        right: -4%;
-        top: calc(100% + 8px);
-        width: 70px;
-        height: 88px;
-    }
-
-    .imageRightBlock {
-        display: none;
-    }
-
-    .textKra {
-        font-size: clamp(10px, 1vw, 14px);
-        padding: 15px 10px;
-        right: 3%;
-        left: 56%;
-    }
-
-    .textKra-editor {
-        right: 3%;
-        left: 56%;
-    }
-}
-
-@media (max-width: 875px) {
-    .quote-container {
-        bottom: -16rem;
-        left: 80%;
-        transform: translateX(-50%);
-        width: 300px;
-        text-align: center;
-    }
-
-    .imageRightNone {
-        display: none;
-    }
-
-    .right-images {
-        width: 64px;
-        height: 80px;
-        right: -2%;
-        top: calc(100% + 6px);
-    }
-
-    .textKra {
-        font-size: clamp(9px, 0.9vw, 12px);
-        padding: 12px 8px;
-    }
-}
-
-@media (max-width: 768px) {
-    .imageRightBlock {
-        display: none;
-    }
-
-    .imageRightNone {
-        display: block;
-        position: absolute;
-        bottom: 46rem;
-        left: -40px;
-        scale: 4;
-        z-index: 5;
+    .center-content {
+        left: 52%;
+        top: 45%;
+        width: 72%;
     }
 
     .left-images {
-        left: 13%;
-        top: 55%;
-        scale: 1.6;
-    }
-
-    .center-content {
-        left: 50%;
-        top: 43%;
-        width: 50%;
-        z-index: 3;
-    }
-
-    .center-image {
-        content: url("/img/notebook-phone.png");
-        max-width: 315px;
-        aspect-ratio: 315 / 415;
-    }
-
-    .phoneMain {
-        background-image: url(/img/stripes-phone.png);
-        background-size: cover;
-    }
-
-    .quote-container {
-        bottom: -14rem;
-        left: 93%;
-        transform: translateX(-50%);
-        width: 280px;
-        text-align: right;
-    }
-
-    .quote {
-        font-size: clamp(0.9rem, 1.5vw, 1rem);
-        color: #d3cbcb;
-    }
-
-    .author {
-        font-size: clamp(0.8rem, 1.2vw, 0.8rem);
-    }
-
-    .image-right-middle,
-    .image-right-top,
-    .image-right-bottom {
-        display: none;
-    }
-
-    .left-images img {
-        transform: rotate(-20deg);
-    }
-
-    .right-images {
-        right: -6%;
-        top: calc(100% + 10px);
-        width: min(26vw, 95px);
-        height: min(22vw, 85px);
-    }
-
-    .grafKara,
-    .topKara,
-    .nizKara,
-    .tocKara,
-    .phoneToc {
-        display: block;
-        position: absolute;
-        filter: drop-shadow(0 6px 10px rgba(40, 28, 12, 0.2));
-        animation: rightDecorDrift 7s ease-in-out infinite;
-    }
-
-    .grafKara {
-        width: 70%;
-        left: 8%;
-        bottom: 4%;
-        z-index: 1;
-        opacity: 0.9;
-        animation-delay: 0.2s;
-    }
-
-    .topKara {
-        width: 48%;
-        left: 0;
-        bottom: 18%;
-        z-index: 2;
-        transform: rotate(-20deg);
-        animation-delay: 0.5s;
-    }
-
-    .nizKara {
-        width: 36%;
-        right: 6%;
-        bottom: 8%;
-        z-index: 2;
-        transform: rotate(12deg);
-        animation-delay: 0.8s;
-    }
-
-    .tocKara {
         width: 34%;
-        right: 18%;
-        bottom: 42%;
-        z-index: 2;
-        transform: rotate(-8deg);
-        animation-delay: 1s;
+        /* overlap: правь -66% (⅓ под блокнотом) */
+        transform: translate(calc(-66% + 20px), -50%);
     }
 
-    .phoneToc {
-        width: 42%;
+    .quote-container {
+        left: calc(58% - 80px);
+        width: 48%;
+        max-width: none;
+        transform: translate(-55%, -1rem);
+    }
+
+    .quote {
+        font-size: clamp(0.65rem, 1.4vw, 0.85rem);
+    }
+
+    .author {
+        font-size: clamp(0.6rem, 1.2vw, 0.8rem);
+    }
+
+    .quote-line {
+        white-space: nowrap;
+    }
+
+    .right-images {
+        right: -2%;
+        top: calc(100% + 2px);
+        width: clamp(20px, 2.8vw, 30px);
+        height: clamp(26px, 4vw, 38px);
+        translate: 20px 110%;
+    }
+
+    .edit-controls {
+        top: 1.5%;
         right: 2%;
-        bottom: 28%;
-        z-index: 3;
-        transform: rotate(18deg);
-        animation-delay: 0.35s;
-    }
-
-    .textKra {
-        font-size: clamp(10px, 1vw, 13px);
-        padding: 12px 8px;
-    }
-}
-
-@media (max-width: 650px) {
-    .imageRightNone {
-        bottom: 48rem;
-        left: 1rem;
-        scale: 5;
-    }
-
-    .left-images {
-        left: 8%;
-        top: 55%;
-        scale: 1.8;
-    }
-
-    .center-content {
-        left: 50%;
-        top: 43%;
-        width: 65%;
-    }
-
-    .quote-container {
-        bottom: -13rem;
-        left: 75%;
-        transform: translateX(-50%);
-        width: 280px;
-        text-align: right;
-    }
-
-    .right-images {
-        width: min(28vw, 90px);
-        height: min(24vw, 80px);
-        right: -4%;
-        top: calc(100% + 8px);
-    }
-
-    .textKra {
-        font-size: clamp(10px, 1vw, 14px);
-        padding: 10px 6px;
-    }
-}
-
-@media (max-width: 550px) {
-    .imageRightNone {
-        bottom: 48rem;
-        left: 4rem;
-        scale: 6;
-    }
-
-    .left-images {
-        left: 8%;
-        top: 58%;
-        scale: 2.2;
-    }
-
-    .center-content {
-        left: 50%;
-        top: 40%;
-        width: 75%;
-    }
-
-    .quote-container {
-        bottom: -14rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 300px;
-        text-align: right;
-    }
-
-    .quote {
-        font-size: 14px;
-    }
-
-    .author {
-        font-size: 14px;
-    }
-
-    .grafKara,
-    .topKara,
-    .nizKara,
-    .tocKara,
-    .phoneToc {
-        display: none;
-    }
-
-    .right-images {
-        display: none;
-    }
-
-    .textKra {
-        font-size: clamp(9px, 0.9vw, 12px);
-        padding: 10px 6px;
-        text-align: left;
-    }
-}
-
-@media (max-width: 430px) {
-    .imageRightNone {
-        bottom: 47rem;
-        left: 3rem;
-        scale: 7.5;
-    }
-
-    .left-images {
-        left: 8%;
-        top: 60%;
-        scale: 2.5;
-    }
-
-    .center-content {
-        left: 50%;
-        top: 38%;
-        width: 82%;
-    }
-
-    .quote-container {
-        bottom: -15rem;
-        left: 47%;
-        transform: translateX(-50%);
-        width: 250px;
-        text-align: right;
-    }
-
-    .quote {
-        font-size: 12px;
-    }
-
-    .author {
-        font-size: 12px;
-    }
-
-    .textKra {
-        font-size: clamp(8px, 0.8vw, 10px);
-        padding: 8px 5px;
-        text-align: left;
-    }
-
-    .edit-controls {
-        top: 1%;
-        right: 1%;
-    }
-
-    .edit-btn,
-    .save-btn,
-    .cancel-btn {
-        width: 32px;
-        height: 32px;
-    }
-}
-
-@media (max-width: 768px) {
-    .edit-controls {
-        top: 1%;
-        right: 1%;
     }
 
     .edit-btn,
@@ -1450,6 +1132,158 @@ onUnmounted(() => {
     .cancel-btn svg {
         width: 16px;
         height: 16px;
+    }
+}
+
+@media (max-width: 768px) {
+    .phoneMain {
+        background-image: url(/img/stripes-phone.png);
+        background-size: cover;
+    }
+
+    .center-content {
+        left: 54%;
+        top: 44%;
+        width: 82%;
+    }
+
+    .left-images {
+        width: 32%;
+        transform: translate(calc(-66% + 20px), -50%);
+    }
+
+    .quote-container {
+        left: calc(55% - 60px);
+        width: 55%;
+        transform: translate(-50%, -0.85rem);
+    }
+
+    .quote {
+        font-size: clamp(0.55rem, 1.8vw, 0.75rem);
+    }
+
+    .author {
+        font-size: clamp(0.5rem, 1.5vw, 0.7rem);
+        margin-top: 0.35rem;
+    }
+
+    .right-images {
+        width: clamp(16px, 3vw, 24px);
+        height: clamp(20px, 4vw, 30px);
+        translate: 12px 110%;
+    }
+}
+
+/*
+ * ≤900px: лицевая = левая страница разворота.
+ * Тап → сдвиг на правую страницу + текст.
+ */
+@media (max-width: 900px) {
+    .center-content {
+        left: 50%;
+        top: 46%;
+        /* фиксированный размер — не сжимается при сужении окна */
+        width: 360px;
+        min-width: 360px;
+        max-width: 360px;
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    .left-images,
+    .quote-container,
+    .right-images {
+        display: none;
+    }
+
+    .notebook-clip {
+        overflow: hidden;
+        width: 360px;
+        min-width: 360px;
+        border-radius: 2px;
+    }
+
+    .center-image {
+        width: 720px;
+        min-width: 720px;
+        max-width: none;
+        aspect-ratio: 1041 / 708;
+        height: auto;
+        margin: 0;
+        transform: translateX(0);
+        transition: transform 0.45s ease;
+        will-change: transform;
+    }
+
+    .center-content--page-open .center-image {
+        transform: translateX(-50%);
+    }
+
+    .textKra,
+    .textKra-editor {
+        left: 10%;
+        right: 7%;
+        top: 4%;
+        bottom: 8%;
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transition: opacity 0.35s ease 0.1s;
+        font-size: clamp(11px, 4.6cqi, 15px);
+        padding: 2cqi;
+    }
+
+    .center-content--page-open .textKra,
+    .center-content--page-open .textKra-editor {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+
+    /* подсказка: лицевая / назад */
+    .center-content::after {
+        content: 'Нажми';
+        position: absolute;
+        left: 60%;
+        right: auto;
+        bottom: 8%;
+        transform: translateX(-50%);
+        z-index: 5;
+        padding: 0.5rem 1rem;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.88);
+        color: #4a3d32;
+        font-size: 0.9rem;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        pointer-events: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .center-content--page-open::after {
+        display: none;
+    }
+
+    .notebook-back-btn {
+        display: block;
+        position: absolute;
+        top: 5%;
+        right: 5%;
+        z-index: 30;
+        padding: 0.35rem 0.75rem;
+        border: none;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.92);
+        color: #4a3d32;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    }
+
+    .edit-controls {
+        top: 2%;
+        right: 4%;
     }
 }
 </style>

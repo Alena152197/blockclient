@@ -1,19 +1,47 @@
 <template>
     <header class="relative z-20 shrink-0">
         <nav class="bg-gradient-to-r from-red-600 to-red-800 border-gray-200">
-            <!-- отвечает за расположение навигации -->
-            <div class="max-w-screen-xl flex flex-wrap items-center justify-evenly mx-auto p-2">
-                <NuxtLink to="/">
+            <div class="mx-auto flex max-w-screen-xl items-center gap-3 px-3 py-2 sm:px-4">
+                <NuxtLink to="/" class="shrink-0">
                     <img src="/img/site-logo.png" alt="Blockclient">
                 </NuxtLink>
 
-                <div class="flex gap-8 md:order-2">
-                    <div class="relative hidden md:block">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                <!-- Десктоп-ссылки -->
+                <ul class="mx-auto hidden items-center gap-6 font-bold lg:flex">
+                    <li>
+                        <NuxtLink
+                            to="/"
+                            class="block rounded px-2 py-1 text-white transition hover:text-[#a79d1c]"
+                            :class="{ 'font-semibold text-[#a79d1c]': isActive('') }"
+                        >
+                            О БЛОГЕ
+                        </NuxtLink>
+                    </li>
+                    <li>
+                        <NuxtLink
+                            to="/contact"
+                            class="block rounded px-2 py-1 text-white transition hover:text-[#a79d1c]"
+                            :class="{ 'font-semibold text-[#a79d1c]': isActive('contact') }"
+                        >
+                            ИСТОРИЯ
+                        </NuxtLink>
+                    </li>
+                    <li>
+                        <NuxtLink
+                            to="/blog"
+                            class="block rounded px-2 py-1 text-white transition hover:text-[#a79d1c]"
+                            :class="{ 'font-semibold text-[#a79d1c]': isActive('blog') || isActive('post') || isActive('category') }"
+                        >
+                            ИНТЕРЕСЫ
+                        </NuxtLink>
+                    </li>
+                </ul>
+
+                <div class="ml-auto flex shrink-0 items-center gap-2 sm:gap-3">
+                    <div class="relative hidden lg:block">
+                        <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+                            <svg class="h-4 w-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                             <span class="sr-only">Search icon</span>
                         </div>
@@ -22,14 +50,13 @@
                             type="text"
                             id="search-navbar"
                             placeholder="Поиск статей..."
-                            class="block w-full p-2 ps-10 md:ps-1 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder-center"
+                            class="placeholder-center block w-44 rounded-lg border border-gray-300 bg-gray-50 p-2 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 xl:w-56"
                             @focus="goToSearch"
                             @keydown.enter.prevent="goToSearch"
                         >
                     </div>
 
-                    <!-- Меню пользователя на Vue (без Flowbite dropdown — скрипт async и ломался после смены DOM / навигации) -->
-                    <div ref="userMenuRoot" class="relative ml-4 inline-block text-left">
+                    <div ref="userMenuRoot" class="relative inline-block text-left">
                         <button
                             id="avatarButton"
                             type="button"
@@ -72,13 +99,13 @@
                                     </div>
                                 </div>
                                 <template v-if="search.userMe?.id">
-                                    <p class="text-center text-base font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400">
+                                    <p class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-center text-base font-extrabold tracking-tight text-transparent">
                                         {{ search.userMe.username }}
                                     </p>
                                     <p class="mt-0.5 truncate text-center text-xs text-gray-400">{{ search.userMe.email }}</p>
                                 </template>
                                 <template v-else>
-                                    <p class="text-center text-base font-extrabold tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400">
+                                    <p class="bg-gradient-to-r from-pink-400 via-purple-400 to-indigo-400 bg-clip-text text-center text-base font-extrabold tracking-tight text-transparent">
                                         Гость
                                     </p>
                                     <p class="mt-0.5 truncate text-center text-xs text-gray-400">guest@example.com</p>
@@ -183,71 +210,110 @@
 
                     <button
                         type="button"
-                        class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg lg:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
-                        aria-controls="navbar-search"
+                        class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-white hover:bg-white/15 focus:outline-none focus:ring-2 focus:ring-white/40 lg:hidden"
+                        aria-controls="mobile-nav-drawer"
                         :aria-expanded="navOpen"
                         @click.stop="navOpen = !navOpen"
                     >
-                        <span class="sr-only">Open main menu</span>
-                        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 17 14">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M1 1h15M1 7h15M1 13h15" />
+                        <span class="sr-only">Открыть меню</span>
+                        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
                         </svg>
                     </button>
                 </div>
-
-
-                <div
-                    id="navbar-search"
-                    class="items-center justify-between w-full md:w-auto md:order-1"
-                    :class="navOpen ? 'flex' : 'hidden lg:flex'"
-                >
-                    <div class="relative mt-3 md:hidden ">
-                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-500" aria-hidden="true"
-                                xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                            </svg>
-                        </div>
-                        <input
-                            v-model="search.searchQuery"
-                            type="text"
-                            id="search-navbar-mobile"
-                            placeholder="Поиск статей..."
-                            class="block w-full p-2 ps-10 text-sm text-gray-900 bg-gray-50 focus:ring-blue-500 focus:border-blue-500 placeholder-center"
-                            @focus="goToSearch"
-                            @keydown.enter.prevent="goToSearch"
-                        >
-                    </div>
-                    <ul
-                        class="flex flex-col p-5 mt-4 font-bold md:space-x-8  md:flex-row md:mt-0  sm:flex-row sm:justify-center sm:mt-0">
-                        <li>
-                            <NuxtLink to="/"
-                                class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
-                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('') }"
-                                @click="navOpen = false"> О БЛОГЕ
-                            </NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="/contact"
-                                class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
-                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('contact') }"
-                                @click="navOpen = false">
-                                ИСТОРИЯ</NuxtLink>
-                        </li>
-                        <li>
-                            <NuxtLink to="/blog"
-                                class="block py-2 px-5 text-white rounded hover:bg-gray-100 sm:text-sm md:hover:bg-transparent md:hover:text-[#a79d1c] md:p-0"
-                                :class="{ 'md:text-[#a79d1c] font-semibold': isActive('blog') || isActive('post') || isActive('category') }"
-                                @click="navOpen = false">
-                                ИНТЕРЕСЫ</NuxtLink>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </nav>
+
+        <!-- Мобильное меню: выезд справа -->
+        <Teleport to="body">
+            <Transition name="nav-drawer">
+                <div
+                    v-if="navOpen"
+                    class="nav-drawer-root fixed inset-0 z-[60] lg:hidden"
+                >
+                    <button
+                        type="button"
+                        class="nav-drawer-backdrop absolute inset-0 border-0 bg-black/45"
+                        aria-label="Закрыть меню"
+                        @click="navOpen = false"
+                    />
+                    <aside
+                        id="mobile-nav-drawer"
+                        class="nav-drawer-panel absolute inset-y-0 right-0 flex w-[min(100%,20rem)] flex-col bg-gradient-to-b from-red-700 to-red-900 shadow-2xl"
+                        role="dialog"
+                        aria-modal="true"
+                        aria-label="Меню сайта"
+                        @click.stop
+                    >
+                        <div class="flex items-center justify-between border-b border-white/15 px-4 py-3">
+                            <span class="text-sm font-bold tracking-wide text-white/90">Меню</span>
+                            <button
+                                type="button"
+                                class="inline-flex h-9 w-9 items-center justify-center rounded-lg text-white hover:bg-white/15"
+                                aria-label="Закрыть"
+                                @click="navOpen = false"
+                            >
+                                <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                                    <path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M6 6l12 12M18 6L6 18" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        <div class="px-4 pt-4">
+                            <div class="relative">
+                                <div class="pointer-events-none absolute inset-y-0 start-0 flex items-center ps-3">
+                                    <svg class="h-4 w-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                </div>
+                                <input
+                                    v-model="search.searchQuery"
+                                    type="text"
+                                    id="search-navbar-mobile"
+                                    placeholder="Поиск статей..."
+                                    class="placeholder-center block w-full rounded-lg border border-gray-200 bg-gray-50 p-2.5 ps-10 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500"
+                                    @focus="goToSearch"
+                                    @keydown.enter.prevent="goToSearch"
+                                >
+                            </div>
+                        </div>
+
+                        <ul class="mt-4 flex flex-1 flex-col gap-1 overflow-y-auto px-3 pb-6 font-bold">
+                            <li>
+                                <NuxtLink
+                                    to="/"
+                                    class="block rounded-xl px-4 py-3 text-white transition hover:bg-white/15"
+                                    :class="{ 'bg-white/20 text-[#f0e68c]': isActive('') }"
+                                    @click="navOpen = false"
+                                >
+                                    О БЛОГЕ
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    to="/contact"
+                                    class="block rounded-xl px-4 py-3 text-white transition hover:bg-white/15"
+                                    :class="{ 'bg-white/20 text-[#f0e68c]': isActive('contact') }"
+                                    @click="navOpen = false"
+                                >
+                                    ИСТОРИЯ
+                                </NuxtLink>
+                            </li>
+                            <li>
+                                <NuxtLink
+                                    to="/blog"
+                                    class="block rounded-xl px-4 py-3 text-white transition hover:bg-white/15"
+                                    :class="{ 'bg-white/20 text-[#f0e68c]': isActive('blog') || isActive('post') || isActive('category') }"
+                                    @click="navOpen = false"
+                                >
+                                    ИНТЕРЕСЫ
+                                </NuxtLink>
+                            </li>
+                        </ul>
+                    </aside>
+                </div>
+            </Transition>
+        </Teleport>
     </header>
 </template>
 
@@ -311,7 +377,7 @@ function onSubscribeChanged(e) {
 
 const userMenuOpen = ref(false)
 const userMenuRoot = ref(null)
-/** Мобильное меню на Vue — без Flowbite (он ломал DOM и поиск при навигации) */
+/** Мобильное меню — выезд справа */
 const navOpen = ref(false)
 let searchNavLock = false
 
@@ -339,6 +405,11 @@ watch(
     }
 )
 
+watch(navOpen, (open) => {
+    if (typeof document === 'undefined') return
+    document.body.style.overflow = open ? 'hidden' : ''
+})
+
 onMounted(() => {
     document.addEventListener('click', closeUserMenuOnOutside, true)
     document.addEventListener('keydown', onEscape)
@@ -350,6 +421,7 @@ onUnmounted(() => {
     document.removeEventListener('click', closeUserMenuOnOutside, true)
     document.removeEventListener('keydown', onEscape)
     window.removeEventListener('blog-subscribe-changed', onSubscribeChanged)
+    document.body.style.overflow = ''
 })
 
 watch(
@@ -383,5 +455,25 @@ function onLogoutClick() {
 <style scoped>
 .placeholder-center::placeholder {
     text-align: center;
+}
+
+.nav-drawer-enter-active,
+.nav-drawer-leave-active {
+    transition: opacity 0.22s ease;
+}
+
+.nav-drawer-enter-active .nav-drawer-panel,
+.nav-drawer-leave-active .nav-drawer-panel {
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.nav-drawer-enter-from,
+.nav-drawer-leave-to {
+    opacity: 0;
+}
+
+.nav-drawer-enter-from .nav-drawer-panel,
+.nav-drawer-leave-to .nav-drawer-panel {
+    transform: translateX(100%);
 }
 </style>

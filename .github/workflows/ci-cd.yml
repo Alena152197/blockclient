@@ -6,6 +6,11 @@ on:
       - main
   workflow_dispatch:
 
+# Не запускать два деплоя сразу — иначе pm2/сборка на VPS пересекаются и сайт падает
+concurrency:
+  group: production-deploy
+  cancel-in-progress: true
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
