@@ -4,7 +4,6 @@
             <div class="phoneMain-bg-layer" :style="customBgLayerStyle" />
             <div class="phoneMain-bg-overlay" :style="customBgOverlayStyle" />
         </div>
-        <!-- Центральная часть: левые фото привязаны к блокноту (~⅓ под ним) -->
         <div
             class="center-content"
             :class="{ 'center-content--page-open': mobileNotebookOpen }"
@@ -32,13 +31,11 @@
             >
                 Назад
             </button>
-            <!-- Режим просмотра -->
             <div
                 v-if="!isEditing"
                 class="textKra"
                 v-html="notebookText"
             ></div>
-            <!-- Режим редактирования — панель как в книге -->
             <div v-else class="textKra-editor">
                 <div
                     class="notebook-fmt-toolbar"
@@ -135,7 +132,6 @@
                     </span>
                 </div>
             </div>
-            <!-- Кнопки управления — только администратор контента -->
             <div v-if="canManageContent" class="edit-controls" @click.stop>
                 <button
                     v-if="!isEditing"
@@ -192,7 +188,6 @@
                     >{{ item.ch }}</span>
                 </p>
             </div>
-            <!-- Карандаши у правого нижнего угла блокнота, чуть ниже -->
             <div class="right-images" aria-hidden="true">
                 <img src="/img/swirl-large.png" alt="" class="image-right-bottom">
                 <img src="/img/pencil.png" alt="" class="image-right-top">
@@ -227,14 +222,7 @@ import {
 } from '~/utils/contactBookFormat';
 
 const index = useSearchStore();
-const runtimeConfig = useRuntimeConfig();
-const adminAllow = computed(() => ({
-    emails: runtimeConfig.public.contentAdminEmails || '',
-    usernames: runtimeConfig.public.contentAdminUsernames || ''
-}));
-const canManageContent = computed(() =>
-    canManageBlogContent(index.userMe, adminAllow.value)
-);
+const canManageContent = computed(() => canManageBlogContent(index.userMe));
 const notebookEditRef = ref(null);
 const draftTextColor = ref('#8b4513');
 const draftFontSize = ref('1em');
@@ -257,9 +245,8 @@ const QUOTE_WAVE_LINES = [
 ];
 const AUTHOR_WAVE_TEXT = '— Светлана Кременецкая';
 
-/** Сдвиг между соседними буквами (больше = медленнее) */
 const WAVE_CHAR_STEP_S = 0.11;
-/** Пауза в конце полного прохода, перед повтором */
+
 const WAVE_CYCLE_PAUSE_S = 1.2;
 
 function toWaveChars(text) {
@@ -272,7 +259,6 @@ function toWaveChars(text) {
 const quoteWaveLines = QUOTE_WAVE_LINES.map(toWaveChars);
 const authorWaveChars = toWaveChars(AUTHOR_WAVE_TEXT);
 
-/** Старт каждой строки = сразу после последней буквы предыдущей */
 const waveLineStarts = (() => {
     const lengths = [
         ...quoteWaveLines.map((l) => l.length),
@@ -302,7 +288,6 @@ function waveCharStyle(lineIdx, charIdx) {
 
 const STORAGE_KEY = 'notebook-text-fixed-v3';
 
-/* Переносы строк зафиксированы <br> — одинаковые на любом экране */
 const defaultText = `<p>Всем привет!<br>
 Будем знакомы, Меня зовут Алена.</p>
 <p>В этом блоге я хочу рассказать<br>
@@ -326,7 +311,6 @@ const notebookText = ref(defaultText);
 const isEditing = ref(false);
 const editingText = ref('');
 
-/** ≤900px: сначала лицевая (левая) страница, по тапу — правая с текстом */
 const mobileNotebookOpen = ref(false);
 const isMobileNotebook = ref(false);
 let mobileNotebookMq = null;
@@ -345,21 +329,18 @@ function onNotebookTap(e) {
     if (t?.closest?.('.edit-controls, .textKra-editor, .notebook-fmt-toolbar, button, a, input, select, textarea')) {
         return;
     }
-    /* открыто: тап по тексту не закрывает (можно читать/выделять) */
     if (mobileNotebookOpen.value && t?.closest?.('.textKra')) {
         return;
     }
     mobileNotebookOpen.value = !mobileNotebookOpen.value;
 }
 
-/** Старые сохранения с <h4> для приветствия → обычные <p>, чтобы вес шрифта совпадал у всех */
 function normalizeNotebookHtml(html) {
     return String(html || '')
         .replace(/<h4([^>]*)>/gi, '<p$1>')
         .replace(/<\/h4>/gi, '</p>');
 }
 
-// Загрузка текста из localStorage
 const loadText = () => {
     if (typeof window !== 'undefined') {
         const saved = localStorage.getItem(STORAGE_KEY);
@@ -373,7 +354,6 @@ const loadText = () => {
     }
 };
 
-// Сохранение текста в localStorage
 const saveToStorage = (text) => {
     if (typeof window !== 'undefined') {
         localStorage.setItem(STORAGE_KEY, text);
@@ -386,7 +366,6 @@ function onNotebookInput() {
     }
 }
 
-/** Esc / Ctrl+Enter; пробел и обычный Enter не трогаем */
 function onNotebookKeydown(e) {
     if (e.key === 'Escape') {
         e.preventDefault();
@@ -432,13 +411,11 @@ function applyNotebookFormat(kind) {
     }
 }
 
-// Начать редактирование
 const startEdit = () => {
     if (!canManageContent.value) return;
     if (isMobileNotebook.value) {
         mobileNotebookOpen.value = true;
     }
-    // Абзацы → переносы, жирный/цвет/ссылки сохраняем как HTML-теги
     editingText.value = notebookHtmlToEditable(notebookText.value);
     isEditing.value = true;
     nextTick(() => {
@@ -450,7 +427,6 @@ const startEdit = () => {
     });
 };
 
-// Сохранить изменения
 const saveText = () => {
     if (!canManageContent.value) {
         cancelEdit();
@@ -468,7 +444,6 @@ const saveText = () => {
     isEditing.value = false;
 };
 
-// Отменить редактирование
 const cancelEdit = () => {
     isEditing.value = false;
     editingText.value = '';
@@ -510,7 +485,7 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Позиции left/top/width/rotate — правь в media ниже */
+
 .phoneMain {
     --chrome: 151px;
     position: relative;
@@ -551,10 +526,6 @@ onUnmounted(() => {
     pointer-events: none;
 }
 
-/*
- * Текст на правом листе — одни % и размер от ширины блокнота.
- * Переносы только через <br>, media не трогает.
- */
 .textKra {
     position: absolute;
     top: 3%;
@@ -817,7 +788,6 @@ onUnmounted(() => {
     pointer-events: none;
 }
 
-/* ===== ДЕСКТОП как на скрине ===== */
 .center-content {
     position: absolute;
     z-index: 2;
@@ -831,10 +801,6 @@ onUnmounted(() => {
     container-name: notebook;
 }
 
-/*
- * Левые фото — внутри блокнота.
- * translateX(-66% + 20px): ~⅔ снаружи, ~⅓ под блокнотом.
- */
 .left-images {
     position: absolute;
     left: 0;
@@ -851,7 +817,6 @@ onUnmounted(() => {
     display: block;
 }
 
-/* поворот левых фото — крути здесь */
 .image-left-top {
     transform: rotate(-6deg);
 }
@@ -962,7 +927,6 @@ onUnmounted(() => {
     }
 }
 
-/* карандаши — правый нижний угол блокнота */
 .right-images {
     position: absolute;
     right: 1%;
@@ -971,7 +935,7 @@ onUnmounted(() => {
     height: clamp(34px, 4.2vw, 48px);
     z-index: 4;
     pointer-events: none;
-    /* +50% своей высоты вниз */
+    
     translate: 50px 110%;
 }
 
@@ -984,7 +948,6 @@ onUnmounted(() => {
     transform-origin: center center;
 }
 
-/* повороты карандашей — крути transform: rotate(...) */
 .image-right-bottom {
     width: 58%;
     left: 2%;
@@ -1021,11 +984,6 @@ onUnmounted(() => {
         translate: 0 -6px;
     }
 }
-
-/*
- * MEDIA — один и тот же открытый блокнот (notebook-zebra)
- * на всех экранах. Крути left / top / width / rotate сама.
- */
 
 @media (max-width: 1400px) {
     .center-content {
@@ -1084,7 +1042,7 @@ onUnmounted(() => {
 
     .left-images {
         width: 34%;
-        /* overlap: правь -66% (⅓ под блокнотом) */
+        
         transform: translate(calc(-66% + 20px), -50%);
     }
 
@@ -1174,15 +1132,11 @@ onUnmounted(() => {
     }
 }
 
-/*
- * ≤900px: лицевая = левая страница разворота.
- * Тап → сдвиг на правую страницу + текст.
- */
 @media (max-width: 900px) {
     .center-content {
         left: 50%;
         top: 46%;
-        /* фиксированный размер — не сжимается при сужении окна */
+        
         width: 360px;
         min-width: 360px;
         max-width: 360px;
@@ -1240,7 +1194,7 @@ onUnmounted(() => {
         pointer-events: auto;
     }
 
-    /* подсказка: лицевая / назад */
+    
     .center-content::after {
         content: 'Нажми';
         position: absolute;

@@ -1,20 +1,13 @@
-import { defineEventHandler, readBody, getHeader, createError } from 'h3'
-import { verifyBearerUser } from '../../utils/strapiVerifyUser'
+import { defineEventHandler, readBody, createError } from 'h3'
 import { assertContentEditor } from '../../utils/contentAdminGate'
 import { removeBlockedUser } from '../../utils/blockedUsersFile'
 
 export default defineEventHandler(async (event) => {
   const body = (await readBody(event).catch(() => ({}))) as {
     email?: unknown
-    editorEmail?: unknown
-    editorUsername?: unknown
   }
 
-  const user = await verifyBearerUser(getHeader(event, 'authorization'))
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
-  await assertContentEditor(event, body as Record<string, unknown>)
+  await assertContentEditor(event)
 
   const email = typeof body.email === 'string' ? body.email : ''
   try {

@@ -1,68 +1,99 @@
 import { createError, getHeader } from 'h3'
 import type { H3Event } from 'h3'
 import { useRuntimeConfig } from '#imports'
+import { verifyBearerUser } from './strapiVerifyUser'
+import { isContentAdminStrapiUser } from './strapiContentAdmin'
 
-function splitList(raw: string | undefined) {
+function splitList(raw: string | undefined | null) {
   if (!raw) return []
-  return raw
+  return String(raw)
     .split(',')
     .map((s) => s.trim().toLowerCase())
     .filter(Boolean)
 }
 
-function decodeHeaderValue(raw: string) {
-  const s = String(raw || '').trim()
-  if (!s) return ''
+/** Allowlist только с сервера — не из NUXT_PUBLIC_* в браузерном бандле. */
+export function getContentAdminAllowlist(event?: H3Event) {
+  let emails = ''
+  let usernames = ''
   try {
-    return decodeURIComponent(s)
+    const config = event ? useRuntimeConfig(event) : useRuntimeConfig()
+    emails = String(config.contentAdminEmails || '')
+    usernames = String(config.contentAdminUsernames || '')
   } catch {
-    return s
+    /* вне Nuxt-контекста */
+  }
+
+  if (!emails) {
+    emails =
+      process.env.CONTENT_ADMIN_EMAILS ||
+      process.env.NUXT_CONTENT_ADMIN_EMAILS ||
+      process.env.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS ||
+      ''
+  }
+  if (!usernames) {
+    usernames =
+      process.env.CONTENT_ADMIN_USERNAMES ||
+      process.env.NUXT_CONTENT_ADMIN_USERNAMES ||
+      process.env.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES ||
+      ''
+  }
+
+  return {
+    emails: splitList(emails),
+    usernames: splitList(usernames)
   }
 }
 
+/** Админ по роли Strapi или по серверному allowlist; identity только из verified user. */
+export function isVerifiedContentAdmin(user: Record<string, unknown> | null | undefined, event?: H3Event) {
+  if (!user) return false
+  if (isContentAdminStrapiUser(user)) return true
+
+  const { emails, usernames } = getContentAdminAllowlist(event)
+  const email = String(user.email || '')
+    .toLowerCase()
+    .trim()
+  const username = String(user.username || '')
+    .toLowerCase()
+    .trim()
+
+  if (email && emails.includes(email)) return true
+  if (username && usernames.includes(username)) return true
+  return false
+}
+
 /**
- * Проверка: есть JWT и email/username из allowlist.
- * Identity: заголовки (URI-encoded) или поля body.editorEmail / editorUsername.
+ * JWT проверяется в Strapi (/users/me). Email/username из заголовков и body
+ * не доверяем — только поля верифицированного пользователя.
  */
-export async function assertContentEditor(event: H3Event, body?: Record<string, unknown>) {
+export async function assertContentEditor(event: H3Event, _body?: Record<string, unknown>) {
   const auth = getHeader(event, 'authorization')
   if (!auth || !/^Bearer\s+\S+/i.test(auth)) {
     throw createError({ statusCode: 401, message: 'Нужна авторизация' })
   }
 
-  let email = decodeHeaderValue(getHeader(event, 'x-editor-email') || '').toLowerCase()
-  let username = decodeHeaderValue(getHeader(event, 'x-editor-username') || '').toLowerCase()
-
-  const b = body && typeof body === 'object' ? body : null
-  if (!email && typeof b?.editorEmail === 'string') {
-    email = b.editorEmail.toLowerCase().trim()
-  }
-  if (!username && typeof b?.editorUsername === 'string') {
-    username = b.editorUsername.toLowerCase().trim()
+  const user = await verifyBearerUser(auth)
+  if (!user) {
+    throw createError({ statusCode: 401, message: 'Недействительный токен' })
   }
 
-  const config = useRuntimeConfig(event)
-  const emails = splitList(
-    (config.public?.contentAdminEmails as string) ||
-      process.env.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS
-  )
-  const names = splitList(
-    (config.public?.contentAdminUsernames as string) ||
-      process.env.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES
-  )
-
-  const ok =
-    (email && emails.includes(email)) || (username && names.includes(username))
-
-  if (!ok) {
+  if (!isVerifiedContentAdmin(user, event)) {
     throw createError({
       statusCode: 403,
       message:
-        'Редактирование только для администратора. Проверьте NUXT_PUBLIC_CONTENT_ADMIN_EMAILS в .env'
+        'Редактирование только для администратора. Нужна роль Admin в Strapi или CONTENT_ADMIN_EMAILS на сервере.'
     })
   }
 
-  return { auth, email, username }
+  const email = String(user.email || '')
+    .toLowerCase()
+    .trim()
+  const username = String(user.username || '')
+    .toLowerCase()
+    .trim()
+
+  return { auth, email, username, user }
 }
 
 /** Токен для записи в Strapi: API Token (полный доступ) или JWT пользователя. */

@@ -6,7 +6,6 @@
                     <img src="/img/site-logo.png" alt="Blockclient">
                 </NuxtLink>
 
-                <!-- Десктоп-ссылки -->
                 <ul class="mx-auto hidden items-center gap-6 font-bold lg:flex">
                     <li>
                         <NuxtLink
@@ -224,7 +223,6 @@
             </div>
         </nav>
 
-        <!-- Мобильное меню: выезд справа -->
         <Teleport to="body">
             <Transition name="nav-drawer">
                 <div
@@ -325,18 +323,13 @@ import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const search = useSearchStore()
 const route = useRoute()
-const runtimeConfig = useRuntimeConfig()
-const adminAllow = computed(() => ({
-    emails: runtimeConfig.public.contentAdminEmails || '',
-    usernames: runtimeConfig.public.contentAdminUsernames || '',
-}))
 const isActive = (path) => route.path.split('/')[1] === path
 const router = useRouter()
 
 const backendUrl = STRAPI_BASE
-const showConsole = computed(() => canManageBlogContent(search.userMe, adminAllow.value))
-const showSettings = computed(() => canAccessBlogSettings(search.userMe, adminAllow.value))
-/** Вошёл, но не админ контента — пункты подписки / поддержки / идей */
+const showConsole = computed(() => canManageBlogContent(search.userMe))
+const showSettings = computed(() => canAccessBlogSettings(search.userMe))
+
 const isRegularUser = computed(
     () => Boolean(search.userMe?.id) && !showConsole.value && !showSettings.value
 )
@@ -377,7 +370,7 @@ function onSubscribeChanged(e) {
 
 const userMenuOpen = ref(false)
 const userMenuRoot = ref(null)
-/** Мобильное меню — выезд справа */
+
 const navOpen = ref(false)
 let searchNavLock = false
 

@@ -1,13 +1,10 @@
-import { defineEventHandler, getHeader, createError } from 'h3'
-import { verifyBearerUser } from '../utils/strapiVerifyUser'
+import { defineEventHandler } from 'h3'
+import { assertContentEditor } from '../utils/contentAdminGate'
 import { readSubscribers } from '../utils/subscribersFile'
 
-/** Список подписчиков — только для вошедшего (страница настроек / активности). */
+/** Список подписчиков — только content-admin. */
 export default defineEventHandler(async (event) => {
-  const user = await verifyBearerUser(getHeader(event, 'authorization'))
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
+  await assertContentEditor(event)
 
   const { subscribers } = await readSubscribers()
   const sorted = [...subscribers].sort(

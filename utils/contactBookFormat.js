@@ -1,27 +1,11 @@
-/**
- * Мягкий лимит текста на правом листе (без lead-image).
- * Не обрезаем уже сохранённый длинный текст при открытии редактора —
- * только не даём набрать сверх лимита в поле ввода.
- */
 export const BOOK_SPREAD_BODY_MAX_CHARS = 850
 
-/**
- * Обрезка только при новом вводе / форматировании (не при загрузке в редактор).
- * @param {string} text
- * @param {number} [max]
- */
 export function clampBookBodyText(text, max = BOOK_SPREAD_BODY_MAX_CHARS) {
   const s = String(text ?? '')
   if (s.length <= max) return s
   return s.slice(0, max)
 }
 
-/**
- * Обёртка выделения в textarea markdown-разметкой / HTML.
- * @param {HTMLTextAreaElement | null | undefined} el
- * @param {(selected: string) => { before: string, mid: string, after: string }} wrap
- * @param {(next: string) => void} setValue
- */
 export function wrapTextareaSelection(el, wrap, setValue) {
   if (!el) return
   const start = el.selectionStart ?? 0
@@ -43,25 +27,21 @@ export function wrapTextareaSelection(el, wrap, setValue) {
   })
 }
 
-/** Жирный markdown */
 export function wrapBold(selected) {
   const mid = selected || 'текст'
   return { before: '**', mid, after: '**' }
 }
 
-/** Курсив markdown */
 export function wrapItalic(selected) {
   const mid = selected || 'текст'
   return { before: '*', mid, after: '*' }
 }
 
-/** Подчёркивание через HTML (markdown-it html: true) */
 export function wrapUnderline(selected) {
   const mid = selected || 'текст'
   return { before: '<u>', mid, after: '</u>' }
 }
 
-/** Цвет текста */
 export function wrapColor(selected, color) {
   const hex = String(color || '#8b4513').replace(/[^\w#]/g, '')
   const mid = selected || 'текст'
@@ -72,7 +52,6 @@ export function wrapColor(selected, color) {
   }
 }
 
-/** Размеры шрифта для выделения (относительные к тексту листа) */
 export const BOOK_FONT_SIZE_OPTIONS = [
   { value: '0.85em', label: 'Мелкий' },
   { value: '1em', label: 'Обычный' },
@@ -80,7 +59,6 @@ export const BOOK_FONT_SIZE_OPTIONS = [
   { value: '1.35em', label: 'Очень крупный' }
 ]
 
-/** Размер текста через HTML span */
 export function wrapFontSize(selected, size) {
   const allowed = new Set(BOOK_FONT_SIZE_OPTIONS.map((o) => o.value))
   const fs = allowed.has(size) ? size : '1em'
@@ -92,7 +70,6 @@ export function wrapFontSize(selected, size) {
   }
 }
 
-/** Ссылка markdown [text](url) */
 export function wrapLink(selected, url) {
   const href = String(url || '').trim()
   if (!href) return { before: '', mid: selected, after: '' }
@@ -100,7 +77,6 @@ export function wrapLink(selected, url) {
   return { before: '[', mid, after: `](${href})` }
 }
 
-/** HTML-обёртки для блокнота на главной (хранится как HTML, не markdown) */
 export function wrapHtmlBold(selected) {
   const mid = selected || 'текст'
   return { before: '<strong>', mid, after: '</strong>' }
@@ -119,13 +95,8 @@ export function wrapHtmlLink(selected, url) {
   return { before: `<a href="${safe}" target="_blank" rel="noopener">`, mid, after: '</a>' }
 }
 
-/**
- * HTML блокнота → текст для textarea (абзацы → переносы, inline-теги сохраняем).
- * @param {string} html
- */
 export function notebookHtmlToEditable(html) {
   let s = String(html || '')
-  // компактный разрыв абзаца → пустая строка в редакторе
   s = s.replace(
     /<p[^>]*class=["'][^"']*notebook-gap[^"']*["'][^>]*>[\s\S]*?<\/p>/gi,
     '\n\n'
@@ -141,10 +112,8 @@ export function notebookHtmlToEditable(html) {
   return s.trim()
 }
 
-/** Лимит текста блокнота на главной (буквы, пробелы, знаки; HTML-теги не считаем) */
 export const NOTEBOOK_BODY_MAX_CHARS = 520
 
-/** Длина видимого текста без HTML-тегов */
 export function notebookPlainLength(text) {
   return String(text || '')
     .replace(/<[^>]+>/g, '')
@@ -152,11 +121,6 @@ export function notebookPlainLength(text) {
     .length
 }
 
-/**
- * Обрезка по видимым символам (теги форматирования сохраняем по возможности).
- * @param {string} text
- * @param {number} [max]
- */
 export function clampNotebookBodyText(text, max = NOTEBOOK_BODY_MAX_CHARS) {
   const s = String(text ?? '')
   if (notebookPlainLength(s) <= max) return s
@@ -178,11 +142,6 @@ export function clampNotebookBodyText(text, max = NOTEBOOK_BODY_MAX_CHARS) {
   return out
 }
 
-/**
- * Текст textarea блокнота → HTML для сохранения.
- * Пустая строка → компактный разрыв (не съедает половину листа).
- * @param {string} plain
- */
 export function notebookEditableToHtml(plain) {
   let formattedText = String(plain || '')
     .replace(/\r\n/g, '\n')
@@ -201,7 +160,6 @@ export function notebookEditableToHtml(plain) {
         result.push(currentParagraph)
         currentParagraph = []
       }
-      // не дублируем подряд идущие разрывы
       if (result[result.length - 1] !== '__gap__') {
         result.push('__gap__')
       }
@@ -210,7 +168,6 @@ export function notebookEditableToHtml(plain) {
     }
   }
   if (currentParagraph.length > 0) result.push(currentParagraph)
-  // убрать разрыв в начале/конце
   while (result[0] === '__gap__') result.shift()
   while (result[result.length - 1] === '__gap__') result.pop()
 
@@ -222,8 +179,6 @@ export function notebookEditableToHtml(plain) {
         }
         const processedLines = paragraph.map((line) => line)
         const paragraphContent = processedLines.join('<br>')
-        // Всегда <p>: раньше «привет / знакомы» превращались в <h4> и выглядели жирнее
-        // в одном браузере (после сохранения), чем в другом (дефолт / другой аккаунт).
         return `<p>${paragraphContent}</p>`
       })
       .join('') || ''

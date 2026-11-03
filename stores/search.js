@@ -60,6 +60,7 @@ function writeCachedAuthUser(user) {
       localStorage.removeItem(AUTH_USER_KEY)
       return
     }
+    // isContentAdmin не кэшируем — только с /api/auth/content-admin
     localStorage.setItem(
       AUTH_USER_KEY,
       JSON.stringify({
@@ -87,6 +88,28 @@ export const useSearchStore = defineStore('search', {
   }),
 
   actions: {
+    /** Серверный флаг админа (allowlist не светится в public runtimeConfig). */
+    async refreshContentAdminFlag() {
+      try {
+        const token = localStorage.getItem('jwt')
+        if (!token || !this.userMe?.id) {
+          if (this.userMe && typeof this.userMe === 'object') {
+            this.userMe = { ...this.userMe, isContentAdmin: false }
+          }
+          return false
+        }
+        const res = await $fetch('/api/auth/content-admin', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        const isAdmin = Boolean(res?.isAdmin)
+        this.userMe = { ...this.userMe, isContentAdmin: isAdmin }
+        return isAdmin
+      } catch {
+        this.userMe = { ...this.userMe, isContentAdmin: false }
+        return false
+      }
+    },
+
     /**
      * @param {Record<string, unknown> | null} [fallbackUser] — user из /auth/local, если /users/me даёт 403
      */
@@ -163,9 +186,11 @@ export const useSearchStore = defineStore('search', {
           email: data.email,
           avatar: data.avatar,
           role: chosenRole,
+          isContentAdmin: false,
         }
         writeCachedAuthUser(this.userMe)
         this.loadProfileNote(data.id)
+        await this.refreshContentAdminFlag()
 
       } catch (error) {
         if (import.meta.dev) {
@@ -181,8 +206,10 @@ export const useSearchStore = defineStore('search', {
             email: cached.email,
             avatar: cached.avatar,
             role: normalizeStrapiRole(cached.role),
+            isContentAdmin: false,
           }
           this.loadProfileNote(cached.id)
+          await this.refreshContentAdminFlag()
           return
         }
         this.userMe = {}

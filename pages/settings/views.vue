@@ -604,12 +604,7 @@ import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const search = useSearchStore();
 const base_url = STRAPI_BASE;
-const runtimeConfig = useRuntimeConfig();
-const adminAllow = computed(() => ({
-    emails: runtimeConfig.public.contentAdminEmails || '',
-    usernames: runtimeConfig.public.contentAdminUsernames || ''
-}));
-const isAdmin = computed(() => isContentAdminRole(search.userMe, adminAllow.value));
+const isAdmin = computed(() => isContentAdminRole(search.userMe));
 
 const loading = ref(true);
 const loadError = ref('');
@@ -789,12 +784,7 @@ async function deleteAdminComment(c) {
 
 function editorAuthHeaders() {
     const token = localStorage.getItem('jwt');
-    const headers = { Authorization: `Bearer ${token}` };
-    const email = search.userMe?.email;
-    const username = search.userMe?.username;
-    if (email) headers['x-editor-email'] = encodeURIComponent(email);
-    if (username) headers['x-editor-username'] = encodeURIComponent(username);
-    return headers;
+    return { Authorization: `Bearer ${token}` };
 }
 
 async function blockSubscriber(s) {
@@ -813,9 +803,7 @@ async function blockSubscriber(s) {
             body: {
                 email: s.email,
                 userId: s.userId ?? null,
-                reason: String(reason || '').trim(),
-                editorEmail: search.userMe?.email || '',
-                editorUsername: search.userMe?.username || ''
+                reason: String(reason || '').trim()
             }
         });
         if (res?.blocked) {
@@ -846,9 +834,7 @@ async function unblockUser(b) {
                 'Content-Type': 'application/json'
             },
             body: {
-                email: b.email,
-                editorEmail: search.userMe?.email || '',
-                editorUsername: search.userMe?.username || ''
+                email: b.email
             }
         });
         blockedUsers.value = (blockedUsers.value || []).filter(

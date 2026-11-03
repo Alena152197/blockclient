@@ -1,21 +1,16 @@
 import { defineEventHandler, getHeader, createError } from 'h3'
-import { verifyBearerUser } from '../../utils/strapiVerifyUser'
+import { assertContentEditor, strapiWriteAuthHeader } from '../../utils/contentAdminGate'
 import { resolveStrapiBase } from '../../utils/strapiBase'
-import { strapiWriteAuthHeader } from '../../utils/contentAdminGate'
 
 /**
  * Список комментариев для страницы активности.
  * Читает Strapi через API Token — у роли Authenticated часто нет find на Comment (403).
  */
 export default defineEventHandler(async (event) => {
-  const authHeader = getHeader(event, 'authorization')
-  const user = await verifyBearerUser(authHeader)
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
+  const { auth } = await assertContentEditor(event)
 
   const base = resolveStrapiBase()
-  const writeAuth = strapiWriteAuthHeader(authHeader || '', event)
+  const writeAuth = strapiWriteAuthHeader(auth || getHeader(event, 'authorization') || '', event)
 
   const url = `${base}/api/comments?populate=*&sort=createdAt:desc&pagination[pageSize]=100`
   const response = await fetch(url, {

@@ -1,10 +1,12 @@
-import { defineEventHandler, getHeader, readBody, createError, getRouterParam } from 'h3'
-import { STRAPI_BASE } from '../../../utils/strapiBase'
+import { defineEventHandler, readBody, createError, getRouterParam } from 'h3'
+import { resolveStrapiBase } from '../../../utils/strapiBase'
+import { assertContentEditor, strapiWriteAuthHeader } from '../../../utils/contentAdminGate'
 
+/** Установка автора поста — только content-admin. */
 export default defineEventHandler(async (event) => {
-  const baseUrl = STRAPI_BASE
+  const baseUrl = resolveStrapiBase()
   const id = getRouterParam(event, 'id')
-  
+
   if (!id) {
     throw createError({
       statusCode: 400,
@@ -12,16 +14,9 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  // Получаем токен из заголовков
-  const authHeader = getHeader(event, 'authorization')
-  if (!authHeader) {
-    throw createError({
-      statusCode: 401,
-      message: 'Authorization header is required'
-    })
-  }
+  const { auth } = await assertContentEditor(event)
+  const writeAuth = strapiWriteAuthHeader(auth, event)
 
-  // Получаем author ID из тела запроса
   const body = await readBody(event)
   const authorId = body?.authorId || body?.author
 
@@ -33,13 +28,11 @@ export default defineEventHandler(async (event) => {
   }
 
   try {
-    // Пробуем разные форматы для установки связи author в Strapi v4
-    // Формат 1: Просто ID
     let response = await fetch(`${baseUrl}/api/posts/${id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': authHeader
+        Authorization: writeAuth
       },
       body: JSON.stringify({
         data: {
@@ -48,13 +41,12 @@ export default defineEventHandler(async (event) => {
       })
     })
 
-    // Если не сработало, пробуем формат с connect
     if (!response.ok) {
       response = await fetch(`${baseUrl}/api/posts/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': authHeader
+          Authorization: writeAuth
         },
         body: JSON.stringify({
           data: {
@@ -66,13 +58,12 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Если не сработало, пробуем формат с set
     if (!response.ok) {
       response = await fetch(`${baseUrl}/api/posts/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': authHeader
+          Authorization: writeAuth
         },
         body: JSON.stringify({
           data: {
@@ -84,25 +75,23 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Если не сработало, пробуем получить пользователя по ID и использовать его documentId
     if (!response.ok) {
       try {
         const userResponse = await fetch(`${baseUrl}/api/users/${authorId}`, {
           headers: {
-            'Authorization': authHeader
+            Authorization: writeAuth
           }
         })
-        
+
         if (userResponse.ok) {
           const userData = await userResponse.json()
           const userDocumentId = userData.documentId || userData.id
-          
-          // Пробуем с documentId
+
           response = await fetch(`${baseUrl}/api/posts/${id}`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': authHeader
+              Authorization: writeAuth
             },
             body: JSON.stringify({
               data: {
@@ -122,7 +111,7 @@ export default defineEventHandler(async (event) => {
         const errorData = await response.json()
         errorMessage = errorData.error?.message || errorData.message || errorMessage
         console.error('Strapi API error:', JSON.stringify(errorData, null, 2))
-      } catch (e) {
+      } catch {
         const errorText = await response.text()
         errorMessage = errorText || errorMessage
         console.error('Strapi API error (text):', errorText)
@@ -133,14 +122,13 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    const data = await response.json()
-    return data
+    return await response.json()
   } catch (error) {
-    const errorObj = error as any
+    const errorObj = error as { statusCode?: number; status?: number; message?: string }
+    if (errorObj.statusCode) throw error
     throw createError({
       statusCode: errorObj.statusCode || errorObj.status || 500,
       message: errorObj.message || 'Failed to update author'
     })
   }
 })
-

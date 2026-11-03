@@ -31,15 +31,27 @@ export default defineNuxtConfig({
     strapiApiToken: process.env.STRAPI_API_TOKEN || process.env.STRAPI_TOKEN || '',
     /** Секрет POST /api/deploy (лучше задать NUXT_DEPLOY_SECRET в .env на VPS) */
     deploySecret: process.env.DEPLOY_SECRET || process.env.NUXT_DEPLOY_SECRET || '',
+    /**
+     * Запасной allowlist админов контента (только сервер).
+     * Не класть в NUXT_PUBLIC_* — иначе список попадает в браузерный бандл.
+     * Fallback на старые NUXT_PUBLIC_* имена только на сервере при миграции.
+     */
+    contentAdminEmails:
+      process.env.CONTENT_ADMIN_EMAILS ||
+      process.env.NUXT_CONTENT_ADMIN_EMAILS ||
+      process.env.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS ||
+      '',
+    contentAdminUsernames:
+      process.env.CONTENT_ADMIN_USERNAMES ||
+      process.env.NUXT_CONTENT_ADMIN_USERNAMES ||
+      process.env.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES ||
+      '',
     public: {
       /** Клиентский URL Strapi — NUXT_PUBLIC_STRAPI_URL */
       strapiUrl:
         process.env.NUXT_PUBLIC_STRAPI_URL ||
         process.env.STRAPI_URL ||
         'https://324cbb377ef9.vps.myjino.ru',
-      /** Через запятую: email админов контента (запасной список, если в Strapi нет роли Admin) */
-      contentAdminEmails: process.env.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS || '',
-      contentAdminUsernames: process.env.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES || '',
     },
   },
 

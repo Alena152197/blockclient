@@ -1,15 +1,10 @@
 import { isContentAdminRole } from '~/utils/strapiUserRole'
 
-/** Маршруты /settings* и /console* — только администратор контента (Strapi Users & Permissions). */
+/** Маршруты /settings* и /console* — только администратор контента (серверная проверка UI). */
 export default defineNuxtRouteMiddleware(async () => {
   if (import.meta.server) return
 
   const search = useSearchStore()
-  const runtimeConfig = useRuntimeConfig()
-  const allow = {
-    emails: String(runtimeConfig.public.contentAdminEmails || ''),
-    usernames: String(runtimeConfig.public.contentAdminUsernames || '')
-  }
 
   if (!search.userMe?.id) {
     try {
@@ -17,9 +12,15 @@ export default defineNuxtRouteMiddleware(async () => {
     } catch {
       /* ignore */
     }
+  } else if (search.userMe.isContentAdmin == null) {
+    try {
+      await search.refreshContentAdminFlag()
+    } catch {
+      /* ignore */
+    }
   }
 
-  if (!isContentAdminRole(search.userMe, allow)) {
+  if (!isContentAdminRole(search.userMe)) {
     return navigateTo('/')
   }
 })

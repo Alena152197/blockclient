@@ -440,15 +440,8 @@ function onContactPageBgChanged() {
 }
 
 const search = useSearchStore();
-const runtimeConfig = useRuntimeConfig();
-const adminAllow = computed(() => ({
-    emails: runtimeConfig.public.contentAdminEmails || '',
-    usernames: runtimeConfig.public.contentAdminUsernames || '',
-}));
-/** Админ: роль Admin в Strapi ИЛИ email в NUXT_PUBLIC_CONTENT_ADMIN_EMAILS */
-const canManageContent = computed(() =>
-    canManageBlogContent(search.userMe, adminAllow.value)
-);
+/** Админ: роль Admin в Strapi или серверный CONTENT_ADMIN_EMAILS (флаг isContentAdmin). */
+const canManageContent = computed(() => canManageBlogContent(search.userMe));
 
 /** Бесплатно без подписки — первые N разворотов (счётчик 1…N). */
 const freeSpreadLimit = 4;

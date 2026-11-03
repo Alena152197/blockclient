@@ -248,11 +248,6 @@ import { STRAPI_BASE } from '~/utils/strapiBase'
 
 const markdown = new MarkdownIt();
 const mark = ref('');
-const runtimeConfig = useRuntimeConfig();
-const adminAllow = computed(() => ({
-    emails: runtimeConfig.public.contentAdminEmails || '',
-    usernames: runtimeConfig.public.contentAdminUsernames || '',
-}));
 
 function escapeHtml(s) {
     if (typeof s !== 'string') return '';
@@ -344,7 +339,7 @@ const canEditPost = computed(() => {
     if (!post.value) return false;
     const me = search.userMe;
     if (!me?.id && !me?.documentId) return false;
-    return canManageBlogContent(me, adminAllow.value);
+    return canManageBlogContent(me);
 });
 
 const newComment = ref({ text: '' });
@@ -983,7 +978,7 @@ const isMyComment = (comment) => {
 /** Удалить: свой комментарий или любой, если админ */
 const canDeleteComment = (comment) => {
     if (!search.userMe?.id && !search.userMe?.username) return false;
-    if (canManageBlogContent(search.userMe, adminAllow.value)) return true;
+    if (canManageBlogContent(search.userMe)) return true;
     return isMyComment(comment);
 };
 

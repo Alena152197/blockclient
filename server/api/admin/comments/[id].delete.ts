@@ -1,15 +1,10 @@
 import { defineEventHandler, getHeader, getRouterParam, createError } from 'h3'
-import { verifyBearerUser } from '../../../utils/strapiVerifyUser'
+import { assertContentEditor, strapiWriteAuthHeader } from '../../../utils/contentAdminGate'
 import { resolveStrapiBase } from '../../../utils/strapiBase'
-import { strapiWriteAuthHeader } from '../../../utils/contentAdminGate'
 
-/** Удаление комментария админом (через API Token). */
+/** Удаление комментария — только content-admin (через API Token). */
 export default defineEventHandler(async (event) => {
-  const authHeader = getHeader(event, 'authorization')
-  const user = await verifyBearerUser(authHeader)
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
+  const { auth } = await assertContentEditor(event)
 
   const id = getRouterParam(event, 'id')
   if (!id) {
@@ -17,7 +12,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const base = resolveStrapiBase()
-  const writeAuth = strapiWriteAuthHeader(authHeader || '', event)
+  const writeAuth = strapiWriteAuthHeader(auth || getHeader(event, 'authorization') || '', event)
 
   const response = await fetch(`${base}/api/comments/${encodeURIComponent(id)}`, {
     method: 'DELETE',

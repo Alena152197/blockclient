@@ -37,46 +37,11 @@ export function formatStrapiErr(errJson) {
   return null
 }
 
-/** HTTP-заголовки только Latin-1 — кириллицу (алёна) нельзя класть как есть. */
-function headerSafe(value) {
-  const s = String(value || '').trim()
-  if (!s) return ''
-  return encodeURIComponent(s)
-}
-
-/** Только JWT — для прямых запросов к Strapi (upload), иначе CORS из‑за x-editor-* */
+/** JWT для Nuxt `/api/*` (сервер сам проверяет токен в Strapi). */
 function jwtAuthHeaders(extra = {}) {
   const token = typeof localStorage !== 'undefined' ? localStorage.getItem('jwt') : null
   if (!token) throw new Error('Нужна авторизация.')
   return { Authorization: `Bearer ${token}`, ...extra }
-}
-
-/** JWT + редактор — только для наших Nuxt `/api/abouts` (не слать на Strapi напрямую) */
-function nuxtEditorAuthHeaders(extra = {}) {
-  const headers = jwtAuthHeaders(extra)
-  try {
-    const raw = localStorage.getItem('strapi_auth_user')
-    const u = raw ? JSON.parse(raw) : null
-    if (u?.email) headers['x-editor-email'] = headerSafe(u.email)
-    if (u?.username) headers['x-editor-username'] = headerSafe(u.username)
-  } catch {
-    /* ignore */
-  }
-  return headers
-}
-
-function editorIdentityFromCache() {
-  try {
-    const raw = localStorage.getItem('strapi_auth_user')
-    const u = raw ? JSON.parse(raw) : null
-    if (!u || typeof u !== 'object') return {}
-    return {
-      editorEmail: typeof u.email === 'string' ? u.email : '',
-      editorUsername: typeof u.username === 'string' ? u.username : ''
-    }
-  } catch {
-    return {}
-  }
 }
 
 async function readFetchError(response) {
@@ -195,7 +160,7 @@ export async function uploadImageToStrapi(file) {
   // Не ходим напрямую в Strapi из браузера — CORS и права upload у Authenticated
   const response = await fetch('/api/upload', {
     method: 'POST',
-    headers: nuxtEditorAuthHeaders(),
+    headers: jwtAuthHeaders(),
     body: formData
   })
 
@@ -260,9 +225,9 @@ export async function updateAboutEntry(entry, fields) {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      ...nuxtEditorAuthHeaders()
+      ...jwtAuthHeaders()
     },
-    body: JSON.stringify({ data, ...editorIdentityFromCache() })
+    body: JSON.stringify({ data })
   })
 
   if (!response.ok) {
@@ -291,13 +256,12 @@ export async function createAboutEntry(opts = {}) {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...nuxtEditorAuthHeaders()
+      ...jwtAuthHeaders()
     },
     body: JSON.stringify({
       data: {
         [bodyField]: content
-      },
-      ...editorIdentityFromCache()
+      }
     })
   })
 

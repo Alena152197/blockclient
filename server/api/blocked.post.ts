@@ -1,47 +1,29 @@
-import { defineEventHandler, readBody, getHeader, createError } from 'h3'
-import { verifyBearerUser } from '../utils/strapiVerifyUser'
-import { assertContentEditor } from '../utils/contentAdminGate'
+import { defineEventHandler, readBody, createError } from 'h3'
+import {
+  assertContentEditor,
+  getContentAdminAllowlist
+} from '../utils/contentAdminGate'
 import { addBlockedUser } from '../utils/blockedUsersFile'
-import { useRuntimeConfig } from '#imports'
-
-function splitList(raw: string | undefined) {
-  if (!raw) return []
-  return raw
-    .split(',')
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean)
-}
 
 export default defineEventHandler(async (event) => {
   const body = (await readBody(event).catch(() => ({}))) as {
     email?: unknown
     userId?: unknown
     reason?: unknown
-    editorEmail?: unknown
-    editorUsername?: unknown
   }
 
-  const authHeader = getHeader(event, 'authorization')
-  const user = await verifyBearerUser(authHeader)
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
-  const editor = await assertContentEditor(event, body as Record<string, unknown>)
+  const editor = await assertContentEditor(event)
 
   const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
   if (!email) {
     throw createError({ statusCode: 400, message: 'Укажите email.' })
   }
 
-  const config = useRuntimeConfig(event)
-  const adminEmails = splitList(
-    (config.public?.contentAdminEmails as string) ||
-      process.env.NUXT_PUBLIC_CONTENT_ADMIN_EMAILS
-  )
+  const { emails: adminEmails } = getContentAdminAllowlist(event)
   if (adminEmails.includes(email)) {
     throw createError({ statusCode: 400, message: 'Нельзя заблокировать администратора.' })
   }
-  if (typeof user.email === 'string' && user.email.toLowerCase() === email) {
+  if (editor.email && editor.email === email) {
     throw createError({ statusCode: 400, message: 'Нельзя заблокировать себя.' })
   }
 
@@ -54,7 +36,7 @@ export default defineEventHandler(async (event) => {
       email,
       userId: userId as string | number | null,
       reason,
-      blockedBy: editor.email || editor.username || String(user.email || '')
+      blockedBy: editor.email || editor.username || ''
     })
     return {
       ok: true,

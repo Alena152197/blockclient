@@ -143,12 +143,7 @@ function formatWhen(iso) {
 
 function editorAuthHeaders() {
     const token = localStorage.getItem('jwt')
-    const headers = { Authorization: `Bearer ${token}` }
-    const email = search.userMe?.email
-    const username = search.userMe?.username
-    if (email) headers['x-editor-email'] = encodeURIComponent(email)
-    if (username) headers['x-editor-username'] = encodeURIComponent(username)
-    return headers
+    return { Authorization: `Bearer ${token}` }
 }
 
 async function sendReply(id) {
@@ -164,9 +159,7 @@ async function sendReply(id) {
                 'Content-Type': 'application/json'
             },
             body: {
-                reply,
-                editorEmail: search.userMe?.email || '',
-                editorUsername: search.userMe?.username || ''
+                reply
             }
         })
         const updated = res?.suggestion

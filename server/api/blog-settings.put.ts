@@ -1,6 +1,5 @@
-import { defineEventHandler, readBody, getHeader, createError } from 'h3'
-import { verifyBearerUser } from '../utils/strapiVerifyUser'
-import { isContentAdminStrapiUser } from '../utils/strapiContentAdmin'
+import { defineEventHandler, readBody, createError } from 'h3'
+import { assertContentEditor } from '../utils/contentAdminGate'
 import { readBlogSettingsFile, writeBlogSettingsFile } from '../utils/blogSettingsFile'
 
 const KEYS = [
@@ -17,13 +16,7 @@ function sanitizeBody(raw: unknown): Record<string, unknown> {
 }
 
 export default defineEventHandler(async (event) => {
-  const user = await verifyBearerUser(getHeader(event, 'authorization'))
-  if (!user) {
-    throw createError({ statusCode: 401, message: 'Unauthorized' })
-  }
-  if (!isContentAdminStrapiUser(user as Record<string, unknown>)) {
-    throw createError({ statusCode: 403, message: 'Только для администратора' })
-  }
+  await assertContentEditor(event)
 
   const body = sanitizeBody(await readBody(event))
   const existing = await readBlogSettingsFile()
