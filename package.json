@@ -35,5 +35,9 @@
   "overrides": {
     "node-forge": "^1.4.0",
     "form-data": "^4.0.5"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2"
   }
 }

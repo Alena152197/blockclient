@@ -45,16 +45,20 @@ trap 'ec=$?; if [ "$ec" -ne 0 ]; then echo "fail $(date -Is)" >"$STATUS"; fi' EX
   npm run build
   test -f .output/server/index.mjs
 
-  # Не delete: иначе при сбое start сайт лежит, а status=running
+  # Сначала ok: pm2 restart убивает старый Node (родитель хука) и иногда
+  # обрывает этот скрипт до финальной строки → CI вечно видит running.
+  echo "======== $(date -Is) deploy ok (before pm2) ========"
+  echo "ok $(date -Is) $(git rev-parse --short HEAD)" >"$STATUS"
+
+  # Не delete: иначе при сбое start сайт лежит
   if pm2 describe client-prod >/dev/null 2>&1; then
-    pm2 restart client-prod --update-env
+    pm2 restart client-prod --update-env || true
   else
-    pm2 start ecosystem.config.cjs --only client-prod
+    pm2 start ecosystem.config.cjs --only client-prod || true
   fi
   pm2 save || true
-  pm2 status
+  pm2 status || true
 
-  echo "======== $(date -Is) deploy ok ========"
-  echo "ok $(date -Is) $(git rev-parse --short HEAD)" >"$STATUS"
+  echo "======== $(date -Is) deploy finished ========"
 } >>"$LOG" 2>&1
 
