@@ -90,13 +90,6 @@
 
             <div class="mb-8">
                 <p class="date text-gray-700">Дата публикации: <span>{{ formatDate() }}</span></p>
-                <p
-                    v-if="!search.userMe?.id"
-                    class="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-950"
-                >
-                    <NuxtLink to="/admin" class="font-semibold text-amber-900 underline-offset-2 hover:underline">Войдите</NuxtLink>
-                    как администратор блога — над статьёй появится кнопка «Редактировать».
-                </p>
             </div>
         </template>
 
