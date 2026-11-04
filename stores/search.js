@@ -80,7 +80,6 @@ function writeCachedAuthUser(user) {
 export const useSearchStore = defineStore('search', {
   state: () => ({
     searchQuery: '',
-    authToggle: true,
     userMe: {}, // Всегда плоский объект: id, username, email, avatar и т.д.
     config: {},
     // Не читать localStorage в state() — иначе SSR ≠ клиент (hydration mismatch)
