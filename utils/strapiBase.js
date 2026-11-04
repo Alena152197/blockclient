@@ -1,9 +1,8 @@
 /**
  * Базовый URL Strapi CMS.
  * Задаётся через NUXT_PUBLIC_STRAPI_URL (клиент + сервер) или STRAPI_URL (сервер).
+ * Хардкод продакшен-URL убран — иначе адрес CMS светится в бандле даже без .env.
  */
-const DEFAULT_STRAPI_URL = 'https://324cbb377ef9.vps.myjino.ru'
-
 function fromEnv() {
   if (typeof process === 'undefined' || !process.env) return ''
   return (
@@ -15,7 +14,6 @@ function fromEnv() {
 
 function fromImportMeta() {
   try {
-    // Vite/Nuxt подставляет NUXT_PUBLIC_* на этапе сборки
     const v = import.meta.env?.NUXT_PUBLIC_STRAPI_URL
     return typeof v === 'string' ? v : ''
   } catch {
@@ -23,9 +21,31 @@ function fromImportMeta() {
   }
 }
 
+function fromRuntimeConfig() {
+  try {
+    if (typeof useRuntimeConfig === 'function') {
+      const c = useRuntimeConfig()
+      const u = c?.public?.strapiUrl
+      return typeof u === 'string' ? u : ''
+    }
+  } catch {
+    /* вне Nuxt-контекста */
+  }
+  return ''
+}
+
 export function resolveStrapiBase() {
-  const raw = fromImportMeta() || fromEnv() || DEFAULT_STRAPI_URL
-  return String(raw).replace(/\/$/, '')
+  const raw = fromImportMeta() || fromRuntimeConfig() || fromEnv()
+  const url = String(raw || '').replace(/\/$/, '')
+  if (!url) {
+    if (import.meta.dev) {
+      console.warn(
+        '[strapiBase] Задайте NUXT_PUBLIC_STRAPI_URL в .env (URL Strapi без хвоста /).'
+      )
+    }
+    return ''
+  }
+  return url
 }
 
 export const STRAPI_BASE = resolveStrapiBase()

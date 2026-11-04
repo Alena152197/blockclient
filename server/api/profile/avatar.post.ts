@@ -2,36 +2,60 @@ import { defineEventHandler, readMultipartFormData, getHeader, createError } fro
 import { resolveStrapiBase } from '../../utils/strapiBase'
 import { strapiWriteAuthHeader } from '../../utils/contentAdminGate'
 import { verifyBearerUser } from '../../utils/strapiVerifyUser'
+import { assertKeyedRateLimit, assertRateLimit } from '../../utils/rateLimit'
 
-const MAX_BYTES = 8 * 1024 * 1024
+const MAX_BYTES = 2 * 1024 * 1024
+const ALLOWED_MIME = new Set(['image/jpeg', 'image/jpg', 'image/png', 'image/webp'])
 
-function shortUploadFilename(original: string | undefined, mime: string | undefined) {
-  const raw = String(original || 'avatar')
-  const extFromName = (raw.match(/(\.[a-z0-9]{1,8})$/i) || [])[1] || ''
-  const extFromMime =
-    mime === 'image/jpeg' || mime === 'image/jpg'
-      ? '.jpg'
-      : mime === 'image/png'
-        ? '.png'
-        : mime === 'image/webp'
-          ? '.webp'
-          : mime === 'image/gif'
-            ? '.gif'
-            : ''
-  const ext = (extFromName || extFromMime || '.jpg').toLowerCase()
+function shortUploadFilename(mime: string | undefined) {
+  const ext =
+    mime === 'image/png' ? '.png' : mime === 'image/webp' ? '.webp' : '.jpg'
   return `av${Date.now().toString(36).slice(-6)}${ext}`
 }
 
+function sniffImageMime(buf: Buffer): string | null {
+  if (buf.length < 12) return null
+  if (buf[0] === 0xff && buf[1] === 0xd8 && buf[2] === 0xff) return 'image/jpeg'
+  if (buf[0] === 0x89 && buf[1] === 0x50 && buf[2] === 0x4e && buf[3] === 0x47) return 'image/png'
+  if (
+    buf[0] === 0x52 &&
+    buf[1] === 0x49 &&
+    buf[2] === 0x46 &&
+    buf[3] === 0x46 &&
+    buf[8] === 0x57 &&
+    buf[9] === 0x45 &&
+    buf[10] === 0x42 &&
+    buf[11] === 0x50
+  ) {
+    return 'image/webp'
+  }
+  return null
+}
+
 /**
- * Смена аватара для любого вошедшего пользователя (не только админа).
- * Upload + привязка к users через STRAPI_API_TOKEN при необходимости.
+ * Смена аватара для вошедшего пользователя.
+ * Привязка только к своему id из verified JWT. Upload: сначала JWT пользователя,
+ * API Token — только fallback (файл всё равно линкуется только к себе).
  */
 export default defineEventHandler(async (event) => {
+  assertRateLimit(event, {
+    key: 'avatar-ip',
+    limit: 10,
+    windowMs: 60 * 60 * 1000,
+    message: 'Слишком много загрузок аватара. Попробуйте позже.'
+  })
+
   const authHeader = getHeader(event, 'authorization')
   const user = await verifyBearerUser(authHeader)
   if (!user?.id) {
     throw createError({ statusCode: 401, message: 'Нужна авторизация' })
   }
+
+  assertKeyedRateLimit(`avatar-user:${user.id}`, {
+    limit: 8,
+    windowMs: 60 * 60 * 1000,
+    message: 'Лимит смены аватара на час исчерпан.'
+  })
 
   const formData = await readMultipartFormData(event)
   if (!formData?.length) {
@@ -43,25 +67,47 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Некорректный файл' })
   }
   if (file.data.byteLength > MAX_BYTES) {
-    throw createError({ statusCode: 400, message: 'Файл слишком большой (макс. 8 МБ)' })
-  }
-  const mime = file.type || 'application/octet-stream'
-  if (!String(mime).startsWith('image/')) {
-    throw createError({ statusCode: 400, message: 'Можно загружать только изображения' })
+    throw createError({ statusCode: 400, message: 'Файл слишком большой (макс. 2 МБ)' })
   }
 
+  const buf = Buffer.isBuffer(file.data) ? file.data : Buffer.from(file.data)
+  const sniffed = sniffImageMime(buf)
+  const declared = String(file.type || '').toLowerCase()
+  if (!sniffed || !ALLOWED_MIME.has(sniffed)) {
+    throw createError({
+      statusCode: 400,
+      message: 'Разрешены только JPEG, PNG или WebP (не SVG/GIF).'
+    })
+  }
+  if (declared && declared !== 'application/octet-stream' && !ALLOWED_MIME.has(declared)) {
+    throw createError({ statusCode: 400, message: 'Неверный тип файла.' })
+  }
+
+  const mime = sniffed
   const baseUrl = resolveStrapiBase()
-  const writeAuth = strapiWriteAuthHeader(authHeader || '', event)
+  const userAuth = authHeader || ''
+  const apiAuth = strapiWriteAuthHeader(userAuth, event)
 
-  const strapiForm = new FormData()
-  const blob = new Blob([file.data], { type: mime })
-  strapiForm.append('files', blob, shortUploadFilename(file.filename, mime))
+  const bytes = new Uint8Array(buf)
 
-  const uploadRes = await fetch(`${baseUrl}/api/upload`, {
+  function buildUploadForm() {
+    const form = new FormData()
+    form.append('files', new Blob([bytes], { type: mime }), shortUploadFilename(mime))
+    return form
+  }
+
+  let uploadRes = await fetch(`${baseUrl}/api/upload`, {
     method: 'POST',
-    headers: { Authorization: writeAuth },
-    body: strapiForm
+    headers: { Authorization: userAuth },
+    body: buildUploadForm()
   })
+  if (!uploadRes.ok && apiAuth !== userAuth) {
+    uploadRes = await fetch(`${baseUrl}/api/upload`, {
+      method: 'POST',
+      headers: { Authorization: apiAuth },
+      body: buildUploadForm()
+    })
+  }
 
   if (!uploadRes.ok) {
     const errorText = await uploadRes.text()
@@ -70,7 +116,7 @@ export default defineEventHandler(async (event) => {
       statusCode: uploadRes.status,
       message:
         uploadRes.status === 403
-          ? 'Strapi запретил upload. Нужен STRAPI_API_TOKEN в .env Nuxt.'
+          ? 'Strapi запретил upload. Нужен STRAPI_API_TOKEN или права Upload у роли.'
           : `Ошибка загрузки: ${errorText.slice(0, 200)}`
     })
   }
@@ -91,20 +137,23 @@ export default defineEventHandler(async (event) => {
 
   let updateOk = false
   let lastErr = ''
-  for (const body of updateBodies) {
-    const updateRes = await fetch(`${baseUrl}/api/users/${encodeURIComponent(String(userId))}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: writeAuth,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    })
-    if (updateRes.ok) {
-      updateOk = true
-      break
+  for (const auth of [userAuth, apiAuth]) {
+    for (const body of updateBodies) {
+      const updateRes = await fetch(`${baseUrl}/api/users/${encodeURIComponent(String(userId))}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: auth,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
+      })
+      if (updateRes.ok) {
+        updateOk = true
+        break
+      }
+      lastErr = await updateRes.text().catch(() => '')
     }
-    lastErr = await updateRes.text().catch(() => '')
+    if (updateOk) break
   }
 
   if (!updateOk) {
@@ -112,7 +161,7 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 502,
       message:
-        'Файл загружен, но не удалось привязать к профилю. В Strapi Users разрешите update avatar или проверьте API Token.'
+        'Файл загружен, но не удалось привязать к профилю. В Strapi Users разрешите update avatar.'
     })
   }
 

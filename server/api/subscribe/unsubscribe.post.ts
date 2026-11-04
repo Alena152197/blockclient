@@ -3,8 +3,16 @@ import { verifyBearerUser } from '../../utils/strapiVerifyUser'
 import { removeSubscriber } from '../../utils/subscribersFile'
 import { appendUnsubscribeEvent } from '../../utils/blogActivityLog'
 import { resolveVisitorCountry } from '../../utils/geoCountry'
+import { assertRateLimit } from '../../utils/rateLimit'
 
 export default defineEventHandler(async (event) => {
+  assertRateLimit(event, {
+    key: 'unsubscribe',
+    limit: 10,
+    windowMs: 60 * 60 * 1000,
+    message: 'Слишком много запросов. Попробуйте позже.'
+  })
+
   const body = (await readBody(event)) as {
     email?: unknown
     reason?: unknown

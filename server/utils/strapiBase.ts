@@ -1,15 +1,19 @@
 /**
  * Базовый URL Strapi для Nitro API-роутов.
- * (Импорт из ~/utils ломается в Nitro → file:///utils/...)
+ * Без хардкода продакшен-хоста — только env.
  */
-const DEFAULT_STRAPI_URL = 'https://324cbb377ef9.vps.myjino.ru'
-
 export function resolveStrapiBase(): string {
   const raw =
     process.env.NUXT_PUBLIC_STRAPI_URL ||
     process.env.STRAPI_URL ||
-    DEFAULT_STRAPI_URL
-  return String(raw).replace(/\/$/, '')
+    ''
+  const url = String(raw).replace(/\/$/, '')
+  if (!url) {
+    console.warn(
+      '[strapiBase] Задайте NUXT_PUBLIC_STRAPI_URL или STRAPI_URL на сервере.'
+    )
+  }
+  return url
 }
 
 export const STRAPI_BASE = resolveStrapiBase()

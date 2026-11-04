@@ -4,8 +4,16 @@ import { addSubscriber } from '../utils/subscribersFile'
 import { appendSubscribeEvent } from '../utils/blogActivityLog'
 import { resolveVisitorCountry } from '../utils/geoCountry'
 import { isBlockedIdentity } from '../utils/blockedUsersFile'
+import { assertRateLimit } from '../utils/rateLimit'
 
 export default defineEventHandler(async (event) => {
+  assertRateLimit(event, {
+    key: 'subscribe',
+    limit: 8,
+    windowMs: 60 * 60 * 1000,
+    message: 'Слишком много попыток подписки. Попробуйте позже.'
+  })
+
   const body = (await readBody(event)) as {
     email?: unknown
     countryCode?: unknown

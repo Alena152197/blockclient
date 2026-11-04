@@ -393,6 +393,7 @@ import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue';
 import { useSearchStore } from '~/stores/search';
 import { canManageBlogContent } from '~/utils/strapiUserRole';
 import MarkdownIt from 'markdown-it';
+import { sanitizeHtml } from '~/utils/sanitizeHtml';
 import {
     loadPageBgState,
     buildCustomBgLayerStyle,
@@ -495,7 +496,7 @@ const currentEntry = ref(null);
 const currentPage = ref(1);
 const pageSize = 1;
 const totalPages = ref(1);
-/** breaks + html: цвет/<u>/разрывы абзацев */
+/** breaks: абзацы; сырой HTML из редактора пропускаем через sanitizeHtml (без script). */
 const markdown = new MarkdownIt({ breaks: true, html: true });
 const leftClass = ref('');
 
@@ -535,7 +536,7 @@ const textHtml = computed(() => {
     if (isSpreadLocked.value) return '';
     const md = spread.value.textMarkdown;
     if (!md || !String(md).trim()) return '';
-    return markdown.render(md);
+    return sanitizeHtml(markdown.render(md));
 });
 
 /** 21 нитки — top в % высоты разворота, совпадает с дырками на PNG (см. contactBookThreads.js) */

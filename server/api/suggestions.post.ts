@@ -1,8 +1,16 @@
 import { defineEventHandler, readBody, getHeader, createError } from 'h3'
 import { verifyBearerUser } from '../utils/strapiVerifyUser'
 import { addSuggestion } from '../utils/suggestionsFile'
+import { assertRateLimit } from '../utils/rateLimit'
 
 export default defineEventHandler(async (event) => {
+  assertRateLimit(event, {
+    key: 'suggestions',
+    limit: 6,
+    windowMs: 60 * 60 * 1000,
+    message: 'Слишком много обращений. Попробуйте позже.'
+  })
+
   const body = (await readBody(event)) as {
     name?: unknown
     text?: unknown

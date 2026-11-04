@@ -554,7 +554,7 @@
                     <div 
                         ref="previewContentRef"
                         class="prose prose-lg max-w-none text-gray-900 whitespace-pre-wrap break-words"
-                        v-html="newPost.body || '<p class=&quot;text-gray-500&quot;>Текст статьи отсутствует</p>'"
+                        v-html="previewBodyHtml"
                     ></div>
                 </div>
             </div>
@@ -572,7 +572,8 @@ import {
     mergeDescWithCover,
     parseDescWithCover,
     coverLayoutStyle
-} from '~/utils/postCoverLayout';
+} from '~/utils/postCoverLayout'
+import { sanitizeHtml } from '~/utils/sanitizeHtml'
 
 const props = defineProps({
     documentId: {
@@ -593,6 +594,13 @@ const newPost = ref({
     body: '',
     categories: []
 });
+
+const previewBodyHtml = computed(() =>
+    sanitizeHtml(
+        newPost.value.body ||
+            '<p class="text-gray-500">Текст статьи отсутствует</p>'
+    )
+)
 
 const imageFile = ref(null);
 const imagePreview = ref(null);

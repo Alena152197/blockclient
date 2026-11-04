@@ -220,6 +220,7 @@ import {
     notebookPlainLength,
     clampNotebookBodyText
 } from '~/utils/contactBookFormat';
+import { sanitizeHtml } from '~/utils/sanitizeHtml';
 
 const index = useSearchStore();
 const canManageContent = computed(() => canManageBlogContent(index.userMe));
@@ -336,9 +337,10 @@ function onNotebookTap(e) {
 }
 
 function normalizeNotebookHtml(html) {
-    return String(html || '')
+    const swapped = String(html || '')
         .replace(/<h4([^>]*)>/gi, '<p$1>')
         .replace(/<\/h4>/gi, '</p>');
+    return sanitizeHtml(swapped);
 }
 
 const loadText = () => {
@@ -350,13 +352,15 @@ const loadText = () => {
             if (normalized !== saved) {
                 saveToStorage(normalized);
             }
+        } else {
+            notebookText.value = sanitizeHtml(defaultText);
         }
     }
 };
 
 const saveToStorage = (text) => {
     if (typeof window !== 'undefined') {
-        localStorage.setItem(STORAGE_KEY, text);
+        localStorage.setItem(STORAGE_KEY, sanitizeHtml(text));
     }
 };
 
@@ -433,11 +437,13 @@ const saveText = () => {
         return;
     }
     if (!editingText.value.trim()) {
-        notebookText.value = defaultText;
+        notebookText.value = sanitizeHtml(defaultText);
     } else {
         const clamped = clampNotebookBodyText(editingText.value);
         editingText.value = clamped;
-        notebookText.value = notebookEditableToHtml(clamped) || defaultText;
+        notebookText.value = sanitizeHtml(
+            notebookEditableToHtml(clamped) || defaultText
+        );
     }
 
     saveToStorage(notebookText.value);

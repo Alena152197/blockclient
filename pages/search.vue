@@ -125,6 +125,7 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import { stripCoverFromDesc } from '~/utils/postCoverLayout';
 import { STRAPI_BASE } from '~/utils/strapiBase'
+import { escapeHtml } from '~/utils/sanitizeHtml'
 
 const search = useSearchStore()
 const route = useRoute()
@@ -136,13 +137,14 @@ const home = STRAPI_BASE
 // Таймер для debounce
 let searchTimeout = null
 
-// Функция подсветки найденного текста
+// Подсветка: сначала escape текста/запроса, иначе XSS через title/desc или query
 const highlightText = (text, query) => {
-    if (!text || !query) return text
-    // Экранируем специальные символы для regex
-    const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    const safe = escapeHtml(text == null ? '' : String(text))
+    if (!query) return safe
+    const escapedQuery = escapeHtml(String(query)).replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    if (!escapedQuery) return safe
     const regex = new RegExp(`(${escapedQuery})`, 'gi')
-    return text.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>')
+    return safe.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>')
 }
 
 // Функция загрузки всех постов

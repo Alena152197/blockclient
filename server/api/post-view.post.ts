@@ -3,6 +3,7 @@ import { verifyBearerUser } from '../utils/strapiVerifyUser'
 import { incrementPostView } from '../utils/postViewsFile'
 import { appendPostViewEvent } from '../utils/blogActivityLog'
 import { resolveVisitorCountry } from '../utils/geoCountry'
+import { assertRateLimit } from '../utils/rateLimit'
 
 function isValidDocumentId(id: unknown): id is string {
   if (typeof id !== 'string') return false
@@ -21,6 +22,13 @@ function isValidAnonVisitorId(id: unknown): id is string {
 }
 
 export default defineEventHandler(async (event) => {
+  assertRateLimit(event, {
+    key: 'post-view',
+    limit: 60,
+    windowMs: 60 * 1000,
+    message: 'Слишком много запросов просмотров.'
+  })
+
   const body = await readBody(event).catch(() => ({}))
   const documentId = (body as { documentId?: unknown })?.documentId
   if (!isValidDocumentId(documentId)) {

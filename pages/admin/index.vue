@@ -105,7 +105,6 @@ const userForma = ref({
     email: '',
     password: ''
 })
-const newID = ref(0)
 const router = useRouter()
 
 const isLoggedIn = computed(() => Boolean(index.userMe?.id || index.userMe?.documentId))
@@ -133,22 +132,6 @@ const loginError = ref('')
 const registrationError = ref('')
 const loginSuccessMessage = ref('')
 
-const fetchUsers = async () => {
-    try {
-        const response = await $fetch(`${STRAPI_BASE}/api/users?fields=username&sort=username:desc`)
-        const lastUser = response[0]
-
-        if (lastUser && lastUser.username) {
-            const match = lastUser.username.match(/\d+/)
-            if (match) {
-                newID.value = match[0]
-            }
-        }
-    } catch (error) {
-        console.warn(`Не вышло получить последний id пользователя: ${error}`)
-    }
-}
-
 const registr = async () => {
     registrationError.value = ''
     try {
@@ -157,58 +140,56 @@ const registr = async () => {
             return
         }
 
-        await fetchUsers()
-        if (newID) {
-            const data = await $fetch(`${STRAPI_BASE}/api/auth/local/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: {
-                    username: userForma.value.username,
-                    email: userForma.value.email,
-                    password: userForma.value.password
-                }
-            })
+        // Не вызываем GET /api/users — список пользователей должен быть закрыт в Strapi.
+        const data = await $fetch(`${STRAPI_BASE}/api/auth/local/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: {
+                username: userForma.value.username,
+                email: userForma.value.email,
+                password: userForma.value.password
+            }
+        })
 
-            if (!data?.jwt) {
-                throw new Error('Регистрация: нет токена')
-            }
-            localStorage.setItem('jwt', data.jwt)
-            try {
-                if (data.user) {
-                    localStorage.setItem(
-                        'strapi_auth_user',
-                        JSON.stringify({
-                            id: data.user.id,
-                            documentId: data.user.documentId,
-                            username: data.user.username,
-                            email: data.user.email,
-                            avatar: data.user.avatar,
-                            role: data.user.role
-                        })
-                    )
-                }
-            } catch {
-                /* ignore */
-            }
-            try {
-                const ban = await $fetch('/api/blocked/status', {
-                    headers: { Authorization: `Bearer ${data.jwt}` }
-                })
-                if (ban?.blocked) {
-                    index.logout()
-                    registrationError.value = 'Этот email заблокирован. Регистрация недоступна.'
-                    return
-                }
-            } catch {
-                /* ignore */
-            }
-            await index.fetchUserMe(data.user || null)
-            router.replace('/')
+        if (!data?.jwt) {
+            throw new Error('Регистрация: нет токена')
         }
+        localStorage.setItem('jwt', data.jwt)
+        try {
+            if (data.user) {
+                localStorage.setItem(
+                    'strapi_auth_user',
+                    JSON.stringify({
+                        id: data.user.id,
+                        documentId: data.user.documentId,
+                        username: data.user.username,
+                        email: data.user.email,
+                        avatar: data.user.avatar,
+                        role: data.user.role
+                    })
+                )
+            }
+        } catch {
+            /* ignore */
+        }
+        try {
+            const ban = await $fetch('/api/blocked/status', {
+                headers: { Authorization: `Bearer ${data.jwt}` }
+            })
+            if (ban?.blocked) {
+                index.logout()
+                registrationError.value = 'Этот email заблокирован. Регистрация недоступна.'
+                return
+            }
+        } catch {
+            /* ignore */
+        }
+        await index.fetchUserMe(data.user || null)
+        router.replace('/')
     } catch (error) {
-        registrationError.value = 'Ошибка при регистрации: ' + error.message
+        registrationError.value = 'Ошибка при регистрации: ' + (error?.data?.error?.message || error?.message || error)
         console.error('Ошибка при регистрации:', error)
     } finally {
         userForma.value = {

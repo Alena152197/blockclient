@@ -245,18 +245,11 @@ import { parseDescWithCover, coverLayoutStyle } from "~/utils/postCoverLayout";
 import { canManageBlogContent } from "~/utils/strapiUserRole";
 import { getOrCreateVisitorId } from "~/utils/blogVisitorId";
 import { STRAPI_BASE } from '~/utils/strapiBase'
+import { sanitizeHtml, escapeHtml } from '~/utils/sanitizeHtml'
 
-const markdown = new MarkdownIt();
+/** html: false — сырой HTML из CMS всё равно чистим через sanitizeHtml */
+const markdown = new MarkdownIt({ html: false, linkify: true });
 const mark = ref('');
-
-function escapeHtml(s) {
-    if (typeof s !== 'string') return '';
-    return s
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
-}
 
 /** Есть ли реальные HTML-теги (<p>, <div>, <br>, <span …> и т.д.) */
 function isLikelyHtml(body) {
@@ -275,13 +268,15 @@ function looksLikeMarkdown(body) {
 }
 
 function renderPostBody(body) {
+    let html;
     if (isLikelyHtml(body)) {
-        return body;
+        html = body;
+    } else if (looksLikeMarkdown(body)) {
+        html = markdown.render(body);
+    } else {
+        html = `<div class="ns_post-plain">${escapeHtml(body)}</div>`;
     }
-    if (looksLikeMarkdown(body)) {
-        return markdown.render(body);
-    }
-    return `<div class="ns_post-plain">${escapeHtml(body)}</div>`;
+    return sanitizeHtml(html);
 }
 const route = useRoute();
 const base_url = STRAPI_BASE;
@@ -368,9 +363,8 @@ const loadComments = async () => {
                 new Date(b.createdAt || 0) - new Date(a.createdAt || 0)
             );
             
-            // Загружаем информацию об авторах с аватарами, если она не загружена
+            // Аватары — из populate комментария или своего профиля. Не дергаем /api/users.
             for (const comment of sortedComments) {
-                // Если автор - это строка и это текущий пользователь, используем его данные
                 if (typeof comment.author === 'string' && search.userMe?.username === comment.author) {
                     comment.author = {
                         id: search.userMe.id,
@@ -378,50 +372,8 @@ const loadComments = async () => {
                         email: search.userMe.email,
                         avatar: search.userMe.avatar
                     };
-                }
-                // Если автор - это объект с id, но без аватара, загружаем его
-                else if (typeof comment.author === 'object' && comment.author?.id && !comment.author?.avatar) {
-                    try {
-                        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-                            // Публичное чтение — без JWT (с токеном Authenticated часто 403)
-                            const userResponse = await fetch(`${base_url}/api/users/${comment.author.id}?populate=avatar`);
-                            if (userResponse.ok) {
-                                const userData = await userResponse.json();
-                                comment.author = {
-                                    ...comment.author,
-                                    ...userData,
-                                    avatar: userData.avatar
-                                };
-                            }
-                        }
-                    } catch (e) {
-                        // Не удалось загрузить информацию об авторе
-                    }
-                }
-                // Если автор - это строка (username), ищем пользователя по username
-                else if (typeof comment.author === 'string') {
-                    try {
-                        // Проверяем, что мы на клиенте
-                        if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-                            const username = comment.author;
-                            // Ищем пользователя по username (без JWT)
-                            const userResponse = await fetch(`${base_url}/api/users?filters[username][$eq]=${encodeURIComponent(username)}&populate=avatar`);
-                            if (userResponse.ok) {
-                                const userData = await userResponse.json();
-                                if (userData.data && userData.data.length > 0) {
-                                    const user = userData.data[0];
-                                    comment.author = {
-                                        id: user.id,
-                                        username: user.username,
-                                        email: user.email,
-                                        avatar: user.avatar
-                                    };
-                                }
-                            }
-                        }
-                    } catch (e) {
-                        // Не удалось загрузить информацию об авторе по username
-                    }
+                } else if (typeof comment.author === 'string') {
+                    comment.author = { username: comment.author, avatar: null };
                 }
             }
             
@@ -496,51 +448,25 @@ const loadComments = async () => {
                         });
                         
                         // Затем добавляем/обновляем комментарии из API (они имеют приоритет)
-                        // И загружаем информацию об авторах с аватарами
                         for (const newComment of sortedComments) {
                             if (newComment.post?.id === postId || newComment.post?.documentId === postDocumentId) {
-                                // Если автор - это объект с id, но без полной информации, загружаем его отдельно
-                                if (typeof newComment.author === 'object' && newComment.author?.id && !newComment.author?.avatar) {
-                                    try {
-                                        if (typeof window !== 'undefined') {
-                                            const userResponse = await fetch(`${base_url}/api/users/${newComment.author.id}?populate=avatar`);
-                                            if (userResponse.ok) {
-                                                const userData = await userResponse.json();
-                                                newComment.author = {
-                                                    ...newComment.author,
-                                                    ...userData,
-                                                    avatar: userData.avatar
-                                                };
-                                            }
-                                        }
-                                    } catch (e) {
-                                        // Не удалось загрузить информацию об авторе
-                                    }
+                                if (
+                                    typeof newComment.author === 'string' &&
+                                    search.userMe?.username === newComment.author
+                                ) {
+                                    newComment.author = {
+                                        id: search.userMe.id,
+                                        username: search.userMe.username,
+                                        email: search.userMe.email,
+                                        avatar: search.userMe.avatar
+                                    };
+                                } else if (typeof newComment.author === 'string') {
+                                    newComment.author = {
+                                        username: newComment.author,
+                                        avatar: null
+                                    };
                                 }
-                                // Если автор - это строка (username), ищем пользователя по username
-                                else if (typeof newComment.author === 'string') {
-                                    try {
-                                        if (typeof window !== 'undefined') {
-                                            const username = newComment.author;
-                                            const userResponse = await fetch(`${base_url}/api/users?filters[username][$eq]=${encodeURIComponent(username)}&populate=avatar`);
-                                            if (userResponse.ok) {
-                                                const userData = await userResponse.json();
-                                                if (userData.data && userData.data.length > 0) {
-                                                    const user = userData.data[0];
-                                                    newComment.author = {
-                                                        id: user.id,
-                                                        username: user.username,
-                                                        email: user.email,
-                                                        avatar: user.avatar
-                                                    };
-                                                }
-                                            }
-                                        }
-                                    } catch (e) {
-                                        // Не удалось загрузить информацию об авторе по username
-                                    }
-                                }
-                                
+
                                 // Сохраняем комментарий с информацией о связи
                                 const commentWithPost = {
                                     ...newComment,

@@ -47,11 +47,8 @@ export default defineNuxtConfig({
       process.env.NUXT_PUBLIC_CONTENT_ADMIN_USERNAMES ||
       '',
     public: {
-      /** Клиентский URL Strapi — NUXT_PUBLIC_STRAPI_URL */
-      strapiUrl:
-        process.env.NUXT_PUBLIC_STRAPI_URL ||
-        process.env.STRAPI_URL ||
-        'https://324cbb377ef9.vps.myjino.ru',
+      /** Клиентский URL Strapi — обязательно NUXT_PUBLIC_STRAPI_URL в .env */
+      strapiUrl: process.env.NUXT_PUBLIC_STRAPI_URL || process.env.STRAPI_URL || '',
     },
   },
 
