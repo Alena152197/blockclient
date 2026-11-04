@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фуражкова Алёна</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Arial", "Helvetica", "Helvetica Neue", "sans-serif"],
+                    },
+                    colors: {
+                        resume: "#f24c40",
+                        paper: "#f3f3f3",
+                        link: "#1a5cc8",
+                    },
+                },
+            },
+        };
+    </script>
+    <style>
+        @media print {
+            body {
+                background: #fff !important;
+            }
+
+            #holder {
+                width: auto !important;
+                height: auto !important;
+                margin: 0 !important;
+            }
+
+            #sheet {
+                transform: none !important;
+            }
+        }
+
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+
+        .sheet,
+        .sidebar {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    </style>
+</head>
+
+<body class="m-0 bg-[#e6e6e6] font-sans text-[#1c1c1c]">
+    <div id="holder" class="mx-auto my-4 w-[840px]">
+        <article id="sheet"
+            class="sheet grid min-h-[1180px] w-[840px] origin-top-left grid-cols-[380px_1fr] border-[6px] border-black bg-paper">
+            <aside class="sidebar bg-resume px-5 pb-8 pt-[22px] text-[15.5px] leading-[1.38] text-white">
+                <img class="block h-[450px] w-full rounded-[18px] bg-white/20 object-cover object-[center_20%]"
+                    src="./rezumeA.jpg" alt="Furajkova Alena Dmitrievna">
+                <h1 class="mb-4 mt-[18px] text-[28px] font-bold leading-[1.12]">Фуражкова<br>Алёна<br>Дмитриевна</h1>
+                <p class="m-0">Дата рождения: 21.02.1997</p>
+                <p class="m-0">Город: Москва</p>
+                <p class="m-0 mt-2">Электронная почта</p>
+                <p class="m-0">
+                    <a class="text-blue-300 no-underline" href=" mailto:furajkova@mail.ru">furajkova@mail.ru</a>
+                </p>
+                <p class="m-0 mt-2">Номер телефона:</p>
+                <p class="m-0">
+                    <a class="text-blue-300 no-underline" href="tel:+79022197710">+7 (902) 219-77-10</a>
+                </p>
+
+                <h2 class="mb-2 mt-[22px] text-[18px] font-bold">Навыки</h2>
+
+                <p class="mb-0.5 mt-[11px] font-bold text-gray-700">Frontend:</p>
+                <p class="m-0">
+                    HTML5, CSS3, JavaScript <br>
+                    React, Angular, Vue.js <br>
+                    Tailwind CSS, Flexbox / Grid <br>
+                    Адаптивная верстка, SEO-основы
+                </p>
+                <p class="mb-0.5 mt-[11px] font-bold text-gray-700">Backend:</p>
+                <p class="m-0">
+                    PHP, Node.js, Express, Go<br>
+                    MySQL, PostgreSQL, Redis<br>
+                    REST API, SQL-запросы<br>
+                    CRUD, авторизация, формы
+                </p>
+                <p class="mb-0.5 mt-[11px] font-bold text-gray-700">Доп. навыки:</p>
+                <p class="m-0">
+                    Основы веб-дизайна, Figma (базово)<br>
+                    Git, GitHub, VS Code<br>
+                    Docker (базово), Postman<br>
+                    Английский — B1 (средний)
+                </p>
+            </aside>
+
+
+            <main class="px-[22px] pb-8 pt-[26px] text-[16.5px] leading-[1.35]">
+                <section>
+                    <h2 class="mb-3 text-[20px] font-bold leading-tight">Обо мне</h2>
+                    <p class="m-0">
+                        Fullstack-разработчик:<br>
+                        делаю веб-приложения от интерфейса до<br>
+                        API, базы и деплоя. Есть продукты в<br>
+                        открытом доступе (уплетаем.рф,<br>
+                        expressplaner.website, fenix1521.ru).<br>
+                        Прошла переподготовку Computer<br>
+                        Academy TOP (Web-development Full-<br>
+                        stack). Ищу первую коммерческую роль<br>
+                        в офисе — хочу расти в команде и закрывать<br>
+                        задачи от идеи до релиза.
+                    </p>
+                </section>
+
+                <section class="mt-[22px]">
+                    <h2 class="mb-3 text-[20px] font-bold leading-tight">Образование</h2>
+                    <p class="m-0 mb-0.5 font-bold">
+                        Web-development Full-stack |<br>
+                        Computer Academy TOP
+                    </p>
+                    <p class="m-0">20.02.2024-28.01.2025</p>
+                    <p class="m-0">Город: Сочи</p>
+                </section>
+
+                <section class="mt-[22px]">
+                    <h2 class="mb-3 text-[20px] font-bold leading-tight">Мои личные проекты</h2>
+                    <article>
+                        <h3 class="m-0 text-[16.5px] font-bold leading-[1.35]">Family Recipes</h3>
+                        <a class="text-link underline underline-offset-2" href="https://уплетаем.рф/" target="_blank"
+                            rel="noopener">https://уплетаем.рф/</a>
+                        <p class="m-0">
+                            Nuxt 3, Vue, Strapi, PostgreSQL, Redis, PWA
+                        </p>
+                        <p class="m-0">
+                            Рецепты с приватностью, друзья, чат,<br>
+                            рейтинги, админ-раздел; деплой на VPS<br>
+                            (Nginx, PM2, HTTPS).
+                        </p>
+                    </article>
+
+                    <article class="mt-4">
+                        <h3 class="m-0 text-[16.5px] font-bold leading-[1.35]">Планёрка</h3>
+                        <a class="text-link underline underline-offset-2" href="https://expressplaner.website/"
+                            target="_blank" rel="noopener">https://expressplaner.website/
+                        </a>
+                        <p class="m-0">Nuxt, Vue, Express, Prisma, MySQL, PWA</p>
+                        <p class="m-0">
+                            Задачи, финансы, Web Push, AI-чат;<br>
+                            деплой на VPS (Nginx, PM2).
+                        </p>
+                    </article>
+
+                    <article class="mt-4">
+                        <h3 class="m-0 text-[16.5px] font-bold leading-[1.35]">
+                            Личный блог - дипллом Computer Academy<br>TOP · 2025
+                        </h3>
+                        <a class="text-link underline underline-offset-2" href="https://fenix1521.ru/" target="_blank"
+                            rel="noopener">https://fenix1521.ru/</a>
+                        <p class="m-0">
+                            Nuxt 3, Vue, Pinia, Tailwind, Strapi (REST,<br>
+                            JWT)
+                        </p>
+                        <p class="m-0">
+                            Авторизация, CRUD статей и категорий,<br>
+                            комментарии, поиск, админка.
+                        </p>
+                    </article>
+                </section>
+            </main>
+        </article>
+    </div>
+
+    <script>
+        (function () {
+            var sheet = document.getElementById("sheet");
+            var holder = document.getElementById("holder");
+
+            function fit() {
+                var scale = Math.min(1, (window.innerWidth - 20) / sheet.offsetWidth);
+                sheet.style.transform = "scale(" + scale + ")";
+                holder.style.width = sheet.offsetWidth * scale + "px";
+                holder.style.height = sheet.offsetHeight * scale + "px";
+            }
+
+            window.addEventListener("resize", fit);
+            window.addEventListener("load", fit);
+            fit();
+        })();
+    </script>
+
+</body>
+
+</html>
