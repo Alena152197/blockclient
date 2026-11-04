@@ -97,7 +97,7 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { STRAPI_BASE } from '~/utils/strapiBase'
+import { resolveStrapiBase } from '~/utils/strapiBase'
 
 const index = useSearchStore()
 const userForma = ref({
@@ -141,7 +141,13 @@ const registr = async () => {
         }
 
         // Не вызываем GET /api/users — список пользователей должен быть закрыт в Strapi.
-        const data = await $fetch(`${STRAPI_BASE}/api/auth/local/register`, {
+        const strapi = resolveStrapiBase()
+        if (!strapi) {
+            registrationError.value =
+                'Не задан адрес Strapi (NUXT_PUBLIC_STRAPI_URL). Обратитесь к администратору.'
+            return
+        }
+        const data = await $fetch(`${strapi}/api/auth/local/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -204,7 +210,13 @@ const login = async (form) => {
     loginError.value = ''
     loginSuccessMessage.value = ''
     try {
-        const data = await $fetch(`${STRAPI_BASE}/api/auth/local`, {
+        const strapi = resolveStrapiBase()
+        if (!strapi) {
+            loginError.value =
+                'Не задан адрес Strapi (NUXT_PUBLIC_STRAPI_URL). На VPS проверьте .env и пересоберите сайт.'
+            return
+        }
+        const data = await $fetch(`${strapi}/api/auth/local`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

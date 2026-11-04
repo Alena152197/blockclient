@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { STRAPI_BASE } from '~/utils/strapiBase'
+import { STRAPI_BASE, resolveStrapiBase } from '~/utils/strapiBase'
 
 const defaultProfileNote = `В этом блоге я хочу рассказать
 про свой жизненный путь, с чего всё началось, поиски себя и своего места
@@ -247,7 +247,13 @@ export const useSearchStore = defineStore('search', {
 
     async login(loginData) {
       try {
-        const response = await fetch(`${STRAPI_BASE}/api/auth/local`, {
+        const strapi = resolveStrapiBase()
+        if (!strapi) {
+          throw new Error(
+            'Не задан NUXT_PUBLIC_STRAPI_URL — вход невозможен. Проверьте .env на сервере.'
+          )
+        }
+        const response = await fetch(`${strapi}/api/auth/local`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

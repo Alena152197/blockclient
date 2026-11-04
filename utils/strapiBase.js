@@ -1,8 +1,10 @@
 /**
  * Базовый URL Strapi CMS.
- * Задаётся через NUXT_PUBLIC_STRAPI_URL (клиент + сервер) или STRAPI_URL (сервер).
- * Хардкод продакшен-URL убран — иначе адрес CMS светится в бандле даже без .env.
+ * NUXT_PUBLIC_STRAPI_URL / runtimeConfig.public.strapiUrl.
+ * Важно: не кэшировать пустую строку на import — иначе `${STRAPI_BASE}/api/auth/local`
+ * превращается в `/api/auth/local` на fenix1521.ru → 404.
  */
+
 function fromEnv() {
   if (typeof process === 'undefined' || !process.env) return ''
   return (
@@ -15,7 +17,7 @@ function fromEnv() {
 function fromImportMeta() {
   try {
     const v = import.meta.env?.NUXT_PUBLIC_STRAPI_URL
-    return typeof v === 'string' ? v : ''
+    return typeof v === 'string' ? v.trim() : ''
   } catch {
     return ''
   }
@@ -26,26 +28,31 @@ function fromRuntimeConfig() {
     if (typeof useRuntimeConfig === 'function') {
       const c = useRuntimeConfig()
       const u = c?.public?.strapiUrl
-      return typeof u === 'string' ? u : ''
+      return typeof u === 'string' ? u.trim() : ''
     }
   } catch {
-    /* вне Nuxt-контекста */
+    /* вне Nuxt-контекста / до инициализации */
   }
   return ''
 }
 
 export function resolveStrapiBase() {
-  const raw = fromImportMeta() || fromRuntimeConfig() || fromEnv()
-  const url = String(raw || '').replace(/\/$/, '')
-  if (!url) {
-    if (import.meta.dev) {
-      console.warn(
-        '[strapiBase] Задайте NUXT_PUBLIC_STRAPI_URL в .env (URL Strapi без хвоста /).'
-      )
-    }
-    return ''
-  }
-  return url
+  // runtimeConfig первым: на проде подхватывает NUXT_PUBLIC_* после pm2 --update-env
+  const raw = fromRuntimeConfig() || fromImportMeta() || fromEnv()
+  return String(raw || '')
+    .trim()
+    .replace(/\/$/, '')
 }
 
-export const STRAPI_BASE = resolveStrapiBase()
+/** Ленивый URL: работает в шаблонных строках `${STRAPI_BASE}/api/...` */
+export const STRAPI_BASE = {
+  toString() {
+    return resolveStrapiBase()
+  },
+  valueOf() {
+    return resolveStrapiBase()
+  },
+  [Symbol.toPrimitive]() {
+    return resolveStrapiBase()
+  }
+}
